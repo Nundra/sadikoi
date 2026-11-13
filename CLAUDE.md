@@ -22,7 +22,7 @@ Application web d'entraînement pour le Sadida de Dofus 3 : une « salle d'entra
 
 **V1**
 - **Mode infini** (écran d'arrivée, aucune étape avant) : une run, c'est-à-dire un enchaînement de salles. On ne passe à la salle suivante qu'avec 3 étoiles au moins ; sinon on recommence la run, ou on rejoue la salle, ce qui passe en training sur cette salle (mêmes ennemis) et termine la run (« Nouvelle run » dans le bandeau). Record de la plus longue run gardé dans `sadikoi:run`. Salles tirées au hasard parmi les types de map cochés dans les réglages (par défaut : zones normales, donjons et Songes ; pas de zones spéciales, de Kolizéum ni de maps à part).
-- **Training map spécifique** : le joueur choisit une map dans un sélecteur.
+- **Training map spécifique** : le joueur choisit une map dans un sélecteur. En training, la fenêtre de fin propose de retravailler la salle (« Rejouer la salle » avec le même placement, ou « Recommencer du placement »), pas de salle suivante.
 - **Training map de boss** : même chose, limité aux maps de boss.
 
 **Partage** : chaque salle a un code court (`codeSalle` dans `engine/salle.ts` : map en base 36, puis 3 caractères par ennemi, case et monstre dessiné), gardé dans l'URL (`?salle=…`) en training (map ou boss) pour qu'un rechargement redonne la même salle, et retiré en mode infini pour qu'un rechargement relance un tirage. Le bouton « Partager » copie ce lien ; l'ouvrir charge la même salle en mode « map spécifique ».

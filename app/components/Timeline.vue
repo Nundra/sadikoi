@@ -184,10 +184,16 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
         </p>
         <div class="boutons">
           <button type="button" @click="dialogue?.close()">Revoir le tour</button>
-          <button type="button" :title="store.mode === 'infini' ? 'Passe en training sur cette salle : la run s’arrête' : undefined" @click="store.rejouerSalle()">Rejouer la salle</button>
+          <!-- Mode infini : rejouer passe en training sur cette salle (la run s'arrête) -->
+          <button v-if="store.mode === 'infini'" type="button" title="Passe en training sur cette salle : la run s’arrête" @click="store.rejouerSalle()">Rejouer la salle</button>
+          <!-- Training : on retravaille la même salle -->
+          <button v-else type="button" title="Même salle, retour au placement" @click="store.replacer()">Recommencer du placement</button>
         </div>
-        <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">Salle suivante</button>
-        <button v-else type="button" class="fin" @click="store.nouvelleRun()">Recommencer la run</button>
+        <template v-if="store.mode === 'infini'">
+          <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">Salle suivante</button>
+          <button v-else type="button" class="fin" @click="store.nouvelleRun()">Recommencer la run</button>
+        </template>
+        <button v-else type="button" class="fin" title="Même salle, même placement : le tour repart de zéro" @click="store.rejouerSalle()">Rejouer la salle</button>
       </template>
     </dialog>
   </section>
