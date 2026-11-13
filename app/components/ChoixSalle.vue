@@ -107,6 +107,9 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
       <option value="creation">{{ t('choix.creation') }}</option>
     </select>
 
+    <button v-if="store.mode === 'creation' && !store.edition" type="button" class="editer" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">
+      <span class="crayon" aria-hidden="true">✎</span>{{ t('creation.modifier') }}
+    </button>
     <div v-if="store.mode === 'map' || store.mode === 'boss'" class="combo">
       <button
         v-if="!ouvert"
@@ -171,6 +174,8 @@ input { border-color: var(--or); }
 .courante { display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; }
 .courante span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chevron { color: var(--or); }
+.editer { display: flex; align-items: center; justify-content: center; gap: 8px; border-color: var(--or); color: var(--or-clair); }
+.crayon { font-size: 15px; }
 .combo { position: relative; }
 ul {
   position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: 320px; overflow: auto;

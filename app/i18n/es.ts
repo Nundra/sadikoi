@@ -227,6 +227,7 @@ export const es: DicoLangue = {
   'creation.test': 'Prueba',
   'creation.tester': 'Probar el mapa',
   'creation.modifier': 'Editar el mapa',
+  'creation.modifier-aide': 'Volver a la construcción del mapa (se borra el turno en curso)',
   'creation.titre': 'Creador de mapas',
   'creation.aide': 'Elige una herramienta y haz clic o arrastra sobre el tablero para pintar las casillas. Hace falta al menos una casilla de salida y un enemigo.',
   'creation.aide-plateau': 'Haz clic o arrastra para pintar las casillas con la herramienta elegida.',

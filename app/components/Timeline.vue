@@ -148,6 +148,7 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
       </button>
       <button type="button" :disabled="store.phase === 'placement'" @click="store.replacer()">{{ t('timeline.replacer') }}</button>
     </div>
+    <button v-if="store.mode === 'creation'" type="button" class="editer" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
     <button type="button" class="fin" :disabled="!bouton.actif" @click="bouton.action()">{{ bouton.texte }}</button>
 
     <dialog ref="dialogue" class="resultat" aria-labelledby="titre-resultat">
@@ -179,6 +180,8 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
           <button v-if="store.mode === 'infini'" type="button" :title="t('timeline.rejouer-infini')" @click="store.rejouerSalle()">{{ t('timeline.rejouer') }}</button>
           <!-- Training : on retravaille la même salle -->
           <button v-else type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
+          <!-- Map perso : retour à la construction -->
+          <button v-if="store.mode === 'creation'" type="button" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
         </div>
         <template v-if="store.mode === 'infini'">
           <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">{{ t('resultat.suivante') }}</button>
@@ -228,6 +231,7 @@ ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: col
 .boutons { display: flex; gap: 8px; margin-top: 10px; }
 .boutons button { flex: 1; }
 button.fin { margin-top: 8px; width: 100%; }
+button.editer { margin-top: 8px; width: 100%; border-color: var(--or); color: var(--or-clair); }
 
 .resultat {
   border-radius: 16px; border: 1px solid var(--or); background: linear-gradient(#18292f, #132227);

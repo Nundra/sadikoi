@@ -52,7 +52,7 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
       <button v-if="store.mode === 'infini'" type="button" :title="t('bandeau.nouvelle-run-aide')" @click="store.nouvelleRun()">{{ t('bandeau.nouvelle-run') }}</button>
       <template v-else-if="store.mode === 'creation'">
         <button v-if="store.edition" type="button" :disabled="store.problemes.length > 0" @click="store.testerCarte()">{{ t('creation.tester') }}</button>
-        <button v-else type="button" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
+        <button v-else type="button" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
       </template>
       <button v-else type="button" @click="store.nouvelleSalle()">{{ t('bandeau.autres-ennemis') }}</button>
       <button type="button" :title="store.lienPartage ? t('bandeau.partager-aide', { lien: store.lienPartage }) : undefined" @click="store.partager()">{{ t('bandeau.partager') }}</button>

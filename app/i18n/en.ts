@@ -227,6 +227,7 @@ export const en: DicoLangue = {
   'creation.test': 'Test',
   'creation.tester': 'Test the map',
   'creation.modifier': 'Edit the map',
+  'creation.modifier-aide': 'Back to building the map (the current turn is cleared)',
   'creation.titre': 'Map creator',
   'creation.aide': 'Pick a tool, then click or drag on the board to paint cells. You need at least one starting cell and one enemy.',
   'creation.aide-plateau': 'Click or drag to paint cells with the selected tool.',
