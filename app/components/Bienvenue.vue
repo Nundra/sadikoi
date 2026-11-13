@@ -80,7 +80,7 @@ defineExpose({ ouvrir })
 <style scoped>
 .bienvenue {
   border-radius: 16px; border: 1px solid var(--or); background: linear-gradient(#18292f, #132227);
-  color: var(--texte); padding: 22px 28px; width: min(640px, 92vw); max-height: 90vh;
+  color: var(--texte); padding: 22px 28px; width: var(--largeur-fenetre-large); max-height: 90vh;
   font-size: 14px; line-height: 1.5;
 }
 .bienvenue::backdrop { background: rgb(5 10 12 / 0.75); }

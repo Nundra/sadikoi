@@ -12,6 +12,9 @@
   --fond-creux: #0e1c22;
   --fond-bouton: #22363c;
   --fond-plateau: #0c181d;
+  /* Largeur des fenêtres (fin de salle, réglages) ; la bienvenue est un peu plus large */
+  --largeur-fenetre: min(580px, 92vw);
+  --largeur-fenetre-large: min(680px, 92vw);
   --police-titre: 'Marcellus', serif;
   --police-texte: 'Nunito Sans', system-ui, sans-serif;
 }

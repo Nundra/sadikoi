@@ -126,7 +126,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
 <style scoped>
 .reglages {
   border-radius: 16px; border: 1px solid var(--or); background: linear-gradient(#18292f, #132227);
-  color: var(--texte); padding: 22px 26px; width: min(620px, 92vw); max-height: 90vh;
+  color: var(--texte); padding: 22px 26px; width: var(--largeur-fenetre); max-height: 90vh;
 }
 .reglages::backdrop { background: rgb(5 10 12 / 0.7); }
 h2 { margin: 0 0 14px; font-family: var(--police-titre); font-size: 24px; font-weight: 400; color: var(--or-clair); }

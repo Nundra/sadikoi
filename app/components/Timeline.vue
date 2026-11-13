@@ -231,7 +231,7 @@ button.fin { margin-top: 8px; width: 100%; }
 
 .resultat {
   border-radius: 16px; border: 1px solid var(--or); background: linear-gradient(#18292f, #132227);
-  color: var(--texte); padding: 24px 28px; text-align: center; min-width: 360px; max-width: min(480px, 92vw);
+  color: var(--texte); padding: 24px 28px; text-align: center; width: var(--largeur-fenetre);
 }
 .resultat::backdrop { background: rgb(5 10 12 / 0.7); }
 .resultat h2 { font-size: 26px; margin-bottom: 12px; }
