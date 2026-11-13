@@ -21,7 +21,7 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
     <h1 class="titre"><img src="/logo.png" alt="Sadikoi" width="140" height="58"></h1>
 
     <div class="pilule">
-      <span class="mode">{{ t(`mode.${store.mode}`) }}</span><span aria-hidden="true">·</span><span>{{ t('bandeau.salle', { n: store.numeroSalle }) }}</span>
+      <span class="mode">{{ t(`mode.${store.mode}`) }}</span><span aria-hidden="true">·</span><span v-if="store.mode === 'creation'">{{ t(store.edition ? 'creation.construction' : 'creation.test') }}</span><span v-else>{{ t('bandeau.salle', { n: store.numeroSalle }) }}</span>
       <template v-if="store.mode === 'infini' && store.meilleureSerie">
         <span aria-hidden="true">·</span><span class="record" :title="t('bandeau.record-run-aide')">{{ t('bandeau.record-run', { n: store.meilleureSerie }) }}</span>
       </template>
@@ -31,9 +31,10 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
       <div class="map-courante">
         <span>{{ t('bandeau.objectif') }}</span>
         <span v-if="store.map" class="nom-map">
-          {{ nomJeu(store.map.nom) }}<template v-if="store.map.boss"> · {{ t('bandeau.boss', { boss: store.map.boss.map(nomJeu).join(', ') }) }}</template>
+          <template v-if="store.mode === 'creation'">{{ t('creation.nom-map') }}</template>
+          <template v-else>{{ nomJeu(store.map.nom) }}</template><template v-if="store.map.boss"> · {{ t('bandeau.boss', { boss: store.map.boss.map(nomJeu).join(', ') }) }}</template>
         </span>
-        <span v-if="store.map" class="lieu">
+        <span v-if="store.map && store.mode !== 'creation'" class="lieu">
           {{ lieu }}
           <template v-if="!store.map.donjon"> · [{{ store.map.pos[0] }}, {{ store.map.pos[1] }}]</template>
         </span>
@@ -49,6 +50,10 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
 
     <div class="choix">
       <button v-if="store.mode === 'infini'" type="button" :title="t('bandeau.nouvelle-run-aide')" @click="store.nouvelleRun()">{{ t('bandeau.nouvelle-run') }}</button>
+      <template v-else-if="store.mode === 'creation'">
+        <button v-if="store.edition" type="button" :disabled="store.problemes.length > 0" @click="store.testerCarte()">{{ t('creation.tester') }}</button>
+        <button v-else type="button" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
+      </template>
       <button v-else type="button" @click="store.nouvelleSalle()">{{ t('bandeau.autres-ennemis') }}</button>
       <button type="button" :title="store.lienPartage ? t('bandeau.partager-aide', { lien: store.lienPartage }) : undefined" @click="store.partager()">{{ t('bandeau.partager') }}</button>
       <ChoixLangue />

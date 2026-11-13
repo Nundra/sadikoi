@@ -65,6 +65,7 @@ defineExpose({ ouvrir })
       <ul>
         <li v-html="t('bienvenue.modes-1', { n: ETOILES_POUR_AVANCER })" />
         <li v-html="t('bienvenue.modes-2')" />
+        <li v-html="t('bienvenue.modes-creation')" />
         <li v-html="t('bienvenue.modes-3')" />
         <li v-html="t('bienvenue.modes-4')" />
       </ul>

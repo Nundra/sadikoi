@@ -11,13 +11,16 @@ import {
 import type { MapCombat } from '~~/engine/plateau'
 import { casesCiblables } from '~~/engine/portee'
 import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
+import {
+  carteDepuisSalle, carteVide, codeCarte, ennemisDe, lireCodeCarte, mapPerso, peindre, problemesCarte, type Outil,
+} from '~~/engine/creation'
 import { NIVEAU_MAX, SORTS_SADIDA, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
 import type { Message, RefEntite } from '~~/engine/messages'
 import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
 import { useBarreStore } from './barre'
 
-export type Mode = 'infini' | 'map' | 'boss'
+export type Mode = 'infini' | 'map' | 'boss' | 'creation'
 
 /** Meilleur résultat sur une salle. */
 export interface MeilleurScore {
@@ -284,7 +287,7 @@ export const usePartieStore = defineStore('partie', () => {
    */
   const records = ref<Record<string, MeilleurScore>>(lire('records', {}))
   const cleSalle = computed(() => map.value
-    ? `${map.value.id}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
+    ? `${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
     : null)
   const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */
@@ -326,17 +329,111 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   /**
+   * Créateur de map : on construit une map (`brouillon`, gardé dans `sadikoi:creation`) en
+   * peignant ses cases, puis on la teste comme une salle de training (`edition` à faux).
+   * Les ennemis sont sur les cases `b`, les départs du joueur sur les `r` (engine/creation.ts).
+   */
+  const brouillonGarde = lire('creation', { cases: '' }).cases
+  const brouillon = ref<string>(lireCodeCarte(codeCarte(brouillonGarde || carteVide())) ?? carteVide())
+  watch(brouillon, v => ecrire('creation', { cases: v }))
+  const edition = ref(true)
+  const outil = ref<Outil>('sol')
+  /** La map avant chaque trait de pinceau (50 au plus), pour « Annuler ». */
+  const historique = shallowRef<string[]>([])
+  let enTrait = false
+  const problemes = computed(() => problemesCarte(brouillon.value))
+  const enEdition = computed(() => mode.value === 'creation' && edition.value)
+  /** La dernière salle du jeu jouée avant le créateur, pour partir de sa map. */
+  const salleDuJeu = shallowRef<{ map: MapCombat, ennemis: Case[] } | null>(null)
+
+  /** Montre le brouillon sur le plateau (monstre dessiné tiré de la case, pour qu'il ne change pas à chaque trait). */
+  function montrerBrouillon() {
+    map.value = mapPerso(brouillon.value)
+    ennemis.value = ennemisDe(brouillon.value)
+    portraitsEnnemis.value = ennemis.value.map(c => c % portraits.ennemis.length)
+  }
+  watch(brouillon, () => {
+    if (enEdition.value) montrerBrouillon()
+  })
+
+  function memoriser() {
+    historique.value = [...historique.value.slice(-49), brouillon.value]
+  }
+  function debutTrait(c: Case) {
+    memoriser()
+    enTrait = true
+    peindreCase(c)
+  }
+  function peindreCase(c: Case) {
+    if (enTrait) brouillon.value = peindre(brouillon.value, c, outil.value)
+  }
+  function finTrait() {
+    if (!enTrait) return
+    enTrait = false
+    // Un trait qui n'a rien changé ne compte pas dans l'historique
+    if (historique.value.at(-1) === brouillon.value) historique.value = historique.value.slice(0, -1)
+  }
+  function annulerTrait() {
+    const h = historique.value
+    if (!h.length) return
+    brouillon.value = h.at(-1)!
+    historique.value = h.slice(0, -1)
+  }
+  function remplacerCarte(cases: string) {
+    memoriser()
+    brouillon.value = cases
+  }
+  const carteDeZero = () => remplacerCarte(carteVide())
+  function carteDeLaSalle() {
+    if (salleDuJeu.value) remplacerCarte(carteDepuisSalle(salleDuJeu.value.map, salleDuJeu.value.ennemis))
+  }
+
+  /** Passe en créateur de map, sur le brouillon. */
+  function ouvrirCreation() {
+    if (mode.value !== 'creation' && map.value && map.value.id) salleDuJeu.value = { map: map.value, ennemis: [...ennemis.value] }
+    mode.value = 'creation'
+    mapChoisie.value = null
+    modifierCarte()
+  }
+  /** Retour à la construction : le tour en cours est effacé. */
+  function modifierCarte() {
+    edition.value = true
+    sadida.value = null
+    replacer()
+    montrerBrouillon()
+  }
+  /** Joue la map construite, comme une salle de training. */
+  function testerCarte() {
+    if (problemes.value.length) {
+      dire(`creation.probleme.${problemes.value[0]!}`)
+      return
+    }
+    edition.value = false
+    outil.value = 'sol'
+    montrerBrouillon()
+    sadida.value = null
+    numeroSalle.value++
+    replacer()
+  }
+
+  /**
    * Code de la salle en cours, à partager. En training (map ou boss), il est gardé dans l'URL
    * (?salle=…) pour qu'un rechargement redonne la même salle ; en mode infini, il en est retiré
-   * pour qu'un rechargement relance un tirage.
+   * pour qu'un rechargement relance un tirage. Dans le créateur, c'est le code de la map perso
+   * (?carte=…), en construction comme en test.
    */
-  const code = computed(() => (map.value ? codeSalle(map.value, ennemis.value, portraitsEnnemis.value) : null))
+  const code = computed(() => {
+    if (mode.value === 'creation') return codeCarte(brouillon.value)
+    return map.value ? codeSalle(map.value, ennemis.value, portraitsEnnemis.value) : null
+  })
+  const parametre = computed(() => (mode.value === 'creation' ? 'carte' : 'salle'))
   watch([code, mode], ([c, m]) => {
     if (!c) return
     try {
       const url = new URL(window.location.href)
+      url.searchParams.delete(m === 'creation' ? 'salle' : 'carte')
       if (m === 'infini') url.searchParams.delete('salle')
-      else url.searchParams.set('salle', c)
+      else url.searchParams.set(parametre.value, c)
       window.history.replaceState(null, '', url)
     } catch {
       // URL non modifiable (aperçu, iframe…) : sans conséquence
@@ -345,9 +442,26 @@ export const usePartieStore = defineStore('partie', () => {
   const lienPartage = computed(() => {
     if (!code.value) return null
     const url = new URL(prefixe(langue.value) || '/', window.location.origin)
-    url.searchParams.set('salle', code.value)
+    url.searchParams.set(parametre.value, code.value)
     return url.toString()
   })
+
+  /**
+   * Ouvre une map perso partagée (?carte=…) dans le créateur : en test si elle est jouable,
+   * sinon en construction. Le brouillon d'avant reste dans l'historique (« Annuler »).
+   */
+  function chargerCarte(texte: string) {
+    const cases = lireCodeCarte(texte)
+    if (!cases) {
+      nouvelleSalle()
+      dire('msg.carte-inconnue')
+      return
+    }
+    if (cases !== brouillon.value) remplacerCarte(cases)
+    mode.value = 'creation'
+    if (problemesCarte(cases).length) modifierCarte()
+    else testerCarte()
+  }
 
   /** Charge la salle d'un code partagé ; sinon, une nouvelle salle et un message. */
   function chargerCode(texte: string) {
@@ -474,6 +588,7 @@ export const usePartieStore = defineStore('partie', () => {
 
   function choisirSort(id: number) {
     message.value = null
+    if (enEdition.value) return
     if (phase.value === 'placement') {
       dire('msg.valider-dabord')
       return
@@ -539,6 +654,8 @@ export const usePartieStore = defineStore('partie', () => {
     maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, ciblables, accessibles, apercu, score, record, recordPrecedent,
+    brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,
+    carteDeZero, carteDeLaSalle, ouvrirCreation, modifierCarte, testerCarte, chargerCarte,
     sexe, portrait, nomAffiche, texte, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,
     basculerPrycipithon, annuler, regarder,
   }

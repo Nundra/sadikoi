@@ -32,8 +32,9 @@ const cases = computed(() => {
   const out = []
   for (let c = 0; c < NB_CASES; c++) {
     const k = m.cases[c]!
-    if (k === '.') continue
-    out.push({ c, points: losange(c), classe: `case-${k === 'r' || k === 'b' ? (k === joueur ? 'bleue' : 'rouge') : CLASSE[k]}`, damier: (c + Math.floor(c / COLONNES)) % 2 === 1 })
+    // En construction, le vide se dessine aussi : on peut le peindre
+    if (k === '.' && !store.enEdition) continue
+    out.push({ c, points: losange(c), classe: `case-${k === 'r' || k === 'b' ? (k === joueur ? 'bleue' : 'rouge') : k === '.' ? 'vide' : CLASSE[k]}`, damier: (c + Math.floor(c / COLONNES)) % 2 === 1 })
   }
   return out
 })
@@ -53,7 +54,7 @@ const cadre = computed(() => {
   return `${x0 - 12} ${y0 - 72} ${x1 - x0 + 24} ${y1 - y0 + 116}`
 })
 
-const placementLibre = computed(() => new Set(store.phase === 'placement' ? store.casesPlacement : []))
+const placementLibre = computed(() => new Set(store.phase === 'placement' && !store.enEdition ? store.casesPlacement : []))
 
 function etat(c: number): string | null {
   const a = store.apercu
@@ -95,7 +96,28 @@ function caseDe(ev: Event): number | null {
   return v === null || v === undefined ? null : Number(v)
 }
 
+// Construction : on peint en cliquant, et en glissant bouton enfoncé ; le trait finit au relâchement, où qu'il soit
+function surAppui(ev: MouseEvent) {
+  const c = caseDe(ev)
+  if (!store.enEdition || c === null || ev.button !== 0) return
+  ev.preventDefault()
+  store.debutTrait(c)
+}
+function surSurvol(ev: MouseEvent) {
+  const c = caseDe(ev)
+  store.survol = c
+  if (store.enEdition && c !== null && ev.buttons & 1) store.peindreCase(c)
+}
+function surClic(ev: MouseEvent) {
+  const c = caseDe(ev)
+  if (c !== null && !store.enEdition) store.clicCase(c)
+}
+const finTrait = () => store.finTrait()
+onMounted(() => window.addEventListener('mouseup', finTrait))
+onBeforeUnmount(() => window.removeEventListener('mouseup', finTrait))
+
 const aide = computed(() => {
+  if (store.enEdition) return t('creation.aide-plateau')
   if (store.vue !== null) return t('plateau.vue-passee', { n: store.vue + 1 })
   if (store.phase === 'placement') return t('plateau.aide-placement')
   return null
@@ -108,8 +130,10 @@ const aide = computed(() => {
       :viewBox="cadre"
       role="img"
       :aria-label="store.map ? t('plateau.map', { nom: nomJeu(store.map.nom) }) : t('plateau.chargement')"
-      @click="(ev) => { const c = caseDe(ev); if (c !== null) store.clicCase(c) }"
-      @mouseover="(ev) => (store.survol = caseDe(ev))"
+      :class="{ edition: store.enEdition }"
+      @mousedown="surAppui"
+      @click="surClic"
+      @mouseover="surSurvol"
       @mouseleave="store.survol = null"
     >
       <defs>
@@ -211,6 +235,11 @@ polygon {
 .case-bleue { fill: #3c86c9; }
 .case-obstacle { fill: #253129; stroke: #1a221d; }
 .case-muret { fill: #3a4a35; }
+/* Le vide, visible seulement en construction */
+.case-vide { fill: rgb(255 255 255 / 0.03); stroke: rgb(255 255 255 / 0.08); }
+/* En construction, l'obstacle (plein, bloque la LdV) se distingue du vide : teinte pierre */
+svg.edition .case-obstacle { fill: #6b736c; stroke: #8a938b; }
+svg.edition { cursor: crosshair; }
 
 /* États par-dessus le fond : sélecteur plus précis que « .case-sol.damier » */
 .cases polygon.etat-placement { fill: #5aa6ec; stroke: var(--or-clair); stroke-width: 1.5; }

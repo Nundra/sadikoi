@@ -79,9 +79,11 @@ function surTouche(ev: KeyboardEvent) {
 }
 
 function changerMode(ev: Event) {
-  store.mode = (ev.target as HTMLSelectElement).value as Mode
-  store.mapChoisie = null
+  const choisi = (ev.target as HTMLSelectElement).value as Mode
   fermer()
+  if (choisi === 'creation') return store.ouvrirCreation()
+  store.mode = choisi
+  store.mapChoisie = null
   if (store.mode === 'infini') store.nouvelleRun()
   else store.nouvelleSalle()
 }
@@ -102,9 +104,10 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
       <option value="infini">{{ t('choix.infini') }}</option>
       <option value="map">{{ t('choix.map') }}</option>
       <option value="boss">{{ t('choix.boss') }}</option>
+      <option value="creation">{{ t('choix.creation') }}</option>
     </select>
 
-    <div v-if="store.mode !== 'infini'" class="combo">
+    <div v-if="store.mode === 'map' || store.mode === 'boss'" class="combo">
       <button
         v-if="!ouvert"
         type="button"

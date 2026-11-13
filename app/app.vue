@@ -18,9 +18,13 @@ useRaccourcis(
 onMounted(async () => {
   // Langue de l'adresse (/en, /es) : ses textes du jeu, chargés avec les maps
   await Promise.all([store.charger(), choisirLangue(langue.value)])
-  // Lien partagé (ou rechargement en training) : ?salle=<code> charge cette salle en training
-  const code = new URLSearchParams(window.location.search).get('salle')
-  if (code) store.chargerCode(code)
+  // Lien partagé (ou rechargement) : ?salle=<code> charge cette salle en training,
+  // ?carte=<code> ouvre cette map perso dans le créateur
+  const params = new URLSearchParams(window.location.search)
+  const salle = params.get('salle')
+  const carte = params.get('carte')
+  if (carte) store.chargerCarte(carte)
+  else if (salle) store.chargerCode(salle)
   else store.nouvelleSalle()
 })
 </script>
@@ -31,8 +35,11 @@ onMounted(async () => {
     <main>
       <Plateau />
       <aside>
-        <Timeline />
-        <FicheSort />
+        <Editeur v-if="store.enEdition" />
+        <template v-else>
+          <Timeline />
+          <FicheSort />
+        </template>
       </aside>
     </main>
     <footer>
