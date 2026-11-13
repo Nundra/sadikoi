@@ -219,6 +219,14 @@ export const es: DicoLangue = {
   'bienvenue.note': 'Las reglas están simplificadas (placaje: nunca sales del contacto de un enemigo) y algunos hechizos se interpretan según su descripción. Si algo no cuadra con el juego, ¡dilo!',
   'bienvenue.go': '¡Vamos!',
 
+  // Fenêtre des nouveautés (une fois, après la bienvenue)
+  'nouveaute.etiquette': 'Novedad',
+  'nouveaute.titre': 'El creador de mapas',
+  'nouveaute.texte': 'Dibuja tu propio mapa: casillas libres, vacíos, obstáculos, casillas de salida y enemigos donde quieras. Pruébalo y compártelo con un simple enlace.',
+  'nouveaute.defi': 'Reta a tus amigos: ¿quién infecta a todos en tu mapa?',
+  'nouveaute.plus-tard': 'Más tarde',
+  'nouveaute.essayer': 'Probar el creador',
+
   // Créateur de map
   'choix.creation': 'Creador de mapas',
   'mode.creation': 'Creador de mapas',

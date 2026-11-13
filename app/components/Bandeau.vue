@@ -14,6 +14,7 @@ const lieu = computed(() => {
 
 const reglages = ref<{ ouvrir: () => void } | null>(null)
 const bienvenue = ref<{ ouvrir: () => void } | null>(null)
+const nouveautes = ref<{ ouvrirSiNouvelle: () => void } | null>(null)
 </script>
 
 <template>
@@ -64,7 +65,8 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
         <span class="interrogation" aria-hidden="true" />
       </button>
       <Reglages ref="reglages" />
-      <Bienvenue ref="bienvenue" />
+      <Bienvenue ref="bienvenue" @libre="nouveautes?.ouvrirSiNouvelle()" />
+      <Nouveautes ref="nouveautes" />
     </div>
   </header>
 </template>

@@ -233,6 +233,14 @@ export const fr = {
   'bienvenue.note': 'Les règles sont simplifiées (tacle : on ne quitte jamais le contact d’un ennemi) et certains sorts sont interprétés d’après leur description. Si quelque chose ne colle pas avec le jeu, dis-le !',
   'bienvenue.go': 'C’est parti',
 
+  // Fenêtre des nouveautés (une fois, après la bienvenue)
+  'nouveaute.etiquette': 'Nouveauté',
+  'nouveaute.titre': 'Le créateur de map',
+  'nouveaute.texte': 'Dessine ta propre map : cases libres, vides, obstacles, cases de départ et ennemis où tu veux. Teste-la, puis partage-la avec un simple lien.',
+  'nouveaute.defi': 'Lance un défi à tes amis : qui infecte tout le monde sur ta map ?',
+  'nouveaute.plus-tard': 'Plus tard',
+  'nouveaute.essayer': 'Essayer le créateur',
+
   // Créateur de map
   'choix.creation': 'Créateur de map',
   'mode.creation': 'Créateur de map',

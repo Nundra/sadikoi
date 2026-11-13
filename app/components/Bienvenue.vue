@@ -5,23 +5,34 @@ import { t, type Cle } from '~/i18n'
 
 /**
  * Présentation de l'app : ouverte d'office à la première visite (sadikoi:bienvenue),
- * puis à la demande avec le bouton d'aide du bandeau.
+ * puis à la demande avec le bouton d'aide du bandeau. `libre` signale qu'elle vient d'être
+ * refermée : la fenêtre des nouveautés peut s'ouvrir.
  */
+const emit = defineEmits<{ libre: [] }>()
 const dialogue = ref<HTMLDialogElement | null>(null)
 
+let ouverte = false
+
 function ouvrir() {
+  ouverte = true
   dialogue.value?.showModal()
   // Le focus va sur « C'est parti », en bas : on garde la fenêtre affichée depuis le haut
   if (dialogue.value) dialogue.value.scrollTop = 0
 }
 
-function fermer() {
+/**
+ * À la fermeture (bouton, ou Échap par l'événement `close`) : vue pour de bon. Le bouton
+ * l'appelle lui-même, sans attendre `close`, que certains navigateurs ne déclenchent pas.
+ */
+function surFermeture() {
+  if (!ouverte) return
+  ouverte = false
   try {
     localStorage.setItem('sadikoi:bienvenue', 'vue')
   } catch {
     // stockage indisponible : la fenêtre s'ouvrira de nouveau à la prochaine visite
   }
-  dialogue.value?.close()
+  emit('libre')
 }
 
 onMounted(() => {
@@ -39,7 +50,7 @@ defineExpose({ ouvrir })
 
 <template>
   <!-- Les textes à mise en forme (<strong>, <em>) viennent des dictionnaires de app/i18n, jamais de l'utilisateur -->
-  <dialog ref="dialogue" class="bienvenue" aria-labelledby="titre-bienvenue" @close="fermer">
+  <dialog ref="dialogue" class="bienvenue" aria-labelledby="titre-bienvenue" @close="surFermeture">
     <img src="/logo.png" alt="" class="logo">
     <h2 id="titre-bienvenue">{{ t('bienvenue.titre') }}</h2>
     <p class="accroche" v-html="t('bienvenue.accroche')" />
@@ -73,7 +84,7 @@ defineExpose({ ouvrir })
 
     <p class="note">{{ t('bienvenue.note') }}</p>
 
-    <button type="button" class="fin" @click="fermer">{{ t('bienvenue.go') }}</button>
+    <button type="button" class="fin" @click="dialogue?.close(); surFermeture()">{{ t('bienvenue.go') }}</button>
   </dialog>
 </template>
 
