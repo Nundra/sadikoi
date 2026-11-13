@@ -161,6 +161,8 @@ const aide = computed(() => {
       </g>
     </svg>
 
+    <ChoixSalle />
+
     <ul class="legende">
       <li><span class="pastille bleue" />Placement (toi)</li>
       <li><span class="pastille rouge" />Placement (ennemis)</li>
@@ -274,11 +276,13 @@ polygon:hover { filter: brightness(1.18); }
 .pastille.tient { background: #7a3fb8; border: 2px solid var(--or-clair); }
 .pastille.mandragore { width: 14px; height: 14px; border-radius: 50%; background: #3d2a5c; border: 1px solid var(--mandragore); color: var(--mandragore); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
 
+/* À droite du choix de salle (coin haut-gauche, 320 px) */
 .message {
   position: absolute;
   top: 14px;
-  left: 50%;
+  left: calc(50% + 172px);
   transform: translateX(-50%);
+  max-width: calc(100% - 370px);
   margin: 0;
   padding: 8px 14px;
   border-radius: 10px;
@@ -287,7 +291,6 @@ polygon:hover { filter: brightness(1.18); }
   color: #ffd9cf;
   font-size: 13px;
   font-weight: 700;
-  max-width: 80%;
   text-align: center;
 }
 .message.aide { background: rgb(10 19 23 / 0.85); border-color: var(--bord); color: var(--texte-doux); font-weight: 600; }

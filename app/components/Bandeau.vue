@@ -7,36 +7,8 @@ const NOMS_MODE: Record<Mode, string> = { infini: 'Mode infini', map: 'Training 
 
 const pourcentage = computed(() => `${Math.round((store.score?.part ?? 0) * 100)}%`)
 
-const mapsTriees = computed(() => [...store.mapsActives].sort((a, b) => a.nom.localeCompare(b.nom, 'fr')))
 const reglages = ref<{ ouvrir: () => void } | null>(null)
 const bienvenue = ref<{ ouvrir: () => void } | null>(null)
-const libelleMap = (m: { nom: string, sous_zone: string, id: number }) => `${m.nom}${m.nom === m.sous_zone ? '' : ` · ${m.sous_zone}`} (${m.id})`
-
-// Saisie dans la liste des maps : on garde l'id entre parenthèses à la fin
-const saisie = ref('')
-// Aussi quand on passe en training sur la salle en cours (« Rejouer la salle » depuis le mode infini)
-watch(() => [store.map, store.mode] as const, ([m, mode]) => {
-  if (m && mode === 'map') saisie.value = libelleMap(m)
-}, { immediate: true })
-
-function changerMode(ev: Event) {
-  store.mode = (ev.target as HTMLSelectElement).value as Mode
-  store.mapChoisie = null
-  if (store.mode === 'infini') store.nouvelleRun()
-  else store.nouvelleSalle()
-}
-
-function choisirMap() {
-  const id = Number(/\((\d+)\)$/.exec(saisie.value)?.[1])
-  if (!store.maps.some(m => m.id === id)) return
-  store.mapChoisie = id
-  store.nouvelleSalle()
-}
-
-function choisirBoss(ev: Event) {
-  store.mapChoisie = Number((ev.target as HTMLSelectElement).value)
-  store.nouvelleSalle()
-}
 </script>
 
 <template>
@@ -71,25 +43,6 @@ function choisirBoss(ev: Event) {
     </div>
 
     <div class="choix">
-      <label for="choix-mode">Mode</label>
-      <select id="choix-mode" :value="store.mode" @change="changerMode">
-        <option value="infini">Mode infini (aléatoire)</option>
-        <option value="map">Training : map spécifique…</option>
-        <option value="boss">Training : map de boss…</option>
-      </select>
-      <template v-if="store.mode === 'map'">
-        <label for="choix-map" class="sr-only">Map</label>
-        <input id="choix-map" v-model="saisie" list="liste-maps" placeholder="Chercher une map…" @change="choisirMap">
-        <datalist id="liste-maps">
-          <option v-for="m in mapsTriees" :key="m.id" :value="libelleMap(m)" />
-        </datalist>
-      </template>
-      <template v-else-if="store.mode === 'boss'">
-        <label for="choix-boss" class="sr-only">Salle de boss</label>
-        <select id="choix-boss" :value="store.mapChoisie ?? ''" @change="choisirBoss">
-          <option v-for="m in store.mapsBoss" :key="m.id" :value="m.id">{{ m.donjon }} · {{ m.boss!.join(', ') }}</option>
-        </select>
-      </template>
       <button v-if="store.mode === 'infini'" type="button" title="Recommence la run depuis la salle 1" @click="store.nouvelleRun()">Nouvelle run</button>
       <button v-else type="button" @click="store.nouvelleSalle()">Autres ennemis</button>
       <button type="button" :title="store.lienPartage ? `Copie le lien de cette salle : ${store.lienPartage}` : undefined" @click="store.partager()">Partager</button>
@@ -128,17 +81,12 @@ function choisirBoss(ev: Event) {
 }
 .jauge { width: 140px; height: 10px; border-radius: 6px; background: #22363c; overflow: hidden; }
 .jauge div { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #7cc35a, #b3e07a); transition: width 0.3s; }
+/* Jamais de retour à la ligne dans la jauge (« 0 / 7 », « 0 pts ») */
+.progression > * { flex: none; white-space: nowrap; }
 .compte { font-size: 14px; font-weight: 800; }
 .points { font-size: 14px; font-weight: 800; color: var(--or-clair); }
 .record { font-size: 12px; color: var(--texte-gris); font-weight: 700; }
 .choix { display: flex; align-items: center; gap: 10px; }
-.choix label { font-size: 13px; color: #b9c6c4; font-weight: 700; }
-select, input {
-  height: 40px; min-width: 220px; padding: 0 12px; border-radius: 10px; background: var(--fond-creux);
-  color: var(--texte); border: 1px solid var(--or); font: inherit; font-size: 14px; font-weight: 700;
-}
-#choix-map { min-width: 300px; }
-#choix-boss { max-width: 320px; }
 .engrenage { width: 44px; padding: 0; display: flex; align-items: center; justify-content: center; }
 .engrenage .interrogation { width: 22px; height: 22px; background: var(--or); mask: url('/icones/aide.png') center / contain no-repeat; }
 /* Picto blanc du jeu, teinté en doré */
