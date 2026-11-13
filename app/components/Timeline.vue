@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { POINTS_PAR_PA, POINTS_TOUR_2 } from '~~/engine/partie'
-import { ETOILES_POUR_AVANCER } from '~/stores/partie'
 import { invocation, sort as trouverSort } from '~~/engine/sorts'
+import { t } from '~/i18n'
+import { ETOILES_POUR_AVANCER } from '~/stores/partie'
 
 const store = usePartieStore()
 
@@ -20,11 +21,6 @@ interface Phase {
   lignes: Ligne[]
 }
 
-/** « Ennemi 2 » devient le monstre dessiné sur le plateau : « Piou Bleu (E2) ». */
-function nommer(texte: string): string {
-  return texte.replace(/Ennemi (\d+)/g, (_, n) => store.nomAffiche({ id: Number(n), genre: 'ennemi', nom: '', case: 0, pa: 0, pm: 0 }))
-}
-
 /** Les actions regroupées par acteur, plus les invocations qui n'ont pas encore joué. */
 const phases = computed<Phase[]>(() => {
   const p = store.partie
@@ -34,19 +30,19 @@ const phases = computed<Phase[]>(() => {
     const a = bilan.acteur
     let phase = out.at(-1)
     if (!phase || phase.id !== a.id) {
-      phase = { id: a.id, nom: a.nom, ressources: '', lignes: [] }
+      phase = { id: a.id, nom: store.nomAffiche(a), ressources: '', lignes: [] }
       out.push(phase)
     }
     const prec = avant.entites.find(e => e.id === a.id)!
     const [titre, ...details] = bilan.texte
     phase.lignes.push({
       index,
-      texte: nommer(titre!.replace(`${a.nom} : `, '').replace(`${a.nom} → `, 'Déplacement → ')),
-      details: details.map(nommer),
-      res: bilan.infectes.length ? `+${bilan.infectes.length} infecté${bilan.infectes.length > 1 ? 's' : ''}`
-        : bilan.mandragores.length ? `${bilan.mandragores.length} sous Mandragore`
-        : action.type === 'sort' ? `${trouverSort(action.sort).pa} PA`
-          : action.type === 'deplacement' ? `${prec.pm - a.pm} PM` : '',
+      texte: store.texte(titre!),
+      details: details.map(store.texte),
+      res: bilan.infectes.length ? t('timeline.infectes', { n: bilan.infectes.length })
+        : bilan.mandragores.length ? t('timeline.sous-mandragore', { n: bilan.mandragores.length })
+        : action.type === 'sort' ? t('timeline.pa', { n: trouverSort(action.sort).pa })
+          : action.type === 'deplacement' ? t('timeline.pm', { n: prec.pm - a.pm }) : '',
       infecte: bilan.infectes.length > 0 || bilan.mandragores.length > 0,
     })
   })
@@ -56,24 +52,29 @@ const phases = computed<Phase[]>(() => {
     let phase = out.find(x => x.id === id)
     if (!phase) {
       if (!e) continue
-      phase = { id, nom: e.nom, ressources: '', lignes: [] }
+      phase = { id, nom: store.nomAffiche(e), ressources: '', lignes: [] }
       out.push(phase)
     }
     if (!e) {
-      phase.ressources = 'a quitté le combat'
+      phase.ressources = t('timeline.parti')
       continue
     }
     const max = e.genre === 'sadida' ? p.stats : invocation(e.monstre!)
-    phase.ressources = `${e.pa} / ${max.pa} PA · ${e.pm} / ${max.pm} PM${phase.lignes.length ? '' : ' · à jouer'}`
+    phase.ressources = t('timeline.ressources', { pa: e.pa, paMax: max.pa, pm: e.pm, pmMax: max.pm })
+      + (phase.lignes.length ? '' : ` · ${t('timeline.a-jouer')}`)
   }
   return out
 })
 
 const bouton = computed(() => {
-  if (store.phase === 'placement') return { texte: 'Valider le placement', action: store.validerPlacement, actif: store.sadida !== null }
-  if (store.termine) return { texte: 'Voir le résultat', action: () => dialogue.value?.showModal(), actif: true }
+  if (store.phase === 'placement') return { texte: t('timeline.valider'), action: store.validerPlacement, actif: store.sadida !== null }
+  if (store.termine) return { texte: t('timeline.resultat'), action: () => dialogue.value?.showModal(), actif: true }
   const a = store.acteur
-  return { texte: `Fin du tour${a ? ` de ${a.nom}` : ''}`, action: store.finDuTour, actif: Boolean(a) && store.vue === null }
+  return {
+    texte: a ? t('timeline.fin-du-tour-de', { e: store.nomAffiche(a) }) : t('timeline.fin-du-tour'),
+    action: store.finDuTour,
+    actif: Boolean(a) && store.vue === null,
+  }
 })
 
 const dialogue = ref<HTMLDialogElement | null>(null)
@@ -95,18 +96,13 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
 <template>
   <section class="panneau timeline" aria-labelledby="titre-timeline">
     <div class="entete">
-      <h2 id="titre-timeline">Timeline du tour</h2>
-      <span class="tour">{{ store.phase === 'placement' ? 'Placement' : 'Tour 1' }}</span>
+      <h2 id="titre-timeline">{{ t('timeline.titre') }}</h2>
+      <span class="tour">{{ store.phase === 'placement' ? t('timeline.placement') : t('timeline.tour-1') }}</span>
     </div>
 
     <div ref="liste" class="liste">
-      <p v-if="store.phase === 'placement'" class="vide">
-        Clique une case bleue pour placer le Sadida, puis valide le placement pour commencer le tour.
-      </p>
-      <p v-else-if="!store.etapes.length" class="vide">
-        Aucune action. Choisis un sort dans la barre, puis une case ; clique une case verte pour te déplacer.
-        « Fin du tour » passe la main à l’invocation suivante.
-      </p>
+      <p v-if="store.phase === 'placement'" class="vide">{{ t('timeline.vide-placement') }}</p>
+      <p v-else-if="!store.etapes.length" class="vide">{{ t('timeline.vide') }}</p>
       <div v-for="ph in phases" v-show="store.phase === 'tour'" :key="ph.id" class="phase" :class="{ courante: store.acteur?.id === ph.id }">
         <p class="nom"><span class="puce" />{{ ph.nom }}<span class="ressources">· {{ ph.ressources }}</span></p>
         <ol v-if="ph.lignes.length">
@@ -117,7 +113,7 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
               :class="{ regardee: store.vue !== null && regardee === l.index }"
               :data-index="l.index"
               :aria-current="store.vue !== null && regardee === l.index ? 'step' : undefined"
-              :title="`Voir le plateau après l’action ${l.index + 1}`"
+              :title="t('timeline.voir', { n: l.index + 1 })"
               @click="store.regarder(l.index)"
             >
               <span class="numero">{{ l.index + 1 }}</span>
@@ -132,68 +128,63 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
       </div>
     </div>
 
-    <div v-if="store.etapes.length" class="navigation" aria-label="Revoir les actions">
-      <button type="button" aria-label="Action précédente" :disabled="regardee <= 0" @click="store.regarder(regardee - 1)">◀</button>
-      <span>{{ store.vue === null ? 'Présent' : `Action ${store.vue + 1} / ${store.etapes.length}` }}</span>
-      <button type="button" aria-label="Action suivante" :disabled="store.vue === null" @click="store.regarder(regardee + 1)">▶</button>
-      <button type="button" class="present" :disabled="store.vue === null" @click="store.regarder(null)">Revenir au présent</button>
+    <div v-if="store.etapes.length" class="navigation" :aria-label="t('timeline.revoir')">
+      <button type="button" :aria-label="t('timeline.precedente')" :disabled="regardee <= 0" @click="store.regarder(regardee - 1)">◀</button>
+      <span>{{ store.vue === null ? t('timeline.present') : t('timeline.action', { n: store.vue + 1, total: store.etapes.length }) }}</span>
+      <button type="button" :aria-label="t('timeline.suivante')" :disabled="store.vue === null" @click="store.regarder(regardee + 1)">▶</button>
+      <button type="button" class="present" :disabled="store.vue === null" @click="store.regarder(null)">{{ t('timeline.revenir') }}</button>
     </div>
 
     <div class="boutons">
-      <button type="button" :disabled="!store.actions.length" @click="store.annuler()">Annuler</button>
+      <button type="button" :disabled="!store.actions.length" @click="store.annuler()">{{ t('timeline.annuler') }}</button>
       <!-- En mode infini, toujours possible : on passe en training sur cette salle (la run s'arrête) -->
       <button
         type="button"
         :disabled="!store.actions.length && store.mode !== 'infini'"
-        :title="store.mode === 'infini' ? 'Passe en training sur cette salle : la run s’arrête' : undefined"
+        :title="store.mode === 'infini' ? t('timeline.rejouer-infini') : undefined"
         @click="store.rejouerSalle()"
       >
-        Rejouer la salle
+        {{ t('timeline.rejouer') }}
       </button>
-      <button type="button" :disabled="store.phase === 'placement'" @click="store.replacer()">Replacer</button>
+      <button type="button" :disabled="store.phase === 'placement'" @click="store.replacer()">{{ t('timeline.replacer') }}</button>
     </div>
     <button type="button" class="fin" :disabled="!bouton.actif" @click="bouton.action()">{{ bouton.texte }}</button>
 
     <dialog ref="dialogue" class="resultat" aria-labelledby="titre-resultat">
       <template v-if="store.score">
-        <h2 id="titre-resultat">{{ store.score.etoiles === 4 ? 'Infection qui tient !' : store.score.etoiles ? 'Salle réussie' : 'Échec' }}</h2>
+        <h2 id="titre-resultat">{{ store.score.etoiles === 4 ? t('resultat.tient') : store.score.etoiles ? t('resultat.reussie') : t('resultat.echec') }}</h2>
         <Etoiles :nombre="store.score.etoiles" grand />
-        <p>{{ store.score.infectes }} ennemi{{ store.score.infectes > 1 ? 's' : '' }} infecté{{ store.score.infectes > 1 ? 's' : '' }} sur {{ store.score.total }}, {{ store.score.paDepenses }} PA dépensé{{ store.score.paDepenses > 1 ? 's' : '' }}.</p>
+        <p>{{ t('resultat.bilan', { n: store.score.infectes, total: store.score.total, pa: store.score.paDepenses }) }}</p>
         <p v-if="store.score.part === 1" class="fixation" :class="{ ok: store.score.etoiles === 4 }">
-          <template v-if="store.score.etoiles === 4">Tous encore infectés au tour 2 : l’infection tient.</template>
+          <template v-if="store.score.etoiles === 4">{{ t('resultat.tous-tour-2') }}</template>
           <template v-else>
-            {{ store.score.auTour2 }} / {{ store.score.total }} encore infecté{{ store.score.auTour2 > 1 ? 's' : '' }} au tour 2.
-            Pour la 4e étoile : une infection du Sadida d'au moins 2 tours (Contagion, Sacrifice Vaudou, Sève Paralysante, Cigüe…),
-            une infection posée par une invocation (elle expire au début de son tour, après celui du Sadida),
-            ou Mandragore sur un Infecté une fois tout le monde infecté.
+            {{ t('resultat.tour-2', { n: store.score.auTour2, total: store.score.total }) }}
+            {{ t('resultat.conseil-tour-2') }}
           </template>
         </p>
         <p class="points">
-          <strong>{{ store.score.points }} points</strong>
-          <span v-if="store.score.part === 1">(100 + {{ POINTS_PAR_PA }} × {{ store.score.paRestants }} PA restant{{ store.score.paRestants > 1 ? 's' : '' }}<template v-if="store.score.etoiles === 4"> + {{ POINTS_TOUR_2 }} tour 2</template>)</span>
-          <span v-else>(bonus de PA seulement si tous les ennemis sont infectés)</span>
-          <span v-if="store.prycipithon">Prycipithon Mate : points × 0,9</span>
+          <strong>{{ t('resultat.points', { n: store.score.points }) }}</strong>
+          <span v-if="store.score.part === 1">({{ t('resultat.detail', { pts: POINTS_PAR_PA, pa: store.score.paRestants }) }}<template v-if="store.score.etoiles === 4">{{ t('resultat.detail-tour-2', { n: POINTS_TOUR_2 }) }}</template>)</span>
+          <span v-else>{{ t('resultat.sans-bonus') }}</span>
+          <span v-if="store.prycipithon">{{ t('resultat.prycipithon') }}</span>
         </p>
         <p v-if="store.score.points > 0 && (!store.recordPrecedent || store.score.points > store.recordPrecedent.points)" class="record nouveau">
-          Nouveau record sur cette salle !<template v-if="store.recordPrecedent"> Ancien : {{ store.recordPrecedent.points }} points.</template>
+          {{ t('resultat.nouveau-record') }}<template v-if="store.recordPrecedent"> {{ t('resultat.ancien-record', { n: store.recordPrecedent.points }) }}</template>
         </p>
-        <p v-else-if="store.recordPrecedent" class="record">Record sur cette salle : {{ store.recordPrecedent.points }} points ({{ store.recordPrecedent.paDepenses }} PA).</p>
-        <p v-if="store.mode === 'infini' && !store.peutAvancer" class="bloque">
-          Il faut {{ ETOILES_POUR_AVANCER }} étoiles pour passer à la salle suivante : rejoue la salle,
-          ou recommence la run si elle te paraît impossible.
-        </p>
+        <p v-else-if="store.recordPrecedent" class="record">{{ t('resultat.record', { n: store.recordPrecedent.points, pa: store.recordPrecedent.paDepenses }) }}</p>
+        <p v-if="store.mode === 'infini' && !store.peutAvancer" class="bloque">{{ t('resultat.bloque', { n: ETOILES_POUR_AVANCER }) }}</p>
         <div class="boutons">
-          <button type="button" @click="dialogue?.close()">Revoir le tour</button>
+          <button type="button" @click="dialogue?.close()">{{ t('resultat.revoir') }}</button>
           <!-- Mode infini : rejouer passe en training sur cette salle (la run s'arrête) -->
-          <button v-if="store.mode === 'infini'" type="button" title="Passe en training sur cette salle : la run s’arrête" @click="store.rejouerSalle()">Rejouer la salle</button>
+          <button v-if="store.mode === 'infini'" type="button" :title="t('timeline.rejouer-infini')" @click="store.rejouerSalle()">{{ t('timeline.rejouer') }}</button>
           <!-- Training : on retravaille la même salle -->
-          <button v-else type="button" title="Même salle, retour au placement" @click="store.replacer()">Recommencer du placement</button>
+          <button v-else type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
         </div>
         <template v-if="store.mode === 'infini'">
-          <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">Salle suivante</button>
-          <button v-else type="button" class="fin" @click="store.nouvelleRun()">Recommencer la run</button>
+          <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">{{ t('resultat.suivante') }}</button>
+          <button v-else type="button" class="fin" @click="store.nouvelleRun()">{{ t('resultat.nouvelle-run') }}</button>
         </template>
-        <button v-else type="button" class="fin" title="Même salle, même placement : le tour repart de zéro" @click="store.rejouerSalle()">Rejouer la salle</button>
+        <button v-else type="button" class="fin" :title="t('resultat.rejouer-aide')" @click="store.rejouerSalle()">{{ t('timeline.rejouer') }}</button>
       </template>
     </dialog>
   </section>

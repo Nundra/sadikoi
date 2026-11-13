@@ -2,6 +2,7 @@
 import { COLONNES, NB_CASES } from '~~/engine/grille'
 import { infecteAuTour2, type Entite } from '~~/engine/partie'
 import { equipes } from '~~/engine/salle'
+import { nomJeu, t, type Cle } from '~/i18n'
 
 const store = usePartieStore()
 
@@ -64,15 +65,12 @@ function etat(c: number): string | null {
   return null
 }
 
-const ABREGES: Record<string, string> = {
-  'La Folle': 'Fo', 'La Sacrifiée': 'Sa', 'La Bloqueuse': 'Bl', 'La Gonflable': 'Go', 'La Surpuissante': 'Su', 'Groute': 'Gr', 'Tréant': 'Tr',
-}
-
+/** Étiquette sous le pion : S, E2, A / AF, ou l'abréviation de l'invocation (clés « abrege.* »). */
 function libelle(e: Entite): string {
-  if (e.genre === 'sadida') return 'S'
-  if (e.genre === 'ennemi') return `E${e.id}`
-  if (e.genre === 'arbre') return e.feuillu ? 'AF' : 'A'
-  return ABREGES[e.nom] ?? e.nom.slice(0, 2)
+  if (e.genre === 'sadida') return t('abrege.sadida')
+  if (e.genre === 'ennemi') return t('abrege.ennemi', { id: e.id })
+  if (e.genre === 'arbre') return t(e.feuillu ? 'abrege.arbre-feuillu' : 'abrege.arbre')
+  return t(`abrege.${e.monstre}` as Cle)
 }
 
 const pions = computed(() => [...store.entites]
@@ -84,6 +82,7 @@ const pions = computed(() => [...store.entites]
     actif: store.interactif && store.acteur?.id === e.id,
     menace: store.apercu.infectes.has(e.id),
     tient: infecteAuTour2(e),
+    badge: t('plateau.infecte', { n: e.dureeInfection ?? 1 }),
     // La Sadida est en pied (image avec plus de marge), les monstres en portrait
     taille: e.genre === 'sadida' ? 72 : 44,
   })))
@@ -97,18 +96,18 @@ function caseDe(ev: Event): number | null {
 }
 
 const aide = computed(() => {
-  if (store.vue !== null) return `Action ${store.vue + 1} : l’état du plateau juste après. Reviens au présent pour jouer.`
-  if (store.phase === 'placement') return 'Clique une case bleue pour te placer, puis valide le placement.'
+  if (store.vue !== null) return t('plateau.vue-passee', { n: store.vue + 1 })
+  if (store.phase === 'placement') return t('plateau.aide-placement')
   return null
 })
 </script>
 
 <template>
-  <section class="plateau" :class="{ passe: store.vue !== null }" aria-label="Plateau de combat">
+  <section class="plateau" :class="{ passe: store.vue !== null }" :aria-label="t('plateau.nom')">
     <svg
       :viewBox="cadre"
       role="img"
-      :aria-label="store.map ? `Map ${store.map.nom}` : 'Chargement de la map'"
+      :aria-label="store.map ? t('plateau.map', { nom: nomJeu(store.map.nom) }) : t('plateau.chargement')"
       @click="(ev) => { const c = caseDe(ev); if (c !== null) store.clicCase(c) }"
       @mouseover="(ev) => (store.survol = caseDe(ev))"
       @mouseleave="store.survol = null"
@@ -149,13 +148,13 @@ const aide = computed(() => {
             <text x="12" y="9">{{ p.libelle }}</text>
           </g>
           <g v-if="p.e.infecte" class="badge" transform="translate(2 -50)">
-            <!-- Contour par style : voir Etoiles.vue (Firefox et les classes SVG) -->
-            <rect x="0" y="0" width="52" height="14" rx="7" :style="p.tient ? { stroke: 'var(--or-clair)', strokeWidth: 2 } : undefined" />
-            <text x="26" y="10.5">Infecté {{ p.e.dureeInfection ?? 1 }}t</text>
+            <!-- Contour par style : voir Etoiles.vue (Firefox et les classes SVG). Largeur selon la langue. -->
+            <rect x="0" y="0" :width="p.badge.length * 5 + 2" height="14" rx="7" :style="p.tient ? { stroke: 'var(--or-clair)', strokeWidth: 2 } : undefined" />
+            <text :x="(p.badge.length * 5 + 2) / 2" y="10.5">{{ p.badge }}</text>
           </g>
           <g v-if="p.e.mandragore" class="mandragore" transform="translate(-22 -36)">
             <circle cx="0" cy="0" r="8" />
-            <text x="0" y="3.5">M</text>
+            <text x="0" y="3.5">{{ t('plateau.mandragore') }}</text>
           </g>
         </g>
       </g>
@@ -164,16 +163,16 @@ const aide = computed(() => {
     <ChoixSalle />
 
     <ul class="legende">
-      <li><span class="pastille bleue" />Placement (toi)</li>
-      <li><span class="pastille rouge" />Placement (ennemis)</li>
-      <li><span class="pastille portee" />Portée</li>
-      <li><span class="pastille zone" />Zone du sort</li>
-      <li><span class="pastille accessible" />Déplacement</li>
-      <li><span class="pastille mandragore">M</span>Mandragore</li>
-      <li><span class="pastille tient" />Infecté au tour 2</li>
+      <li><span class="pastille bleue" />{{ t('legende.toi') }}</li>
+      <li><span class="pastille rouge" />{{ t('legende.ennemis') }}</li>
+      <li><span class="pastille portee" />{{ t('legende.portee') }}</li>
+      <li><span class="pastille zone" />{{ t('legende.zone') }}</li>
+      <li><span class="pastille accessible" />{{ t('legende.deplacement') }}</li>
+      <li><span class="pastille mandragore">{{ t('plateau.mandragore') }}</span>{{ t('legende.mandragore') }}</li>
+      <li><span class="pastille tient" />{{ t('legende.tour-2') }}</li>
     </ul>
 
-    <p v-if="store.message" class="message" role="status">{{ store.message }}</p>
+    <p v-if="store.message" class="message" role="status">{{ store.message() }}</p>
     <p v-else-if="aide" class="message aide" role="status">{{ aide }}</p>
   </section>
 </template>

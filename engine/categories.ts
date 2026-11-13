@@ -5,14 +5,8 @@ import { creerPlateau, placements, type MapCombat } from './plateau'
 /** Types de map, pour choisir ce que tire le mode infini. */
 export type Categorie = 'zone' | 'speciale' | 'donjon' | 'koli' | 'songes' | 'autre'
 
-export const CATEGORIES: { id: Categorie, nom: string, description: string }[] = [
-  { id: 'zone', nom: 'Zones', description: 'Les maps normales du monde : 10 ou 12 cases de placement par équipe, sur la carte du monde.' },
-  { id: 'speciale', nom: 'Zones spéciales', description: 'Les autres maps de zone : autre nombre de cases (1, 4, 8…) ou hors de la carte du monde (instances, scénarios).' },
-  { id: 'donjon', nom: 'Donjons', description: 'Toutes les salles de donjon, boss et Expéditions compris.' },
-  { id: 'koli', nom: 'Kolizéum et arènes', description: 'Kolizéum (entraînement, duel, équipes) et Arènes de Goultard.' },
-  { id: 'songes', nom: 'Songes', description: 'Songes Infinis et Contrées oniriques.' },
-  { id: 'autre', nom: 'Autres', description: 'Mode tactique, Foire du Trool, zones privées, mini-jeux où les équipes ne se rejoignent pas.' },
-]
+/** Les types, dans l'ordre des réglages (noms et descriptions : app/i18n, clés « categorie.* »). */
+export const CATEGORIES: Categorie[] = ['zone', 'speciale', 'donjon', 'koli', 'songes', 'autre']
 
 // Zones à part : cartes génériques, événements, tests
 const ZONES_AUTRES = new Set(['', 'Mode tactique', 'Zone privée', 'Convention', 'Foire du Trool'])

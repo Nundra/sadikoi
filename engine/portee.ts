@@ -13,8 +13,8 @@ export interface ReglesPortee {
   case_libre?: boolean
 }
 
-export type RaisonRefus = 'hors de portée' | 'pas en ligne' | 'pas en diagonale' | 'pas en ligne ni en diagonale'
-  | 'pas de ligne de vue' | 'case non ciblable' | 'case occupée'
+export type RaisonRefus = 'hors-portee' | 'pas-en-ligne' | 'pas-en-diagonale' | 'pas-en-ligne-ni-diagonale'
+  | 'pas-de-ldv' | 'case-non-ciblable' | 'case-occupee'
 
 /** PO max une fois le bonus de PO du lanceur ajouté (jamais sous la PO min). */
 export function poMax(sort: ReglesPortee, bonusPo: number): number {
@@ -23,18 +23,18 @@ export function poMax(sort: ReglesPortee, bonusPo: number): number {
 
 /** Pourquoi le sort ne peut pas viser `cible`, ou null s'il le peut. */
 export function refusCible(p: Plateau, lanceur: Case, cible: Case, sort: ReglesPortee, bonusPo = 0): RaisonRefus | null {
-  if (!marchable(p, cible)) return 'case non ciblable'
+  if (!marchable(p, cible)) return 'case-non-ciblable'
   const d = distance(lanceur, cible)
-  if (d < sort.po_min || d > poMax(sort, bonusPo)) return 'hors de portée'
+  if (d < sort.po_min || d > poMax(sort, bonusPo)) return 'hors-portee'
   if (sort.en_ligne && sort.en_diagonale) {
-    if (!enLigne(lanceur, cible) && !enDiagonale(lanceur, cible)) return 'pas en ligne ni en diagonale'
+    if (!enLigne(lanceur, cible) && !enDiagonale(lanceur, cible)) return 'pas-en-ligne-ni-diagonale'
   } else if (sort.en_ligne && !enLigne(lanceur, cible)) {
-    return 'pas en ligne'
+    return 'pas-en-ligne'
   } else if (sort.en_diagonale && !enDiagonale(lanceur, cible)) {
-    return 'pas en diagonale'
+    return 'pas-en-diagonale'
   }
-  if (sort.case_libre && !libre(p, cible)) return 'case occupée'
-  if (sort.ligne_de_vue !== false && !ligneDeVue(p, lanceur, cible)) return 'pas de ligne de vue'
+  if (sort.case_libre && !libre(p, cible)) return 'case-occupee'
+  if (sort.ligne_de_vue !== false && !ligneDeVue(p, lanceur, cible)) return 'pas-de-ldv'
   return null
 }
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MapCombat } from '~~/engine/plateau'
+import { langue, nomJeu, t } from '~/i18n'
 import type { Mode } from '~/stores/partie'
 
 /**
@@ -13,15 +14,21 @@ const MAX_RESULTATS = 60
 
 const sansAccents = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
 
-function libelle(m: MapCombat): string {
-  if (store.mode === 'boss') return `${m.donjon} · ${m.boss!.join(', ')}`
-  return m.nom === m.sous_zone ? m.nom : `${m.nom} · ${m.sous_zone}`
+/** Libellé d'une map dans la langue choisie (ou en français, avec `traduire` à faux). */
+function libelle(m: MapCombat, traduire = true): string {
+  const n = traduire ? nomJeu : (x: string) => x
+  if (store.mode === 'boss') return `${n(m.donjon!)} · ${m.boss!.map(n).join(', ')}`
+  return m.nom === m.sous_zone ? n(m.nom) : `${n(m.nom)} · ${n(m.sous_zone)}`
 }
 
-/** Texte cherché : libellé, zone, donjon, boss et id. */
+/** Texte cherché : libellé et zone (dans la langue choisie et en français), donjon et id. */
 const index = computed(() => (store.mode === 'boss' ? store.mapsBoss : store.mapsActives)
-  .map(m => ({ m, texte: sansAccents([libelle(m), m.zone, m.donjon ?? '', m.id].join(' ')) }))
-  .sort((a, b) => libelle(a.m).localeCompare(libelle(b.m), 'fr')))
+  .map(m => ({
+    m,
+    nom: libelle(m),
+    texte: sansAccents([libelle(m), nomJeu(m.zone), libelle(m, false), m.zone, m.donjon ?? '', m.id].join(' ')),
+  }))
+  .sort((a, b) => a.nom.localeCompare(b.nom, langue.value)))
 
 const ouvert = ref(false)
 const recherche = ref('')
@@ -90,11 +97,11 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
 
 <template>
   <div ref="racine" class="choix-salle">
-    <label class="sr-only" for="choix-mode">Mode</label>
+    <label class="sr-only" for="choix-mode">{{ t('choix.mode') }}</label>
     <select id="choix-mode" :value="store.mode" @change="changerMode">
-      <option value="infini">Mode infini (aléatoire)</option>
-      <option value="map">Training : map spécifique</option>
-      <option value="boss">Training : salle de boss</option>
+      <option value="infini">{{ t('choix.infini') }}</option>
+      <option value="map">{{ t('choix.map') }}</option>
+      <option value="boss">{{ t('choix.boss') }}</option>
     </select>
 
     <div v-if="store.mode !== 'infini'" class="combo">
@@ -102,10 +109,10 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
         v-if="!ouvert"
         type="button"
         class="courante"
-        :aria-label="`Changer de map : ${store.map ? libelle(store.map) : 'aucune'}`"
+        :aria-label="t('choix.changer', { map: store.map ? libelle(store.map) : t('choix.aucune') })"
         @click="ouvrir"
       >
-        <span>{{ store.map ? libelle(store.map) : 'Choisir une map…' }}</span>
+        <span>{{ store.map ? libelle(store.map) : t('choix.choisir') }}</span>
         <span class="chevron" aria-hidden="true">▾</span>
       </button>
       <template v-else>
@@ -119,11 +126,11 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
           aria-expanded="true"
           aria-controls="liste-maps"
           :aria-activedescendant="resultats[actif] ? `map-${resultats[actif]!.id}` : undefined"
-          :placeholder="store.mode === 'boss' ? 'Chercher un donjon, un boss…' : 'Chercher une map, une zone…'"
+          :placeholder="store.mode === 'boss' ? t('choix.chercher-boss') : t('choix.chercher-map')"
           autocomplete="off"
           @keydown="surTouche"
         >
-        <ul id="liste-maps" ref="liste" role="listbox" :aria-label="store.mode === 'boss' ? 'Salles de boss' : 'Maps'">
+        <ul id="liste-maps" ref="liste" role="listbox" :aria-label="store.mode === 'boss' ? t('choix.liste-boss') : t('choix.liste-maps')">
           <li
             v-for="(m, k) in resultats"
             :id="`map-${m.id}`"
@@ -135,11 +142,11 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
             @mousedown.prevent="choisir(m)"
           >
             <span class="nom">{{ libelle(m) }}</span>
-            <span class="zone">{{ m.zone }}</span>
+            <span class="zone">{{ nomJeu(m.zone) }}</span>
           </li>
-          <li v-if="!resultats.length" class="vide" role="presentation">Aucune map ne correspond.</li>
+          <li v-if="!resultats.length" class="vide" role="presentation">{{ t('choix.aucun-resultat') }}</li>
           <li v-else-if="total > resultats.length" class="vide" role="presentation">
-            {{ total - resultats.length }} autres : précise ta recherche.
+            {{ t('choix.autres', { n: total - resultats.length }) }}
           </li>
         </ul>
       </template>

@@ -1,0 +1,5 @@
+# Cloudflare Pages : /en et /es servent la même app (une seule page), qui lit la langue dans l’adresse
+/en /index.html 200
+/en/* /index.html 200
+/es /index.html 200
+/es/* /index.html 200

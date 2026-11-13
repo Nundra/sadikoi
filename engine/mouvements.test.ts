@@ -11,7 +11,7 @@ const sort = (nom: string, cible: Case, acteur = SADIDA): Action => ({ type: 'so
 function suite(sorts: string[], ennemis: Case[], actions: Action[], obstacles: Case[] = []): Partie {
   const depart = nouvellePartie({ cases: plateauTest(obstacles.map(c => [c, '#'] as const)).cases, sadida: A, ennemis, sorts: sorts.map(id) })
   const r = rejouer(depart, actions)
-  if (r.erreur) throw new Error(`action ${r.erreur.index} refusée : ${r.erreur.raison}`)
+  if (r.erreur) throw new Error(`action ${r.erreur.index} refusée : ${JSON.stringify(r.erreur.raison)}`)
   return r.partie
 }
 const caseDe = (p: Partie, nom: string) => p.entites.find(e => e.nom === nom)?.case
@@ -44,7 +44,7 @@ describe('Tremblement', () => {
     const p = suite(['Tremblement', 'Arbre Feuillu'], [decale(A, 3, 6)], [sort('Arbre Feuillu', arbre), sort('Tremblement', arbre)])
     expect(caseDe(p, 'Ennemi 1')).toBe(decale(A, 1, 6))
     const r = jouer(p, sort('Tremblement', decale(A, 2, 2)))
-    expect(r).toEqual({ ok: false, raison: 'il faut viser le lanceur, un Arbre Feuillu ou une Poupée' })
+    expect(r).toEqual({ ok: false, raison: { code: 'viser-centre-tremblement' } })
   })
 })
 
@@ -104,7 +104,7 @@ describe('La Bloqueuse et La Surpuissante', () => {
     expect(caseDe(apres.partie, 'La Sacrifiée')).toBe(bloqueuse)
     expect(apres.partie.entites.find(e => e.nom === 'La Bloqueuse')?.pm).toBe(5 + 4)
     // Substitution sur un ennemi ou une case vide : refusée
-    expect(jouer(p0, { type: 'sort', acteur: b, sort: 18669, cible: decale(A, 1, 2) })).toEqual({ ok: false, raison: 'il faut viser un allié' })
+    expect(jouer(p0, { type: 'sort', acteur: b, sort: 18669, cible: decale(A, 1, 2) })).toEqual({ ok: false, raison: { code: 'viser-allie' } })
   })
 
   it('Ardeur Estivale donne 3 PM à La Sacrifiée, qui atteint un ennemi trop loin sans eux', () => {
@@ -116,7 +116,7 @@ describe('La Bloqueuse et La Surpuissante', () => {
     const [surpuissante, s] = p0.ordre.slice(1) as [number, number]
     // Sans le don : 4 PM ne suffisent pas pour aller au contact (case (0, 8), à 6 cases)
     const sans = rejouer(p0, [fin(surpuissante), { type: 'deplacement', acteur: s, vers: decale(A, 0, 8) }])
-    expect(sans.erreur?.raison).toBe("case hors d'atteinte avec 4 PM")
+    expect(sans.erreur?.raison).toEqual({ code: 'hors-atteinte', p: { pm: 4 } })
     const avec = rejouer(p0, [
       { type: 'sort', acteur: surpuissante, sort: 14381, cible: sacrifiee }, // Ardeur Estivale
       fin(surpuissante),
@@ -132,7 +132,7 @@ describe('tacle', () => {
   it('empêche de quitter le contact d’un ennemi', () => {
     const p = suite(['Vent Empoisonné'], [decale(A, 1, 0)], [])
     expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, -2, 0) }))
-      .toEqual({ ok: false, raison: "Sadida est taclé : impossible de quitter le contact d'un ennemi" })
+      .toEqual({ ok: false, raison: { code: 'tacle', p: { e: { id: 0, genre: 'sadida' } } } })
   })
 
   it('arrête le déplacement sur la première case au contact', () => {

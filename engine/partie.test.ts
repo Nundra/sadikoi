@@ -13,7 +13,7 @@ function partie(sorts: string[], ennemis: Case[], stats?: Stats): Partie {
 /** Joue les actions et échoue clairement si l'une d'elles est refusée. */
 function suite(p: Partie, actions: Action[]): Partie {
   const r = rejouer(p, actions)
-  if (r.erreur) throw new Error(`action ${r.erreur.index} refusée : ${r.erreur.raison}`)
+  if (r.erreur) throw new Error(`action ${r.erreur.index} refusée : ${JSON.stringify(r.erreur.raison)}`)
   return r.partie
 }
 
@@ -37,20 +37,20 @@ describe('partie', () => {
   it('vérifie chaque lancer', () => {
     const e = decale(A, 3, 0)
     const p = partie(['Vent Empoisonné', 'Arbre'], [e])
-    expect(jouer(p, sort('Mandragore', e))).toEqual({ ok: false, raison: "Sadida n'a pas Mandragore" })
+    expect(jouer(p, sort('Mandragore', e))).toEqual({ ok: false, raison: { code: 'sort-absent', p: { e: { id: 0, genre: 'sadida' }, sort: id('Mandragore') } } })
     expect(jouer(suite(p, [sort('Vent Empoisonné', e)]), sort('Vent Empoisonné', e)))
-      .toEqual({ ok: false, raison: 'Vent Empoisonné : déjà lancé 1 fois ce tour' })
-    expect(jouer(p, sort('Vent Empoisonné', decale(A, 8, -8)))).toEqual({ ok: false, raison: 'hors de portée' })
+      .toEqual({ ok: false, raison: { code: 'lancers-par-tour', p: { sort: id('Vent Empoisonné'), n: 1 } } })
+    expect(jouer(p, sort('Vent Empoisonné', decale(A, 8, -8)))).toEqual({ ok: false, raison: { code: 'hors-portee' } })
     const fatigue = nouvellePartie({ cases: p.cases, sadida: A, ennemis: [e], sorts: [id('Vent Empoisonné')], stats: { pa: 1, pm: 0, po: 0 } })
-    expect(jouer(fatigue, sort('Vent Empoisonné', e))).toEqual({ ok: false, raison: 'PA insuffisants (1 / 2)' })
+    expect(jouer(fatigue, sort('Vent Empoisonné', e))).toEqual({ ok: false, raison: { code: 'pa-insuffisants', p: { pa: 1, cout: 2 } } })
     // un Arbre entre le Sadida et l'ennemi coupe la ligne de vue
     expect(jouer(suite(p, [sort('Arbre', decale(A, 1, 0))]), sort('Vent Empoisonné', e)))
-      .toEqual({ ok: false, raison: 'pas de ligne de vue' })
+      .toEqual({ ok: false, raison: { code: 'pas-de-ldv' } })
   })
 
   it('refuse les sorts qui ont une relance initiale', () => {
     expect(jouer(partie(['Rempotage'], []), sort('Rempotage', decale(A, 2, 0))))
-      .toEqual({ ok: false, raison: 'Rempotage ne se lance pas au tour 1' })
+      .toEqual({ ok: false, raison: { code: 'relance-initiale', p: { sort: id('Rempotage') } } })
   })
 
   it("n'a pas de zone autour d'un Arbre normal, mais autour d'un Arbre Feuillu", () => {
@@ -86,7 +86,7 @@ describe('partie', () => {
     p = suite(p, [sort('Vent Empoisonné', e[0]!), sort('Fléau', e[0]!), sort('Fléau', e[0]!), sort('Ronce', e[0]!)])
     expect(p.exploitations).toBe(3)
     const r = jouer(p, sort('Ronce', e[0]!))
-    expect(r.ok && r.bilan.texte).toContain("pas d'exploitation : déjà 3 ce tour")
+    expect(r.ok && r.bilan.texte).toContainEqual({ code: 'pas-exploitation', p: { max: 3 } })
     // Fléau sur un ennemi sain : pas d'exploitation
     expect(suite(partie(['Fléau'], e), [sort('Fléau', e[1]!)]).exploitations).toBe(0)
   })
@@ -101,7 +101,7 @@ describe('partie', () => {
     expect(p.entites.find(x => x.id === sacrifiee)?.nom).toBe('La Sacrifiée')
     // Tant que le Sadida n'a pas fini, La Folle attend
     expect(jouer(p, { type: 'deplacement', acteur: folle!, vers: decale(A, 3, 0) }))
-      .toEqual({ ok: false, raison: "c'est au tour de Sadida" })
+      .toEqual({ ok: false, raison: { code: 'tour-de', p: { e: { id: 0, genre: 'sadida' } } } })
     p = suite(p, [
       fin(SADIDA),
       { type: 'deplacement', acteur: folle!, vers: decale(A, 3, 0) },
@@ -109,14 +109,14 @@ describe('partie', () => {
     ])
     expect(infectes(p)).toEqual([1])
     expect(acteurCourant(p)?.id).toBe(folle)
-    expect(jouer(p, sort('Vent Empoisonné', e))).toEqual({ ok: false, raison: "c'est au tour de La Folle" })
+    expect(jouer(p, sort('Vent Empoisonné', e))).toEqual({ ok: false, raison: { code: 'tour-de', p: { e: { id: folle!, genre: 'invocation', monstre: 5896 } } } })
     // La Sacrifiée joue ensuite ; après elle, la salle est finie
     p = suite(p, [fin(folle!), { type: 'deplacement', acteur: sacrifiee!, vers: decale(A, -2, 0) }])
     expect(jouer(p, { type: 'deplacement', acteur: folle!, vers: decale(A, 4, 0) }))
-      .toEqual({ ok: false, raison: "c'est au tour de La Sacrifiée" })
+      .toEqual({ ok: false, raison: { code: 'tour-de', p: { e: { id: sacrifiee!, genre: 'invocation', monstre: 5898 } } } })
     expect(termine(p)).toBe(false)
     const r = jouer(p, fin(sacrifiee!))
-    expect(r.ok && r.bilan.texte).toEqual(['Fin du tour de La Sacrifiée', 'fin de la salle'])
+    expect(r.ok && r.bilan.texte.map(m => m.code)).toEqual(['titre-fin', 'fin-salle'])
     expect(r.ok && termine(r.partie)).toBe(true)
   })
 
@@ -126,9 +126,9 @@ describe('partie', () => {
     p = suite(p, [sort('La Sacrifiée Transmutée', decale(A, 1, 0)), fin(SADIDA)])
     const s = p.ordre[1]!
     const exploser = (c: Case): Action => ({ type: 'sort', acteur: s, sort: 14385, cible: c })
-    expect(jouer(p, exploser(decale(A, 1, 0)))).toEqual({ ok: false, raison: 'aucun ennemi au contact' })
+    expect(jouer(p, exploser(decale(A, 1, 0)))).toEqual({ ok: false, raison: { code: 'aucun-ennemi-contact' } })
     expect(jouer(p, { type: 'deplacement', acteur: s, vers: decale(A, 6, 0) }))
-      .toEqual({ ok: false, raison: "case hors d'atteinte avec 4 PM" })
+      .toEqual({ ok: false, raison: { code: 'hors-atteinte', p: { pm: 4 } } })
     p = suite(p, [{ type: 'deplacement', acteur: s, vers: decale(A, 4, 0) }, exploser(decale(A, 4, 0))])
     expect(infectes(p)).toEqual([1, 2])
     expect(p.entites.some(e => e.id === s)).toBe(false)
@@ -138,7 +138,7 @@ describe('partie', () => {
     const arbre = decale(A, 2, 0)
     const p = partie(['Arbre', 'Larme de Sadida', 'Puissance Sylvestre'], [])
     const normal = suite(p, [sort('Arbre', arbre)])
-    expect(jouer(normal, sort('Puissance Sylvestre', arbre))).toEqual({ ok: false, raison: 'il faut viser un Arbre Feuillu' })
+    expect(jouer(normal, sort('Puissance Sylvestre', arbre))).toEqual({ ok: false, raison: { code: 'viser-arbre-feuillu' } })
     const groute = suite(p, [sort('Arbre', arbre), sort('Larme de Sadida', arbre), sort('Puissance Sylvestre', arbre)])
     expect(groute.entites.find(e => e.case === arbre)?.nom).toBe('Groute')
     expect(groute.ordre).toHaveLength(2)
@@ -247,6 +247,6 @@ describe('partie', () => {
     const p = partie(['Arbre', 'La Folle'], [])
     const actions = [sort('Arbre', arbre), sort('La Folle', arbre)]
     expect(rejouer(p, actions.slice(0, 1)).partie.entites.at(-1)?.nom).toBe('Arbre')
-    expect(rejouer(p, actions.slice(1)).erreur).toEqual({ index: 0, raison: 'il faut viser un Arbre' })
+    expect(rejouer(p, actions.slice(1)).erreur).toEqual({ index: 0, raison: { code: 'viser-arbre' } })
   })
 })

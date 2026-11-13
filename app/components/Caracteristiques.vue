@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SADIDA, type Stats } from '~~/engine/partie'
+import { t } from '~/i18n'
 
 const store = usePartieStore()
 
@@ -8,25 +9,25 @@ const lignes = computed(() => {
   const s = store.partie?.entites.find(e => e.id === SADIDA)
   const max = store.statsDepart
   return ([
-    ['pa', 'Points d’action', '#6fb4ee', s?.pa],
-    ['pm', 'Points de mouvement', '#86cf62', s?.pm],
-    ['po', 'Portée bonus', '#e7b25a', max.po],
-  ] as const).map(([cle, nom, couleur, reste]) => ({ cle: cle as keyof Stats, nom, couleur, reste: reste ?? max[cle], max: max[cle] }))
+    ['pa', '#6fb4ee', s?.pa],
+    ['pm', '#86cf62', s?.pm],
+    ['po', '#e7b25a', max.po],
+  ] as const).map(([cle, couleur, reste]) => ({ cle: cle as keyof Stats, nom: t(`carac.${cle}`), couleur, reste: reste ?? max[cle], max: max[cle] }))
 })
 </script>
 
 <template>
   <section class="panneau caracteristiques" aria-labelledby="titre-carac">
     <div class="entete">
-      <h2 id="titre-carac">Caractéristiques</h2>
-      <span>restant / max</span>
+      <h2 id="titre-carac">{{ t('carac.titre') }}</h2>
+      <span>{{ t('carac.restant') }}</span>
     </div>
-    <label class="prycipithon" :title="store.verrouille ? 'Verrouillé pendant le tour (Replacer pour changer)' : undefined">
+    <label class="prycipithon" :title="store.verrouille ? t('carac.verrouille') : undefined">
       <input type="checkbox" :checked="store.prycipithon" :disabled="store.verrouille" @change="store.basculerPrycipithon()">
       <img src="/icones/prycipithon.png" alt="" class="picto">
       <span class="texte">
         <strong>Prycipithon Mate</strong>
-        <span>+2 PA au tour 1 · points −10 %</span>
+        <span>{{ t('carac.prycipithon') }}</span>
       </span>
     </label>
     <div v-for="l in lignes" :key="l.cle" class="ligne">

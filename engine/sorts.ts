@@ -124,7 +124,7 @@ export type Comportement =
   /** Donne des PM : à soi (Célérité) ou à l'entité visée (Ardeur Estivale). `intaclable` : ignore le tacle. */
   | { type: 'gain-pm', pm: number, soi: boolean, intaclable?: boolean }
   /** Effet qui compte mais pas encore simulé. */
-  | { type: 'non-simule', effet: string }
+  | { type: 'non-simule', effet: 'teleporte-invocation' }
 
 export const COMPORTEMENTS: Record<number, Comportement> = {
   // Arbres
@@ -162,7 +162,7 @@ export const COMPORTEMENTS: Record<number, Comportement> = {
   14396: { type: 'feuillu', forme: 'tous', rayon: 0 }, // Mangrove
   // Pas encore simulé
   13514: { type: 'attire-centre', rayon: 3, distance: 2 }, // Tremblement
-  13565: { type: 'non-simule', effet: 'téléporte une invocation' }, // Rempotage
+  13565: { type: 'non-simule', effet: 'teleporte-invocation' }, // Rempotage
   // Sorts des invocations
   14380: { type: 'infecte' }, // Agacement (La Folle)
   14385: { type: 'explosion', rayon: 2 }, // Explosion Ouatée (La Sacrifiée)

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import type { Mode } from '~/stores/partie'
+import { nomJeu, t } from '~/i18n'
 
 const store = usePartieStore()
 
-const NOMS_MODE: Record<Mode, string> = { infini: 'Mode infini', map: 'Training map', boss: 'Training boss' }
-
 const pourcentage = computed(() => `${Math.round((store.score?.part ?? 0) * 100)}%`)
+
+/** Zone et sous-zone de la map, dans la langue choisie (la sous-zone seulement si elle diffère du nom). */
+const lieu = computed(() => {
+  const m = store.map
+  if (!m) return ''
+  return [m.zone, m.sous_zone !== m.nom ? m.sous_zone : null].filter(Boolean).map(x => nomJeu(x!)).join(' · ')
+})
 
 const reglages = ref<{ ouvrir: () => void } | null>(null)
 const bienvenue = ref<{ ouvrir: () => void } | null>(null)
@@ -16,20 +21,20 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
     <h1 class="titre"><img src="/logo.png" alt="Sadikoi" width="140" height="58"></h1>
 
     <div class="pilule">
-      <span class="mode">{{ NOMS_MODE[store.mode] }}</span><span aria-hidden="true">·</span><span>Salle {{ store.numeroSalle }}</span>
+      <span class="mode">{{ t(`mode.${store.mode}`) }}</span><span aria-hidden="true">·</span><span>{{ t('bandeau.salle', { n: store.numeroSalle }) }}</span>
       <template v-if="store.mode === 'infini' && store.meilleureSerie">
-        <span aria-hidden="true">·</span><span class="record" title="Plus longue run : salles réussies à 3 étoiles ou plus, d'affilée">record {{ store.meilleureSerie }}</span>
+        <span aria-hidden="true">·</span><span class="record" :title="t('bandeau.record-run-aide')">{{ t('bandeau.record-run', { n: store.meilleureSerie }) }}</span>
       </template>
     </div>
 
     <div class="objectif">
       <div class="map-courante">
-        <span>Objectif : tout infecter au T1 · 4e étoile si ça tient au T2</span>
+        <span>{{ t('bandeau.objectif') }}</span>
         <span v-if="store.map" class="nom-map">
-          {{ store.map.nom }}<template v-if="store.map.boss"> · boss : {{ store.map.boss.join(', ') }}</template>
+          {{ nomJeu(store.map.nom) }}<template v-if="store.map.boss"> · {{ t('bandeau.boss', { boss: store.map.boss.map(nomJeu).join(', ') }) }}</template>
         </span>
         <span v-if="store.map" class="lieu">
-          {{ [store.map.zone, store.map.sous_zone !== store.map.nom ? store.map.sous_zone : null].filter(Boolean).join(' · ') }}
+          {{ lieu }}
           <template v-if="!store.map.donjon"> · [{{ store.map.pos[0] }}, {{ store.map.pos[1] }}]</template>
         </span>
       </div>
@@ -37,19 +42,20 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
         <div class="jauge" aria-hidden="true"><div :style="{ width: pourcentage }" /></div>
         <span class="compte">{{ store.score.infectes }} / {{ store.score.total }}</span>
         <Etoiles :nombre="store.score.etoiles" />
-        <span class="points">{{ store.score.points }} pts</span>
-        <span v-if="store.record" class="record" :title="`Record sur cette salle : ${store.record.points} points, ${store.record.paDepenses} PA`">record {{ store.record.points }}</span>
+        <span class="points">{{ t('bandeau.points', { n: store.score.points }) }}</span>
+        <span v-if="store.record" class="record" :title="t('bandeau.record-aide', { points: store.record.points, pa: store.record.paDepenses })">{{ t('bandeau.record', { n: store.record.points }) }}</span>
       </div>
     </div>
 
     <div class="choix">
-      <button v-if="store.mode === 'infini'" type="button" title="Recommence la run depuis la salle 1" @click="store.nouvelleRun()">Nouvelle run</button>
-      <button v-else type="button" @click="store.nouvelleSalle()">Autres ennemis</button>
-      <button type="button" :title="store.lienPartage ? `Copie le lien de cette salle : ${store.lienPartage}` : undefined" @click="store.partager()">Partager</button>
-      <button type="button" class="engrenage" aria-label="Réglages" title="Réglages" @click="reglages?.ouvrir()">
+      <button v-if="store.mode === 'infini'" type="button" :title="t('bandeau.nouvelle-run-aide')" @click="store.nouvelleRun()">{{ t('bandeau.nouvelle-run') }}</button>
+      <button v-else type="button" @click="store.nouvelleSalle()">{{ t('bandeau.autres-ennemis') }}</button>
+      <button type="button" :title="store.lienPartage ? t('bandeau.partager-aide', { lien: store.lienPartage }) : undefined" @click="store.partager()">{{ t('bandeau.partager') }}</button>
+      <ChoixLangue />
+      <button type="button" class="engrenage" :aria-label="t('bandeau.reglages')" :title="t('bandeau.reglages')" @click="reglages?.ouvrir()">
         <span class="cle" aria-hidden="true" />
       </button>
-      <button type="button" class="engrenage" aria-label="Aide : le principe et comment jouer" title="Aide" @click="bienvenue?.ouvrir()">
+      <button type="button" class="engrenage" :aria-label="t('bandeau.aide-long')" :title="t('bandeau.aide')" @click="bienvenue?.ouvrir()">
         <span class="interrogation" aria-hidden="true" />
       </button>
       <Reglages ref="reglages" />

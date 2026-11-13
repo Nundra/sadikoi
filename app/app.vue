@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { choisirLangue, langue, t } from '~/i18n'
 import { useRaccourcis } from '~/stores/barre'
 
 const store = usePartieStore()
 
-useHead({ title: 'Sadikoi – entraînement à l’infection au tour 1' })
+useHead({ title: () => t('app.titre'), htmlAttrs: { lang: langue } })
 
 // Raccourcis de la barre : la touche d'un emplacement choisit son sort, Échap le relâche
 useRaccourcis(
@@ -15,7 +16,8 @@ useRaccourcis(
 )
 
 onMounted(async () => {
-  await store.charger()
+  // Langue de l'adresse (/en, /es) : ses textes du jeu, chargés avec les maps
+  await Promise.all([store.charger(), choisirLangue(langue.value)])
   // Lien partagé (ou rechargement en training) : ?salle=<code> charge cette salle en training
   const code = new URLSearchParams(window.location.search).get('salle')
   if (code) store.chargerCode(code)

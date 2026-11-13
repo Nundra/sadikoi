@@ -13,9 +13,9 @@ describe('portée', () => {
 
   it('respecte la PO min et max', () => {
     const p = plateauTest()
-    expect(refusCible(p, A, A, sort())).toBe('hors de portée')
+    expect(refusCible(p, A, A, sort())).toBe('hors-portee')
     expect(refusCible(p, A, decale(A, 4, 0), sort())).toBeNull()
-    expect(refusCible(p, A, decale(A, 3, 2), sort())).toBe('hors de portée')
+    expect(refusCible(p, A, decale(A, 3, 2), sort())).toBe('hors-portee')
     expect(refusCible(p, A, decale(A, 3, 2), sort({ po_modifiable: true }), 1)).toBeNull()
   })
 
@@ -29,16 +29,16 @@ describe('portée', () => {
 
   it('refuse les obstacles, le vide et, si demandé, les cases occupées', () => {
     const b = decale(A, 2, 0)
-    expect(refusCible(plateauTest([[b, '#']]), A, b, sort())).toBe('case non ciblable')
-    expect(refusCible(plateauTest([[b, '.']]), A, b, sort())).toBe('case non ciblable')
+    expect(refusCible(plateauTest([[b, '#']]), A, b, sort())).toBe('case-non-ciblable')
+    expect(refusCible(plateauTest([[b, '.']]), A, b, sort())).toBe('case-non-ciblable')
     expect(refusCible(plateauTest([], [b]), A, b, sort())).toBeNull()
-    expect(refusCible(plateauTest([], [b]), A, b, sort({ case_libre: true }))).toBe('case occupée')
+    expect(refusCible(plateauTest([], [b]), A, b, sort({ case_libre: true }))).toBe('case-occupee')
   })
 
   it('demande la ligne de vue sauf si le sort ne la demande pas', () => {
     const p = plateauTest([], [decale(A, 1, 0)])
     const b = decale(A, 3, 0)
-    expect(refusCible(p, A, b, sort())).toBe('pas de ligne de vue')
+    expect(refusCible(p, A, b, sort())).toBe('pas-de-ldv')
     expect(refusCible(p, A, b, sort({ ligne_de_vue: false }))).toBeNull()
   })
 })

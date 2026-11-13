@@ -2,6 +2,7 @@
 import { CATEGORIES } from '~~/engine/categories'
 import { SORTS_SADIDA } from '~~/engine/sorts'
 import { useBarreStore } from '~/stores/barre'
+import { nomSort, t } from '~/i18n'
 
 const store = usePartieStore()
 const barre = useBarreStore()
@@ -9,7 +10,7 @@ const barre = useBarreStore()
 /** Les emplacements de la barre du Sadida, avec la variante choisie et la touche. */
 const emplacements = computed(() => barre.ordre.map((paire, k) => {
   const s = SORTS_SADIDA.find(x => x.id === store.variantes[paire]) ?? SORTS_SADIDA.find(x => x.paire === paire)!
-  return { k, nom: s.nom, touche: barre.libelle(barre.touches[k] ?? '') }
+  return { k, nom: nomSort(s.id), touche: barre.libelle(barre.touches[k] ?? '') }
 }))
 const dialogue = ref<HTMLDialogElement | null>(null)
 
@@ -22,47 +23,49 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
 
 <template>
   <dialog ref="dialogue" class="reglages" aria-labelledby="titre-reglages">
-    <h2 id="titre-reglages">Réglages</h2>
+    <h2 id="titre-reglages">{{ t('reglages.titre') }}</h2>
+
+    <fieldset>
+      <legend>{{ t('reglages.langue') }}</legend>
+      <ChoixLangue />
+    </fieldset>
 
     <fieldset class="apparence">
-      <legend>Personnage</legend>
+      <legend>{{ t('reglages.personnage') }}</legend>
       <div class="choix-sexe">
-        <label v-for="o in [{ v: 'femme', nom: 'Sadida femme' }, { v: 'homme', nom: 'Sadida homme' }] as const" :key="o.v" class="sexe">
-          <input v-model="store.sexe" type="radio" name="sexe" :value="o.v">
-          <img :src="`/portraits/sadida-${o.v}.png`" alt="">
-          <span>{{ o.nom }}</span>
+        <label v-for="v in ['femme', 'homme'] as const" :key="v" class="sexe">
+          <input v-model="store.sexe" type="radio" name="sexe" :value="v">
+          <img :src="`/portraits/sadida-${v}.png`" alt="">
+          <span>{{ t(`reglages.${v}`) }}</span>
         </label>
       </div>
     </fieldset>
 
     <fieldset>
-      <legend>Types de map</legend>
-      <p class="aide">Pour le mode infini et la recherche de map. Le mode boss n’est pas concerné.</p>
-      <label v-for="c in CATEGORIES" :key="c.id" class="categorie">
+      <legend>{{ t('reglages.types') }}</legend>
+      <p class="aide">{{ t('reglages.types-aide') }}</p>
+      <label v-for="c in CATEGORIES" :key="c" class="categorie">
         <input
           type="checkbox"
-          :checked="store.categoriesActives[c.id]"
-          :disabled="seul && store.categoriesActives[c.id]"
-          :aria-describedby="seul && store.categoriesActives[c.id] ? 'aide-seul' : undefined"
-          @change="store.basculerCategorie(c.id)"
+          :checked="store.categoriesActives[c]"
+          :disabled="seul && store.categoriesActives[c]"
+          :aria-describedby="seul && store.categoriesActives[c] ? 'aide-seul' : undefined"
+          @change="store.basculerCategorie(c)"
         >
         <span class="texte">
-          <span class="nom">{{ c.nom }} <span class="compte">{{ store.compteParCategorie[c.id] }} maps</span></span>
-          <span class="description">{{ c.description }}</span>
+          <span class="nom">{{ t(`categorie.${c}`) }} <span class="compte">{{ t('reglages.maps', { n: store.compteParCategorie[c] }) }}</span></span>
+          <span class="description">{{ t(`categorie.${c}.aide`) }}</span>
         </span>
       </label>
       <p class="total">
-        {{ total }} maps dans le tirage.
-        <span v-if="seul" id="aide-seul">Il faut garder au moins un type coché.</span>
+        {{ t('reglages.total', { n: total }) }}
+        <span v-if="seul" id="aide-seul">{{ t('reglages.seul') }}</span>
       </p>
     </fieldset>
 
     <fieldset class="raccourcis">
-      <legend>Raccourcis de la barre</legend>
-      <p class="aide">
-        Clique un emplacement puis appuie sur la touche voulue (Échap annule, Retour arrière efface).
-        Dans le jeu, la touche choisit le sort de l’emplacement, Échap le relâche. Pour changer les sorts de place, fais-les glisser dans la barre.
-      </p>
+      <legend>{{ t('reglages.raccourcis') }}</legend>
+      <p class="aide">{{ t('reglages.raccourcis-aide') }}</p>
       <ol>
         <li v-for="e in emplacements" :key="e.k">
           <span class="numero">{{ e.k + 1 }}</span>
@@ -71,18 +74,18 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
             type="button"
             class="touche"
             :class="{ attente: barre.enAttente === e.k }"
-            :aria-label="`Touche de l’emplacement ${e.k + 1} (${e.nom}) : ${e.touche || 'aucune'}`"
+            :aria-label="t('reglages.touche-de', { n: e.k + 1, nom: e.nom, touche: e.touche || t('reglages.aucune') })"
             @click="barre.enAttente = barre.enAttente === e.k ? null : e.k"
           >
-            {{ barre.enAttente === e.k ? 'Appuie…' : e.touche || '—' }}
+            {{ barre.enAttente === e.k ? t('reglages.appuie') : e.touche || '—' }}
           </button>
         </li>
       </ol>
-      <button type="button" class="retablir" @click="barre.retablir()">Rétablir l’ordre et les touches par défaut</button>
+      <button type="button" class="retablir" @click="barre.retablir()">{{ t('reglages.retablir') }}</button>
     </fieldset>
 
     <form method="dialog" class="boutons">
-      <button type="submit" class="fin" @click="barre.enAttente = null">Fermer</button>
+      <button type="submit" class="fin" @click="barre.enAttente = null">{{ t('reglages.fermer') }}</button>
     </form>
   </dialog>
 </template>

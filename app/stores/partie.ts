@@ -13,6 +13,8 @@ import { casesCiblables } from '~~/engine/portee'
 import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
 import { SORTS_SADIDA, invocation, sort as trouverSort, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
+import type { Message, RefEntite } from '~~/engine/messages'
+import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
 import { useBarreStore } from './barre'
 
 export type Mode = 'infini' | 'map' | 'boss'
@@ -110,17 +112,22 @@ export const usePartieStore = defineStore('partie', () => {
   /** Monstre dessiné pour chaque ennemi de la salle (tiré au hasard, purement visuel). */
   /** Position, dans la liste de data/portraits.json, du monstre dessiné pour chaque ennemi. */
   const portraitsEnnemis = ref<number[]>([])
-  const monstreDe = (e: Entite) => portraits.ennemis[portraitsEnnemis.value[e.id - 1] ?? 0] ?? portraits.ennemis[0]!
+  const monstreDe = (e: { id: number }) => portraits.ennemis[portraitsEnnemis.value[e.id - 1] ?? 0] ?? portraits.ennemis[0]!
   /** Le portrait d'une entité (images de public/portraits, voir data/portraits.json). */
   function portrait(e: Entite): string {
     if (e.genre === 'sadida') return `/portraits/sadida-${sexe.value}.png`
     if (e.genre === 'ennemi') return `/portraits/${monstreDe(e).id}.png`
     return `/portraits/${e.monstre}.png`
   }
-  /** Nom à afficher : le monstre dessiné pour un ennemi, sinon le nom de l'entité. */
-  function nomAffiche(e: Entite): string {
-    return e.genre === 'ennemi' ? `${monstreDe(e).nom} (E${e.id})` : e.nom
+  /** Nom à afficher, dans la langue choisie : le monstre dessiné pour un ennemi (« Piou Bleu (E2) »). */
+  function nomAffiche(e: RefEntite): string {
+    if (e.genre === 'sadida') return 'Sadida'
+    if (e.genre === 'ennemi') return `${nomJeu(monstreDe(e).nom)} (E${e.id})`
+    if (e.genre === 'arbre') return t(e.feuillu ? 'entite.arbre-feuillu' : 'entite.arbre')
+    return nomInvocation(e.monstre!)
   }
+  /** Un message du moteur (refus, bilan) en texte. */
+  const texte = (m: Message) => texteMessage(m, nomAffiche)
   /** D'abord le placement (à valider), puis le tour. */
   const phase = ref<'placement' | 'tour'>('placement')
 
@@ -139,7 +146,12 @@ export const usePartieStore = defineStore('partie', () => {
   const actions = ref<Action[]>([])
   const sortChoisi = ref<number | null>(null)
   const survol = ref<Case | null>(null)
-  const message = ref<string | null>(null)
+  /**
+   * Message affiché sur le plateau. Gardé comme une fonction qui le met en texte, pour suivre
+   * un changement de langue.
+   */
+  const message = shallowRef<(() => string) | null>(null)
+  const dire = (cle: Cle, p?: Params) => (message.value = () => t(cle, p))
   /** Action de la timeline qu'on regarde (son résultat), ou null pour le présent. */
   const vue = ref<number | null>(null)
 
@@ -167,7 +179,8 @@ export const usePartieStore = defineStore('partie', () => {
   // Une variante ou une stat changée peut rendre une action impossible : on coupe là.
   watch(() => deroule.value?.erreur, (e) => {
     if (!e) return
-    message.value = `Action ${e.index + 1} retirée : ${e.raison}`
+    const raison = e.raison
+    message.value = () => t('msg.action-retiree', { n: e.index + 1, raison: texte(raison) })
     actions.value = actions.value.slice(0, e.index)
   })
 
@@ -312,7 +325,7 @@ export const usePartieStore = defineStore('partie', () => {
   })
   const lienPartage = computed(() => {
     if (!code.value) return null
-    const url = new URL(window.location.pathname, window.location.origin)
+    const url = new URL(prefixe(langue.value) || '/', window.location.origin)
     url.searchParams.set('salle', code.value)
     return url.toString()
   })
@@ -322,7 +335,7 @@ export const usePartieStore = defineStore('partie', () => {
     const salle = lireCodeSalle(texte, maps.value)
     if (!salle) {
       nouvelleSalle()
-      message.value = 'Ce code de salle ne correspond à aucune salle : en voici une autre.'
+      dire('msg.code-inconnu')
       return
     }
     mode.value = 'map'
@@ -346,7 +359,7 @@ export const usePartieStore = defineStore('partie', () => {
 
   function salleSuivante() {
     if (!peutAvancer.value) {
-      message.value = `Il faut ${ETOILES_POUR_AVANCER} étoiles pour passer à la salle suivante.`
+      dire('msg.etoiles-requises', { n: ETOILES_POUR_AVANCER })
       return
     }
     if (mode.value === 'infini') {
@@ -378,9 +391,9 @@ export const usePartieStore = defineStore('partie', () => {
   async function partager() {
     try {
       await navigator.clipboard.writeText(lienPartage.value!)
-      message.value = `Lien de la salle copié (code ${code.value}).`
+      dire('msg.lien-copie', { code: code.value! })
     } catch {
-      message.value = `Copie impossible : partage ce lien : ${lienPartage.value}`
+      dire('msg.copie-impossible', { lien: lienPartage.value! })
     }
   }
 
@@ -400,7 +413,7 @@ export const usePartieStore = defineStore('partie', () => {
 
   function validerPlacement() {
     if (sadida.value === null) {
-      message.value = 'Place d’abord le Sadida sur une case bleue.'
+      dire('msg.placer-dabord')
       return
     }
     phase.value = 'tour'
@@ -412,7 +425,8 @@ export const usePartieStore = defineStore('partie', () => {
     if (!p) return false
     const r = jouer(p, action)
     if (!r.ok) {
-      message.value = r.raison
+      const raison = r.raison
+      message.value = () => texte(raison)
       return false
     }
     actions.value = [...actions.value, action]
@@ -422,11 +436,11 @@ export const usePartieStore = defineStore('partie', () => {
   function clicCase(c: Case) {
     message.value = null
     if (vue.value !== null) {
-      message.value = 'Tu regardes une action passée : reviens au présent pour jouer.'
+      dire('msg.vue-passee')
       return
     }
     if (phase.value === 'placement') {
-      if (!casesPlacement.value.includes(c)) message.value = 'Place le Sadida sur une case bleue.'
+      if (!casesPlacement.value.includes(c)) dire('msg.case-bleue')
       else sadida.value = c
       return
     }
@@ -442,7 +456,7 @@ export const usePartieStore = defineStore('partie', () => {
   function choisirSort(id: number) {
     message.value = null
     if (phase.value === 'placement') {
-      message.value = 'Valide d’abord le placement.'
+      dire('msg.valider-dabord')
       return
     }
     sortChoisi.value = sortChoisi.value === id ? null : id
@@ -488,7 +502,7 @@ export const usePartieStore = defineStore('partie', () => {
     maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, stats, statsDepart, prycipithon, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, ciblables, accessibles, apercu, score, record, recordPrecedent,
-    sexe, portrait, nomAffiche, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,
+    sexe, portrait, nomAffiche, texte, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,
     basculerPrycipithon, annuler, regarder,
   }
 })

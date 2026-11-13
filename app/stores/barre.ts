@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { onScopeDispose, ref, watch } from 'vue'
 import { ORDRE_JEU, sort } from '~~/engine/sorts'
+import { langue, t } from '~/i18n'
 
 /** Nombre d'emplacements : 2 rangées de 11. */
 export const EMPLACEMENTS = 22
@@ -20,7 +21,13 @@ const AZERTY: Record<string, string> = {
   Minus: ')', Equal: '=', KeyQ: 'A', KeyW: 'Z', KeyE: 'E', KeyR: 'R', KeyT: 'T', KeyY: 'Y', KeyU: 'U', KeyI: 'I', KeyO: 'O',
   KeyP: 'P', BracketLeft: '^', BracketRight: '$', KeyA: 'Q', KeyS: 'S', KeyD: 'D', KeyF: 'F', KeyG: 'G', KeyH: 'H', KeyJ: 'J',
   KeyK: 'K', KeyL: 'L', Semicolon: 'M', Quote: 'ù', KeyZ: 'W', KeyX: 'X', KeyC: 'C', KeyV: 'V', KeyB: 'B', KeyN: 'N', KeyM: ',',
-  Comma: ';', Period: ':', Slash: '!', Backquote: '²', IntlBackslash: '<', Space: 'Espace',
+  Comma: ';', Period: ':', Slash: '!', Backquote: '²', IntlBackslash: '<',
+}
+
+/** Signes QWERTY des codes de ponctuation (les lettres et chiffres se lisent dans le code). */
+const QWERTY: Record<string, string> = {
+  Minus: '-', Equal: '=', BracketLeft: '[', BracketRight: ']', Semicolon: ';', Quote: '\'', Comma: ',', Period: '.',
+  Slash: '/', Backquote: '`', Backslash: '\\', IntlBackslash: '\\',
 }
 
 function lireListe<T>(cle: string, valide: (v: unknown) => v is T[], defaut: T[]): T[] {
@@ -61,7 +68,9 @@ export const useBarreStore = defineStore('barre', () => {
   function libelle(code: string): string {
     if (!code) return ''
     const lu = disposition.value?.get(code)
-    return (lu ?? AZERTY[code] ?? code.replace(/^(Key|Digit|Numpad)/, '')).toUpperCase()
+    if (code === 'Space') return t('touche.Space').toUpperCase()
+    // Sans la disposition réelle : AZERTY en français, QWERTY (le nom du code) sinon
+    return (lu ?? (langue.value === 'fr' ? AZERTY : QWERTY)[code] ?? code.replace(/^(Key|Digit|Numpad)/, '')).toUpperCase()
   }
 
   /** Échange deux emplacements (glisser-déposer). */

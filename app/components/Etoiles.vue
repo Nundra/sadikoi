@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { t } from '~/i18n'
+
 withDefaults(defineProps<{ nombre: number, grand?: boolean, max?: number }>(), { max: 4 })
 </script>
 
 <template>
-  <span class="etoiles" :class="{ grand }" role="img" :aria-label="`${nombre} étoile${nombre > 1 ? 's' : ''} sur ${max}`">
+  <span class="etoiles" :class="{ grand }" role="img" :aria-label="t('etoiles', { n: nombre, max })">
     <!-- Étoiles du jeu (pictos blancs) colorées par masque : or, et mauve pour la 4e. Couleur par style, pas par classe (Firefox). -->
     <span
       v-for="i in max"

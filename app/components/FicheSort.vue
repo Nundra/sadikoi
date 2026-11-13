@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { sort as trouverSort } from '~~/engine/sorts'
+import { infectionDuSort, nomSort, t } from '~/i18n'
 
 const store = usePartieStore()
 
@@ -10,13 +11,13 @@ const contraintes = computed(() => {
   const s = sort.value
   if (!s) return ''
   return [
-    s.ligne_de_vue === false ? 'sans ligne de vue' : null,
-    s.en_ligne ? 'en ligne' : null,
-    s.en_diagonale ? 'en diagonale' : null,
-    s.case_libre ? 'case libre' : null,
-    s.lancers_par_tour ? `${s.lancers_par_tour} / tour` : null,
-    s.lancers_par_cible ? `${s.lancers_par_cible} / cible` : null,
-    s.relance_initiale ? 'pas au tour 1' : null,
+    s.ligne_de_vue === false ? t('sort.sans-ldv') : null,
+    s.en_ligne ? t('sort.en-ligne') : null,
+    s.en_diagonale ? t('sort.en-diagonale') : null,
+    s.case_libre ? t('sort.case-libre') : null,
+    s.lancers_par_tour ? t('sort.par-tour', { n: s.lancers_par_tour }) : null,
+    s.lancers_par_cible ? t('sort.par-cible', { n: s.lancers_par_cible }) : null,
+    s.relance_initiale ? t('sort.pas-tour-1') : null,
   ].filter(Boolean).join(' · ')
 })
 </script>
@@ -26,25 +27,20 @@ const contraintes = computed(() => {
     <template v-if="sort && element">
       <img class="icone" :src="`/sorts/${sort.id}.png`" alt="">
       <div class="infos">
-        <h2 id="titre-fiche">{{ sort.nom }}</h2>
+        <h2 id="titre-fiche">{{ nomSort(sort.id) }}</h2>
         <p class="carac">
-          {{ sort.pa }} PA · PO {{ porteeDuSort(sort, store.bonusPo) }}{{ sort.po_modifiable ? '' : ' (fixe)' }} · {{ element }}
-          <template v-if="sort.variante_de"> · variante de {{ sort.variante_de.nom }}</template>
+          {{ t('sort.pa', { n: sort.pa }) }} · {{ t('sort.po', { po: porteeDuSort(sort, store.bonusPo) }) }}{{ sort.po_modifiable ? '' : t('sort.fixe') }} · {{ t(`element.${element}`) }}
+          <template v-if="sort.variante_de"> · {{ t('sort.variante-de', { nom: nomSort(sort.variante_de.id) }) }}</template>
         </p>
         <p v-if="contraintes" class="carac">{{ contraintes }}</p>
         <p class="infection">{{ infectionDuSort(sort) }}</p>
       </div>
     </template>
     <div v-else class="infos">
-      <h2 id="titre-fiche">{{ store.acteur?.nom ?? 'Sadida' }}</h2>
-      <p v-if="store.phase === 'placement'" class="infection">
-        Choisis ta case de départ parmi les cases bleues. Tu peux aussi régler tes caractéristiques et tes variantes.
-      </p>
-      <p v-else-if="store.acteur" class="infection">
-        À {{ store.acteur.nom }} de jouer : clique une case verte pour te déplacer, ou choisis un sort dans la barre.
-        « Fin du tour » passe la main à l’invocation suivante.
-      </p>
-      <p v-else class="infection">Tout le monde a joué : la salle est terminée.</p>
+      <h2 id="titre-fiche">{{ store.acteur ? store.nomAffiche(store.acteur) : 'Sadida' }}</h2>
+      <p v-if="store.phase === 'placement'" class="infection">{{ t('fiche.placement') }}</p>
+      <p v-else-if="store.acteur" class="infection">{{ t('fiche.a-toi', { e: store.nomAffiche(store.acteur) }) }}</p>
+      <p v-else class="infection">{{ t('fiche.fini') }}</p>
     </div>
   </section>
 </template>

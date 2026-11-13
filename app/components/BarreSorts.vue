@@ -2,6 +2,7 @@
 import type { Sort } from '~~/engine/sorts'
 import { useBarreStore } from '~/stores/barre'
 import { PAIRES } from '~/stores/partie'
+import { infectionDuSort, nomSort, t } from '~/i18n'
 
 const store = usePartieStore()
 const barre = useBarreStore()
@@ -16,18 +17,19 @@ const sorts = computed(() => store.sortsActeur.map((s, k) => {
     k,
     touche: barre.libelle(barre.touches[k] ?? ''),
     couleur: COULEUR_ELEMENT[element],
-    autre: s.variante_de?.nom ?? null,
+    nom: nomSort(s.id),
+    autre: s.variante_de ? nomSort(s.variante_de.id) : null,
     indisponible: Boolean(s.relance_initiale) || (store.acteur?.pa ?? store.statsDepart.pa) < s.pa,
     variante: store.acteur?.genre !== 'invocation' && !estPremiere(s),
     description: descriptionUtile(s),
     contraintes: [
-      s.ligne_de_vue === false ? 'sans ligne de vue' : null,
-      s.en_ligne ? 'en ligne' : null,
-      s.en_diagonale ? 'en diagonale' : null,
-      s.case_libre ? 'case libre' : null,
-      s.lancers_par_tour ? `${s.lancers_par_tour} par tour` : null,
-      s.lancers_par_cible ? `${s.lancers_par_cible} par cible` : null,
-      s.relance_initiale ? 'pas au tour 1' : null,
+      s.ligne_de_vue === false ? t('sort.sans-ldv') : null,
+      s.en_ligne ? t('sort.en-ligne') : null,
+      s.en_diagonale ? t('sort.en-diagonale') : null,
+      s.case_libre ? t('sort.case-libre') : null,
+      s.lancers_par_tour ? t('sort.par-tour', { n: s.lancers_par_tour }) : null,
+      s.lancers_par_cible ? t('sort.par-cible', { n: s.lancers_par_cible }) : null,
+      s.relance_initiale ? t('sort.pas-tour-1') : null,
     ].filter(Boolean).join(' · '),
   }
 }))
@@ -49,7 +51,7 @@ function deposer(k: number) {
 </script>
 
 <template>
-  <nav class="panneau barre" :aria-label="`Sorts de ${store.acteur?.nom ?? 'Sadida'}`">
+  <nav class="panneau barre" :aria-label="t('barre.nom', { e: store.acteur ? store.nomAffiche(store.acteur) : 'Sadida' })">
     <div
       v-for="x in sorts"
       :key="x.s.id"
@@ -64,7 +66,7 @@ function deposer(k: number) {
         class="sort"
         :class="{ indisponible: x.indisponible }"
         :style="{ '--couleur': x.couleur }"
-        :aria-label="`${x.s.nom}, ${x.s.pa} PA${x.touche ? `, touche ${x.touche}` : ''}`"
+        :aria-label="x.touche ? t('barre.bouton-touche', { nom: x.nom, pa: x.s.pa, touche: x.touche }) : t('barre.bouton', { nom: x.nom, pa: x.s.pa })"
         :aria-pressed="store.sortChoisi === x.s.id"
         :draggable="reorganisable"
         @dragstart="(ev) => { depuis = x.k; ev.dataTransfer?.setData('text/plain', String(x.k)) }"
@@ -79,14 +81,14 @@ function deposer(k: number) {
         <div class="titre">
           <img :src="`/sorts/${x.s.id}.png`" alt="">
           <div>
-            <strong>{{ x.s.nom }}</strong>
-            <span class="carac">{{ x.s.pa }} PA · PO {{ porteeDuSort(x.s, store.bonusPo) }}{{ x.s.po_modifiable ? ' (modifiable)' : '' }}</span>
+            <strong>{{ x.nom }}</strong>
+            <span class="carac">{{ t('sort.pa', { n: x.s.pa }) }} · {{ t('sort.po', { po: porteeDuSort(x.s, store.bonusPo) }) }}{{ x.s.po_modifiable ? t('sort.modifiable') : '' }}</span>
           </div>
         </div>
         <p v-if="x.contraintes" class="contraintes">{{ x.contraintes }}</p>
         <p v-for="(para, i) in x.description" :key="i" class="description">{{ para }}</p>
-        <p class="infection"><span>Infection</span>{{ infectionDuSort(x.s) }}</p>
-        <p class="aide">{{ x.touche ? `Touche ${x.touche}` : 'Sans touche' }}<template v-if="reorganisable"> · glisser pour déplacer</template></p>
+        <p class="infection"><span>{{ t('sort.infection') }}</span>{{ infectionDuSort(x.s) }}</p>
+        <p class="aide">{{ x.touche ? t('barre.touche', { touche: x.touche }) : t('barre.sans-touche') }}<template v-if="reorganisable">{{ t('barre.glisser') }}</template></p>
       </div>
       <button
         v-if="x.autre"
@@ -94,8 +96,8 @@ function deposer(k: number) {
         class="variante"
         :class="{ active: x.variante }"
         :disabled="store.verrouille"
-        :aria-label="`Passer à la variante ${x.autre}`"
-        :title="store.verrouille ? 'Variantes verrouillées pendant le tour (Replacer pour les changer)' : `Passer à la variante ${x.autre}`"
+        :aria-label="t('barre.variante', { nom: x.autre })"
+        :title="store.verrouille ? t('barre.verrouille') : t('barre.variante', { nom: x.autre })"
         @click="store.changerVariante(x.s.paire!)"
       >
         <span class="fleches" aria-hidden="true" />
