@@ -98,7 +98,7 @@ function caseDe(ev: Event): number | null {
 
 const aide = computed(() => {
   if (store.vue !== null) return `Action ${store.vue + 1} : l’état du plateau juste après. Reviens au présent pour jouer.`
-  if (store.phase === 'placement') return 'Placement : clique une case bleue pour placer le Sadida, puis valide le placement.'
+  if (store.phase === 'placement') return 'Clique une case bleue pour te placer, puis valide le placement.'
   return null
 })
 </script>
@@ -276,13 +276,14 @@ polygon:hover { filter: brightness(1.18); }
 .pastille.tient { background: #7a3fb8; border: 2px solid var(--or-clair); }
 .pastille.mandragore { width: 14px; height: 14px; border-radius: 50%; background: #3d2a5c; border: 1px solid var(--mandragore); color: var(--mandragore); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
 
-/* À droite du choix de salle (coin haut-gauche, 320 px) */
+/* Centré sur le plateau, avec la même marge des deux côtés que le choix de salle (coin haut-gauche, 320 px) */
 .message {
   position: absolute;
   top: 14px;
-  left: calc(50% + 172px);
+  left: 50%;
   transform: translateX(-50%);
-  max-width: calc(100% - 370px);
+  width: max-content;
+  max-width: calc(100% - 2 * 344px);
   margin: 0;
   padding: 8px 14px;
   border-radius: 10px;
