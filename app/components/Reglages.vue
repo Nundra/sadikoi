@@ -27,7 +27,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
 
     <fieldset>
       <legend>{{ t('reglages.langue') }}</legend>
-      <ChoixLangue />
+      <ChoixLangue en-ligne />
     </fieldset>
 
     <fieldset class="apparence">

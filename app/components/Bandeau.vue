@@ -93,6 +93,7 @@ const bienvenue = ref<{ ouvrir: () => void } | null>(null)
 .points { font-size: 14px; font-weight: 800; color: var(--or-clair); }
 .record { font-size: 12px; color: var(--texte-gris); font-weight: 700; }
 .choix { display: flex; align-items: center; gap: 10px; }
+.choix > button:not(.engrenage) { padding: 0 18px; }
 .engrenage { width: 44px; padding: 0; display: flex; align-items: center; justify-content: center; }
 .engrenage .interrogation { width: 22px; height: 22px; background: var(--or); mask: url('/icones/aide.png') center / contain no-repeat; }
 /* Picto blanc du jeu, teinté en doré */

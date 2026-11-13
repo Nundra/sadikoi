@@ -95,7 +95,7 @@ Application web d'entraînement pour le Sadida de Dofus 3 : une « salle d'entra
   - Le moteur clone la partie avec `structuredClone` : lui passer des copies simples, jamais des objets réactifs de Vue.
 - Lancer : `pnpm dev` (port 3000). Build statique : `pnpm generate` → `.output/public`.
 - Plateau en SVG.
-- **Langues** : français (`/`), anglais (`/en`), espagnol (`/es`), choisies dans le bandeau ou les réglages ; la langue reste dans l'adresse (partage compris). Tout est dans `app/i18n/` :
+- **Langues** : français (`/`), anglais (`/en`), espagnol (`/es`), choisies dans le bandeau (bouton à drapeau, `ChoixLangue` et `Drapeau`, drapeaux en SVG car les émojis drapeaux ne s’ffichent pas sous Windows) ou les réglages ; la langue reste dans l'adresse (partage compris). Tout est dans `app/i18n/` :
   - `fr.ts` (référence), `en.ts`, `es.ts` : textes de l'interface, mêmes clés, phrases avec `{paramètres}` ou fonctions pour les pluriels. Aucun texte en dur dans les composants : tout passe par `t()`. Une nouvelle clé s'ajoute dans les trois fichiers (le type l'impose).
   - `infection.ts` : le rôle d'infection de chaque sort en anglais et en espagnol (et celui des sorts d'invocation en français), traduit à la main ; `{s:<id>}` / `{i:<id>}` donnent le nom officiel d'un sort / d'une invocation.
   - `index.ts` : `t()`, `choisirLangue()`, les noms du jeu traduits (`nomSort`, `nomInvocation`, `nomJeu` pour les lieux et monstres), et `texteMessage()`.
