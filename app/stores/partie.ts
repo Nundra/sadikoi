@@ -294,10 +294,22 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   /**
-   * Code de la salle en cours, à partager. Il n'est pas gardé dans l'URL : recharger la page
-   * relance un tirage ; seul le lien du bouton « Partager » contient ?salle=….
+   * Code de la salle en cours, à partager. En training (map ou boss), il est gardé dans l'URL
+   * (?salle=…) pour qu'un rechargement redonne la même salle ; en mode infini, il en est retiré
+   * pour qu'un rechargement relance un tirage.
    */
   const code = computed(() => (map.value ? codeSalle(map.value, ennemis.value, portraitsEnnemis.value) : null))
+  watch([code, mode], ([c, m]) => {
+    if (!c) return
+    try {
+      const url = new URL(window.location.href)
+      if (m === 'infini') url.searchParams.delete('salle')
+      else url.searchParams.set('salle', c)
+      window.history.replaceState(null, '', url)
+    } catch {
+      // URL non modifiable (aperçu, iframe…) : sans conséquence
+    }
+  })
   const lienPartage = computed(() => {
     if (!code.value) return null
     const url = new URL(window.location.pathname, window.location.origin)

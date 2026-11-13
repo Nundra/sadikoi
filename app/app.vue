@@ -16,21 +16,10 @@ useRaccourcis(
 
 onMounted(async () => {
   await store.charger()
-  // Lien partagé : ?salle=<code>. On retire le code de l'URL une fois la salle chargée,
-  // pour qu'un rechargement de la page relance un tirage.
-  const url = new URL(window.location.href)
-  const code = url.searchParams.get('salle')
-  if (code) {
-    store.chargerCode(code)
-    url.searchParams.delete('salle')
-    try {
-      window.history.replaceState(null, '', url)
-    } catch {
-      // URL non modifiable (aperçu, iframe…) : sans conséquence
-    }
-  } else {
-    store.nouvelleSalle()
-  }
+  // Lien partagé (ou rechargement en training) : ?salle=<code> charge cette salle en training
+  const code = new URLSearchParams(window.location.search).get('salle')
+  if (code) store.chargerCode(code)
+  else store.nouvelleSalle()
 })
 </script>
 

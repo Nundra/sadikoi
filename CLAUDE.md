@@ -25,7 +25,7 @@ Application web d'entraînement pour le Sadida de Dofus 3 : une « salle d'entra
 - **Training map spécifique** : le joueur choisit une map dans un sélecteur.
 - **Training map de boss** : même chose, limité aux maps de boss.
 
-**Partage** : chaque salle a un code court (`codeSalle` dans `engine/salle.ts` : map en base 36, puis 3 caractères par ennemi, case et monstre dessiné), qui n'est pas gardé dans l'URL (recharger la page relance un tirage). Le bouton « Partager » copie un lien `?salle=…` ; l'ouvrir charge la même salle en mode « map spécifique », puis le code est retiré de l'URL.
+**Partage** : chaque salle a un code court (`codeSalle` dans `engine/salle.ts` : map en base 36, puis 3 caractères par ennemi, case et monstre dessiné), gardé dans l'URL (`?salle=…`) en training (map ou boss) pour qu'un rechargement redonne la même salle, et retiré en mode infini pour qu'un rechargement relance un tirage. Le bouton « Partager » copie ce lien ; l'ouvrir charge la même salle en mode « map spécifique ».
 
 **V2 (plus tard, ne pas faire maintenant)** : comptes utilisateurs, maps custom, défi quotidien.
 
