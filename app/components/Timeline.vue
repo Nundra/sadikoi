@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { POINTS_PAR_PA, POINTS_TOUR_2 } from '~~/engine/partie'
-import { invocation, sort as trouverSort } from '~~/engine/sorts'
+import { invocation } from '~~/engine/sorts'
 import { t } from '~/i18n'
 import { ETOILES_POUR_AVANCER } from '~/stores/partie'
 
@@ -41,7 +41,7 @@ const phases = computed<Phase[]>(() => {
       details: details.map(store.texte),
       res: bilan.infectes.length ? t('timeline.infectes', { n: bilan.infectes.length })
         : bilan.mandragores.length ? t('timeline.sous-mandragore', { n: bilan.mandragores.length })
-        : action.type === 'sort' ? t('timeline.pa', { n: trouverSort(action.sort).pa })
+        : action.type === 'sort' ? t('timeline.pa', { n: store.sortAffiche(action.sort).pa })
           : action.type === 'deplacement' ? t('timeline.pm', { n: prec.pm - a.pm }) : '',
       infecte: bilan.infectes.length > 0 || bilan.mandragores.length > 0,
     })

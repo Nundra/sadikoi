@@ -5,13 +5,13 @@ import { categorie, type Categorie } from '~~/engine/categories'
 import { casesAccessibles, chemin } from '~~/engine/chemins'
 import type { Case } from '~~/engine/grille'
 import {
-  PA_PRYCIPITHON, STATS_DEFAUT, acteurCourant, arretTacle, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
+  PA_PRYCIPITHON, STATS_DEFAUT, acteurCourant, sortDe, arretTacle, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
   type Action, type Bilan, type Entite, type Partie, type Stats,
 } from '~~/engine/partie'
 import type { MapCombat } from '~~/engine/plateau'
 import { casesCiblables } from '~~/engine/portee'
 import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
-import { SORTS_SADIDA, invocation, sort as trouverSort, type Sort } from '~~/engine/sorts'
+import { NIVEAU_MAX, SORTS_SADIDA, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
 import type { Message, RefEntite } from '~~/engine/messages'
 import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
@@ -68,6 +68,12 @@ function ecrire(cle: string, valeur: unknown) {
 
 /** Par défaut, seulement les maps normales : zones à 10 places, donjons, Songes. */
 const CATEGORIES_DEFAUT: Record<Categorie, boolean> = { zone: true, speciale: false, donjon: true, koli: false, songes: true, autre: false }
+
+/** Bornes des caractéristiques réglables (PA, PM et PO de base, sans la Prycipithon). */
+export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6] }
+export const NIVEAU_MIN = 1
+
+const borner = (v: number, [min, max]: [number, number]) => Math.min(max, Math.max(min, Math.round(Number.isFinite(v) ? v : max)))
 
 /** Mode infini : étoiles nécessaires pour passer à la salle suivante. */
 export const ETOILES_POUR_AVANCER = 3
@@ -131,8 +137,16 @@ export const usePartieStore = defineStore('partie', () => {
   /** D'abord le placement (à valider), puis le tour. */
   const phase = ref<'placement' | 'tour'>('placement')
 
-  /** Caractéristiques fixes (12 PA / 6 PM / 6 PO) : les mêmes pour tous les joueurs. */
-  const stats = shallowRef<Stats>(STATS_DEFAUT)
+  /**
+   * Niveau et caractéristiques de base du Sadida, réglables (par défaut niveau 200, 12 PA / 6 PM / 6 PO).
+   * Le niveau débloque les sorts et donne leur rang (PO). Gardés dans `sadikoi:personnage`.
+   */
+  const personnage = lire('personnage', { niveau: NIVEAU_MAX, ...STATS_DEFAUT })
+  const niveau = ref(borner(personnage.niveau, [NIVEAU_MIN, NIVEAU_MAX]))
+  const stats = shallowRef<Stats>({
+    pa: borner(personnage.pa, LIMITES_STATS.pa), pm: borner(personnage.pm, LIMITES_STATS.pm), po: borner(personnage.po, LIMITES_STATS.po),
+  })
+  watch([niveau, stats], ([n, st]) => ecrire('personnage', { niveau: n, ...st }))
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
   const prycipithon = ref<boolean>(lire('equipement', { prycipithon: false }).prycipithon)
   watch(prycipithon, v => ecrire('equipement', { prycipithon: v }))
@@ -155,11 +169,16 @@ export const usePartieStore = defineStore('partie', () => {
   /** Action de la timeline qu'on regarde (son résultat), ou null pour le présent. */
   const vue = ref<number | null>(null)
 
-  const sortsChoisis = computed(() => Object.values(variantes.value))
+  /** Le sort est débloqué au niveau choisi (les sorts d'invocation le sont toujours). */
+  const debloque = (s: Sort) => niveauRequis(s) <= niveau.value
+  /** Variantes choisies et débloquées au niveau : celles qu'on joue. */
+  const sortsChoisis = computed(() => Object.values(variantes.value).filter(id => debloque(trouverSort(id))))
+  /** Un sort tel qu'il se lance au niveau choisi (PO du rang), ou au dernier rang s'il n'est pas débloqué. */
+  const sortAffiche = (id: number) => sortAuNiveau(trouverSort(id), niveau.value) ?? trouverSort(id)
 
   const depart = computed(() => map.value && sadida.value !== null
     // Copies simples : le moteur clone la partie avec structuredClone, qui refuse les proxys de Vue
-    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...stats.value }, prycipithon: prycipithon.value })
+    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...stats.value }, prycipithon: prycipithon.value, niveau: niveau.value })
     : null)
 
   /** La partie rejouée action par action. S'arrête à la première action devenue impossible. */
@@ -217,7 +236,7 @@ export const usePartieStore = defineStore('partie', () => {
     // Dans l'ordre des emplacements de la barre, avec la variante choisie
     return barre.ordre.map((paire) => {
       const [x, y] = PAIRES.find(([z]) => z.paire === paire)!
-      return variantes.value[paire] === x.id ? x : y
+      return sortAffiche(variantes.value[paire] === x.id ? x.id : y.id)
     })
   })
 
@@ -230,7 +249,7 @@ export const usePartieStore = defineStore('partie', () => {
     // Portée, puis ce que le sort exige de sa cible (un Arbre, une Poupée, soi-même…)
     const a = acteur.value
     const id = sortChoisi.value
-    return new Set(casesCiblables(plateau(p), a.case, trouverSort(id), bonusPo.value)
+    return new Set(casesCiblables(plateau(p), a.case, sortDe(p, id) ?? trouverSort(id), bonusPo.value)
       .filter(c => refusCibleSpecifique(p, a, id, c) === null))
   })
 
@@ -265,7 +284,7 @@ export const usePartieStore = defineStore('partie', () => {
    */
   const records = ref<Record<string, MeilleurScore>>(lire('records', {}))
   const cleSalle = computed(() => map.value
-    ? `${map.value.id}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}`
+    ? `${map.value.id}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
     : null)
   const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */
@@ -459,6 +478,11 @@ export const usePartieStore = defineStore('partie', () => {
       dire('msg.valider-dabord')
       return
     }
+    const s = trouverSort(id)
+    if (!debloque(s)) {
+      message.value = () => texte({ code: 'niveau-requis', p: { sort: id, niveau: niveauRequis(s) } })
+      return
+    }
     sortChoisi.value = sortChoisi.value === id ? null : id
   }
 
@@ -480,6 +504,19 @@ export const usePartieStore = defineStore('partie', () => {
     if (sortChoisi.value === ancien) sortChoisi.value = variantes.value[paire]!
   }
 
+  /** Change le niveau ou une caractéristique de base, dans ses bornes (pas pendant le tour). */
+  function changerNiveau(v: number) {
+    if (!verrouille.value) niveau.value = borner(v, [NIVEAU_MIN, NIVEAU_MAX])
+  }
+  function changerStat(cle: keyof Stats, v: number) {
+    if (!verrouille.value) stats.value = { ...stats.value, [cle]: borner(v, LIMITES_STATS[cle]) }
+  }
+  function retablirPersonnage() {
+    if (verrouille.value) return
+    niveau.value = NIVEAU_MAX
+    stats.value = { ...STATS_DEFAUT }
+  }
+
   function basculerPrycipithon() {
     if (verrouille.value) return
     prycipithon.value = !prycipithon.value
@@ -499,7 +536,7 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   return {
-    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, stats, statsDepart, prycipithon, variantes, actions, sortChoisi, survol,
+    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, ciblables, accessibles, apercu, score, record, recordPrecedent,
     sexe, portrait, nomAffiche, texte, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,

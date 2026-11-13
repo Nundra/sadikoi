@@ -16,7 +16,7 @@ export type ValeurMessage = number | string | RefEntite | RefEntite[]
 export type CodeMessage =
   // Refus d'une action
   | 'tour-termine' | 'tour-de' | 'ne-se-deplace-pas' | 'deja-sur-case' | 'tacle' | 'hors-atteinte'
-  | 'sort-inconnu' | 'sort-absent' | 'relance-initiale' | 'pa-insuffisants' | 'lancers-par-tour' | 'lancers-par-cible'
+  | 'sort-inconnu' | 'sort-absent' | 'niveau-requis' | 'relance-initiale' | 'pa-insuffisants' | 'lancers-par-tour' | 'lancers-par-cible'
   | 'hors-portee' | 'pas-en-ligne' | 'pas-en-diagonale' | 'pas-en-ligne-ni-diagonale' | 'pas-de-ldv'
   | 'case-non-ciblable' | 'case-occupee'
   | 'viser-arbre' | 'viser-arbre-feuillu' | 'aucun-ennemi-contact' | 'explose-sur-soi' | 'viser-allie'

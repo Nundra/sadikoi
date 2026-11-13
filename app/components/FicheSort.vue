@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { sort as trouverSort } from '~~/engine/sorts'
 import { infectionDuSort, nomSort, t } from '~/i18n'
 
 const store = usePartieStore()
 
-const sort = computed(() => (store.sortChoisi === null ? null : trouverSort(store.sortChoisi)))
+const sort = computed(() => (store.sortChoisi === null ? null : store.sortAffiche(store.sortChoisi)))
 const element = computed(() => (sort.value ? elementDuSort(sort.value) : null))
 
 const contraintes = computed(() => {

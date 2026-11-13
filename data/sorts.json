@@ -56,7 +56,21 @@
    ],
    "role": "Invocation",
    "infection": "Invoque directement La Folle (PO 1-3), sans Arbre. La Folle lance Agacement (3 PA, PO 1-4) : infecte la cible.",
-   "duree_infecte": "1 (via Agacement)"
+   "duree_infecte": "1 (via Agacement)",
+   "rangs": [
+    {
+     "niveau": 120,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 3
+    },
+    {
+     "niveau": 144,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 3
+    }
+   ]
   },
   {
    "id": 13564,
@@ -108,7 +122,27 @@
    ],
    "role": "Invocation",
    "infection": "Remplace un Arbre par La Folle (PO illimitée). La Folle lance Agacement (3 PA, PO 1-4) : infecte la cible.",
-   "duree_infecte": "1 (via Agacement)"
+   "duree_infecte": "1 (via Agacement)",
+   "rangs": [
+    {
+     "niveau": 10,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 77,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 144,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13519,
@@ -163,7 +197,27 @@
    ],
    "role": "Support",
    "infection": "Plante un Arbre. Il ne devient Feuillu qu'après 1 tour : au T1, pas de zone autour de lui.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 5,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 72,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 139,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13560,
@@ -218,7 +272,21 @@
    ],
    "role": "Support",
    "infection": "Plante un Arbre Feuillu et rend Feuillus tous les Arbres du lanceur dès T1 (active Ronce, Miasmes, Cigüe… autour d'eux).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 115,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 182,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13516,
@@ -330,7 +398,27 @@
    ],
    "role": "Applique + exploite",
    "infection": "Infecte la cible. Sur un Arbre Feuillu : effets dans un cercle de 2 autour de l'Arbre. Sur un ennemi : effets aussi sur tous les Infectés.",
-   "duree_infecte": "1"
+   "duree_infecte": "1",
+   "rangs": [
+    {
+     "niveau": 1,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 66,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 132,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13521,
@@ -403,7 +491,21 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés. Réduit la durée des effets sur la cible (risque de raccourcir l'Infection).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 95,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 6
+    },
+    {
+     "niveau": 162,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13524,
@@ -526,7 +628,15 @@
    ],
    "role": "Conditionnel",
    "infection": "Infecte seulement si la cible attaque un Arbre du lanceur : aucune infection possible pendant ton T1.",
-   "duree_infecte": "2"
+   "duree_infecte": "2",
+   "rangs": [
+    {
+     "niveau": 150,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13571,
@@ -611,7 +721,27 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur une Poupée : carré de 1 autour. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 40,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 4
+    },
+    {
+     "niveau": 107,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 5
+    },
+    {
+     "niveau": 174,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 13526,
@@ -663,7 +793,15 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection (Poupée de blocage, peut échanger de position).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 140,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 3
+    }
+   ]
   },
   {
    "id": 13561,
@@ -715,7 +853,27 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection (Poupée de blocage, peut échanger de position).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 30,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 97,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 140,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13528,
@@ -827,7 +985,27 @@
    ],
    "role": "Support + exploite",
    "infection": "N'infecte pas. Sur un Arbre : cercle de 2 et le rend Feuillu (utile T1). Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 1,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 6
+    },
+    {
+     "niveau": 67,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 7
+    },
+    {
+     "niveau": 133,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13563,
@@ -943,7 +1121,21 @@
    ],
    "role": "Support",
    "infection": "N'infecte pas. Rend Feuillus les Arbres dans la zone (carré de 1).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 100,
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 6
+    },
+    {
+     "niveau": 167,
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13533,
@@ -1031,7 +1223,27 @@
    ],
    "role": "Applique",
    "infection": "Infecte la cible (monocible).",
-   "duree_infecte": "3"
+   "duree_infecte": "3",
+   "rangs": [
+    {
+     "niveau": 15,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 82,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 149,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13562,
@@ -1121,7 +1333,21 @@
    ],
    "role": "Applique (zone)",
    "infection": "Infecte les ennemis dans un cercle de 2 autour du lanceur, et autour de chaque Arbre Feuillu et Poupée.",
-   "duree_infecte": "1"
+   "duree_infecte": "1",
+   "rangs": [
+    {
+     "niveau": 125,
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 0
+    },
+    {
+     "niveau": 192,
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 0
+    }
+   ]
   },
   {
    "id": 13525,
@@ -1245,7 +1471,27 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Arbre Feuillu : cercle de 2. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 25,
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 5
+    },
+    {
+     "niveau": 92,
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 7
+    },
+    {
+     "niveau": 159,
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 9
+    }
+   ]
   },
   {
    "id": 13565,
@@ -1330,7 +1576,15 @@
    ],
    "role": "Support",
    "infection": "Téléporte une invocation Sadida vers le lanceur et plante un Arbre sur la case ciblée (repositionne une Poupée).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 135,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 9
+    }
+   ]
   },
   {
    "id": 13530,
@@ -1397,7 +1651,27 @@
    ],
    "role": "Invocation",
    "infection": "Remplace un Arbre Feuillu par le Groute : Rejet Sylvestre (4 PA, PO 2-8) infecte et pousse la cible.",
-   "duree_infecte": "2 (via Rejet Sylvestre)"
+   "duree_infecte": "2 (via Rejet Sylvestre)",
+   "rangs": [
+    {
+     "niveau": 45,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 112,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 179,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13566,
@@ -1464,7 +1738,15 @@
    ],
    "role": "Invocation",
    "infection": "Remplace un Arbre Feuillu par le Tréant : Étreinte Sylvestre (4 PA, PO 1-8) infecte et attire la cible.",
-   "duree_infecte": "2 (via Étreinte Sylvestre)"
+   "duree_infecte": "2 (via Étreinte Sylvestre)",
+   "rangs": [
+    {
+     "niveau": 155,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13522,
@@ -1528,7 +1810,15 @@
    ],
    "role": "Invocation",
    "infection": "Invoque directement La Sacrifiée (PO 1-3). Explosion Ouatée (2 PA) : se sacrifie et infecte en cercle de 2 autour d'elle.",
-   "duree_infecte": "2 (via Explosion Ouatée)"
+   "duree_infecte": "2 (via Explosion Ouatée)",
+   "rangs": [
+    {
+     "niveau": 160,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 3
+    }
+   ]
   },
   {
    "id": 13567,
@@ -1592,7 +1882,27 @@
    ],
    "role": "Invocation",
    "infection": "Remplace un Arbre par La Sacrifiée. Explosion Ouatée (2 PA) : se sacrifie et infecte en cercle de 2 autour d'elle.",
-   "duree_infecte": "2 (via Explosion Ouatée)"
+   "duree_infecte": "2 (via Explosion Ouatée)",
+   "rangs": [
+    {
+     "niveau": 50,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 117,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 160,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13514,
@@ -1689,7 +1999,21 @@
    ],
    "role": "Support",
    "infection": "N'infecte pas. Attire de 2 cases vers le centre (cercle de 3 autour du lanceur, d'un Arbre Feuillu ou d'une Poupée) : regroupe les ennemis.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 75,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 63
+    },
+    {
+     "niveau": 142,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13559,
@@ -1793,7 +2117,15 @@
    ],
    "role": "Applique + exploite",
    "infection": "Infecte la cible + état Mandragore (2 tours) : la réinfecte si elle subit des dommages de poison ou d'invocation. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": "1 (+ Mandragore 2)"
+   "duree_infecte": "1 (+ Mandragore 2)",
+   "rangs": [
+    {
+     "niveau": 185,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13532,
@@ -1867,7 +2199,21 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 85,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 152,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13579,
@@ -1978,7 +2324,15 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 195,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 0
+    }
+   ]
   },
   {
    "id": 13517,
@@ -2067,7 +2421,15 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un ennemi : effets aussi sur tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 170,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 13531,
@@ -2222,7 +2584,27 @@
    ],
    "role": "Applique (zone) + exploite",
    "infection": "Sur une Poupée : la sacrifie et infecte en cercle de 2 autour d'elle. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": "2"
+   "duree_infecte": "2",
+   "rangs": [
+    {
+     "niveau": 60,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 5
+    },
+    {
+     "niveau": 127,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 194,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13575,
@@ -2334,7 +2716,27 @@
    ],
    "role": "Propage",
    "infection": "Sur un ennemi Infecté : infecte en cercle de 2 autour de la cible et touche tous les Infectés.",
-   "duree_infecte": "2"
+   "duree_infecte": "2",
+   "rangs": [
+    {
+     "niveau": 20,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 5
+    },
+    {
+     "niveau": 87,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 154,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 14396,
@@ -2476,7 +2878,21 @@
    ],
    "role": "Support",
    "infection": "N'infecte pas. Rend Feuillus tous les Arbres.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 130,
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 5
+    },
+    {
+     "niveau": 197,
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 13569,
@@ -2588,7 +3004,21 @@
    ],
    "role": "Consomme",
    "infection": "Retire l'Infection autour de la cible : à éviter pour l'objectif.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 80,
+     "pa": 5,
+     "po_min": 1,
+     "po_max": 5
+    },
+    {
+     "niveau": 147,
+     "pa": 5,
+     "po_min": 1,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 13570,
@@ -2661,7 +3091,15 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 190,
+     "pa": 5,
+     "po_min": 1,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 13523,
@@ -2713,7 +3151,15 @@
    ],
    "role": "Support",
    "infection": "Pas d'infection. La Gonflable peut repousser de 4 cases (Brise Automnale).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 180,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 3
+    }
+   ]
   },
   {
    "id": 13573,
@@ -2765,7 +3211,21 @@
    ],
    "role": "Support",
    "infection": "Pas d'infection. La Gonflable peut repousser de 4 cases (Brise Automnale).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 70,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 137,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13527,
@@ -2873,7 +3333,27 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 35,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 4
+    },
+    {
+     "niveau": 102,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 5
+    },
+    {
+     "niveau": 169,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 14393,
@@ -2973,7 +3453,15 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 145,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    }
+   ]
   },
   {
    "id": 13534,
@@ -3043,7 +3531,27 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection (Arbre de Vie).",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 65,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 131,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 198,
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13572,
@@ -3128,7 +3636,15 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 175,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   },
   {
    "id": 13568,
@@ -3228,7 +3744,21 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 105,
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 6
+    },
+    {
+     "niveau": 172,
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13574,
@@ -3348,7 +3878,27 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Arbre Feuillu : cercle de 2. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 1,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 68,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 134,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13529,
@@ -3425,7 +3975,21 @@
    ],
    "role": "Applique",
    "infection": "Infecte la cible (monocible).",
-   "duree_infecte": "1"
+   "duree_infecte": "1",
+   "rangs": [
+    {
+     "niveau": 110,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 177,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13577,
@@ -3537,7 +4101,27 @@
    ],
    "role": "Maintient + exploite",
    "infection": "N'infecte pas un ennemi sain. Sur un Infecté : remet l'Infection à 3 tours et touche tous les Infectés. Sur un Arbre Feuillu : maintient l'Infection en cercle de 2.",
-   "duree_infecte": "3 (maintien)"
+   "duree_infecte": "3 (maintien)",
+   "rangs": [
+    {
+     "niveau": 1,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6
+    },
+    {
+     "niveau": 69,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    },
+    {
+     "niveau": 136,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8
+    }
+   ]
   },
   {
    "id": 13518,
@@ -3587,7 +4171,27 @@
    ],
    "role": "Aucun",
    "infection": "Pas d'infection.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 55,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 5
+    },
+    {
+     "niveau": 122,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 6
+    },
+    {
+     "niveau": 189,
+     "pa": 3,
+     "po_min": 0,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13576,
@@ -3687,7 +4291,15 @@
    ],
    "role": "Exploite",
    "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 165,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 7
+    }
+   ]
   },
   {
    "id": 13520,
@@ -3739,7 +4351,15 @@
    ],
    "role": "Support",
    "infection": "Pas d'infection directe. La Surpuissante a Choc Hivernal (exploite) et donne des PM.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 200,
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 3
+    }
+   ]
   },
   {
    "id": 13578,
@@ -3791,7 +4411,21 @@
    ],
    "role": "Support",
    "infection": "Pas d'infection directe. La Surpuissante a Choc Hivernal (exploite) et donne des PM.",
-   "duree_infecte": null
+   "duree_infecte": null,
+   "rangs": [
+    {
+     "niveau": 90,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    },
+    {
+     "niveau": 157,
+     "pa": 2,
+     "po_min": 1,
+     "po_max": 63
+    }
+   ]
   }
  ],
  "ordre": [

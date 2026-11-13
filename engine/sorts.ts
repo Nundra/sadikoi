@@ -15,7 +15,16 @@ export interface Sort extends ReglesPortee {
   infection?: string
   variante_de?: { id: number, nom: string }
   description?: string
+  /** Rangs du sort (Sadida) : niveau du joueur qui le débloque, PA et PO à ce rang. Le sort lui-même est au dernier rang. */
+  rangs?: Rang[]
   effets: { action: number, sous_sort?: number, cibles: string, duree?: number, etat?: { id: number, nom: string } }[]
+}
+
+export interface Rang {
+  niveau: number
+  pa: number
+  po_min: number
+  po_max: number
 }
 
 export interface Invocation {
@@ -48,6 +57,23 @@ export function sort(id: number): Sort {
   const s = parId.get(id)
   if (!s) throw new Error(`sort inconnu : ${id}`)
   return s
+}
+
+export const NIVEAU_MAX = 200
+
+/** Niveau du joueur qui débloque le sort (1 pour les sorts d'invocation, qui n'ont pas de rangs). */
+export function niveauRequis(s: Sort): number {
+  return s.rangs?.[0]?.niveau ?? 1
+}
+
+/**
+ * Le sort au rang que donne le niveau du joueur (PA et PO de ce rang), ou null s'il n'est pas
+ * encore débloqué. Les effets restent ceux du dernier rang.
+ */
+export function sortAuNiveau(s: Sort, niveau: number): Sort | null {
+  const r = s.rangs?.filter(x => x.niveau <= niveau).at(-1)
+  if (!s.rangs?.length) return s
+  return r ? { ...s, pa: r.pa, po_min: r.po_min, po_max: r.po_max } : null
 }
 
 export function invocation(id: number): Invocation {

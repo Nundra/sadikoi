@@ -4,7 +4,7 @@ import { attirer, avancer, direction, glisser, repousser } from './mouvements'
 import { creerPlateau, libre, type Plateau } from './plateau'
 import { refusCible } from './portee'
 import {
-  COMPORTEMENTS, POUPEES, SORTS_SADIDA, dureeInfection, exploite, invocation, sort as trouverSort, type Sort,
+  COMPORTEMENTS, NIVEAU_MAX, POUPEES, SORTS_SADIDA, dureeInfection, exploite, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort,
 } from './sorts'
 import { msg, type Message, type RefEntite } from './messages'
 import { zone } from './zones'
@@ -64,7 +64,9 @@ export interface Partie {
   /** Caractéristiques de départ du Sadida (PA comptés avec la Prycipithon). */
   stats: Stats
   prycipithon: boolean
-  /** Les sorts choisis par le joueur : une variante par paire. */
+  /** Niveau du Sadida : il donne les sorts débloqués et leur rang (PO). */
+  niveau: number
+  /** Les sorts choisis par le joueur : une variante par paire, débloquée au niveau. */
   sorts: number[]
   entites: Entite[]
   /** Ceux qui jouent, dans l'ordre : le Sadida, puis ses invocations, de la dernière invoquée à la première. */
@@ -107,7 +109,10 @@ export function nouvellePartie(o: {
   stats?: Stats
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
   prycipithon?: boolean
+  /** Niveau du Sadida (200 par défaut). */
+  niveau?: number
 }): Partie {
+  const niveau = o.niveau ?? NIVEAU_MAX
   const base = o.stats ?? STATS_DEFAUT
   const stats = o.prycipithon ? { ...base, pa: base.pa + PA_PRYCIPITHON } : base
   const paires = new Set<number>()
@@ -115,6 +120,7 @@ export function nouvellePartie(o: {
     const s = SORTS_SADIDA.find(s => s.id === id)
     if (!s) throw new Error(`${id} n'est pas un sort du Sadida`)
     if (paires.has(s.paire!)) throw new Error(`${s.nom} : une seule variante par paire`)
+    if (niveauRequis(s) > niveau) throw new Error(`${s.nom} : pas débloqué au niveau ${niveau}`)
     paires.add(s.paire!)
   }
   const entites: Entite[] = [
@@ -123,7 +129,7 @@ export function nouvellePartie(o: {
   ]
   creerPlateau(o.cases, entites.map(e => e.case)) // vérifie la map
   return {
-    cases: o.cases, stats, prycipithon: Boolean(o.prycipithon), sorts: [...o.sorts], entites, ordre: [SADIDA], tour: 0,
+    cases: o.cases, stats, prycipithon: Boolean(o.prycipithon), niveau, sorts: [...o.sorts], entites, ordre: [SADIDA], tour: 0,
     lancers: {}, exploitations: 0, prochainId: entites.length,
   }
 }
@@ -312,13 +318,19 @@ function deplacer(p: Partie, acteur: Entite, vers: Case): Resultat {
   return { ok: true, partie: p, bilan: { ...bilanVide(), texte: [msg('titre-deplacement', { case: vers, pm: ch.length })] } }
 }
 
+/** Le sort tel que le lance la partie : au rang du niveau du Sadida (null s'il n'est pas débloqué). */
+export function sortDe(p: Partie, id: number): Sort | null {
+  return sortAuNiveau(trouverSort(id), p.niveau)
+}
+
 function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
-  let s: Sort
+  let s: Sort | null
   try {
-    s = trouverSort(id)
+    s = sortDe(p, id)
   } catch {
     return refus(msg('sort-inconnu'))
   }
+  if (!s) return refus(msg('niveau-requis', { sort: id, niveau: niveauRequis(trouverSort(id)) }))
   if (acteur.genre === 'sadida' ? !p.sorts.includes(id)
     : acteur.genre !== 'invocation' || !invocation(acteur.monstre!).sorts.some(x => x.id === id)) {
     return refus(msg('sort-absent', { e: ref(acteur), sort: id }))

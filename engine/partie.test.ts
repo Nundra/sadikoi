@@ -250,3 +250,21 @@ describe('partie', () => {
     expect(rejouer(p, actions.slice(1)).erreur).toEqual({ index: 0, raison: { code: 'viser-arbre' } })
   })
 })
+
+describe('niveau du Sadida', () => {
+  const auNiveau = (sorts: string[], niveau: number) =>
+    nouvellePartie({ cases: plateauTest().cases, sadida: A, ennemis: [decale(A, 0, 8)], sorts: sorts.map(id), niveau })
+
+  it('refuse un sort pas encore débloqué', () => {
+    // Arbre Feuillu se débloque au niveau 115
+    expect(() => auNiveau(['Arbre Feuillu'], 114)).toThrow()
+    expect(() => auNiveau(['Arbre Feuillu'], 115)).not.toThrow()
+  })
+
+  it('donne la PO du rang atteint', () => {
+    // Arbre (PO non modifiable) : PO 6 au niveau 5, 7 au niveau 72, 8 au niveau 139
+    const loin = decale(A, 8, 0)
+    expect(rejouer(auNiveau(['Arbre'], 100), [sort('Arbre', loin)]).erreur?.raison).toEqual({ code: 'hors-portee' })
+    expect(rejouer(auNiveau(['Arbre'], 139), [sort('Arbre', loin)]).erreur).toBeUndefined()
+  })
+})

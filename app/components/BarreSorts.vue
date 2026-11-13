@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Sort } from '~~/engine/sorts'
+import { niveauRequis, type Sort } from '~~/engine/sorts'
 import { useBarreStore } from '~/stores/barre'
 import { PAIRES } from '~/stores/partie'
 import { infectionDuSort, nomSort, t } from '~/i18n'
@@ -19,7 +19,8 @@ const sorts = computed(() => store.sortsActeur.map((s, k) => {
     couleur: COULEUR_ELEMENT[element],
     nom: nomSort(s.id),
     autre: s.variante_de ? nomSort(s.variante_de.id) : null,
-    indisponible: Boolean(s.relance_initiale) || (store.acteur?.pa ?? store.statsDepart.pa) < s.pa,
+    verrou: store.debloque(s) ? null : niveauRequis(s),
+    indisponible: !store.debloque(s) || Boolean(s.relance_initiale) || (store.acteur?.pa ?? store.statsDepart.pa) < s.pa,
     variante: store.acteur?.genre !== 'invocation' && !estPremiere(s),
     description: descriptionUtile(s),
     contraintes: [
@@ -85,6 +86,7 @@ function deposer(k: number) {
             <span class="carac">{{ t('sort.pa', { n: x.s.pa }) }} · {{ t('sort.po', { po: porteeDuSort(x.s, store.bonusPo) }) }}{{ x.s.po_modifiable ? t('sort.modifiable') : '' }}</span>
           </div>
         </div>
+        <p v-if="x.verrou" class="verrou">{{ t('sort.niveau-requis', { n: x.verrou }) }}</p>
         <p v-if="x.contraintes" class="contraintes">{{ x.contraintes }}</p>
         <p v-for="(para, i) in x.description" :key="i" class="description">{{ para }}</p>
         <p class="infection"><span>{{ t('sort.infection') }}</span>{{ infectionDuSort(x.s) }}</p>
@@ -128,6 +130,7 @@ function deposer(k: number) {
 .infobulle .titre div { display: flex; flex-direction: column; }
 .infobulle strong { font-size: 14px; color: var(--or-clair); }
 .infobulle .carac, .infobulle .contraintes, .infobulle .aide { font-size: 11px; color: var(--texte-gris); font-weight: 700; }
+.infobulle .verrou { font-size: 11px; font-weight: 800; color: #ffb4a3; }
 .infobulle p { margin: 0; }
 .infobulle .description { white-space: pre-line; }
 .infobulle .infection { padding: 6px 8px; border-radius: 6px; background: rgb(122 63 184 / 0.18); border: 1px solid rgb(201 165 240 / 0.35); }

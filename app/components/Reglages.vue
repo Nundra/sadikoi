@@ -3,6 +3,8 @@ import { CATEGORIES } from '~~/engine/categories'
 import { SORTS_SADIDA } from '~~/engine/sorts'
 import { useBarreStore } from '~/stores/barre'
 import { nomSort, t } from '~/i18n'
+import { LIMITES_STATS, NIVEAU_MIN } from '~/stores/partie'
+import { NIVEAU_MAX } from '~~/engine/sorts'
 
 const store = usePartieStore()
 const barre = useBarreStore()
@@ -13,6 +15,14 @@ const emplacements = computed(() => barre.ordre.map((paire, k) => {
   return { k, nom: nomSort(s.id), touche: barre.libelle(barre.touches[k] ?? '') }
 }))
 const dialogue = ref<HTMLDialogElement | null>(null)
+
+/** Niveau puis PA, PM, PO : valeur, bornes et réglage (− / + ou saisie). */
+const reglablesPersonnage = computed(() => [
+  { cle: 'niveau', nom: t('reglages.niveau'), valeur: store.niveau, bornes: [NIVEAU_MIN, NIVEAU_MAX] as const, changer: store.changerNiveau },
+  ...(['pa', 'pm', 'po'] as const).map(cle => ({
+    cle, nom: t(`carac.${cle}`), valeur: store.stats[cle], bornes: LIMITES_STATS[cle], changer: (v: number) => store.changerStat(cle, v),
+  })),
+])
 
 defineExpose({ ouvrir: () => dialogue.value?.showModal() })
 
@@ -39,6 +49,29 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
           <span>{{ t(`reglages.${v}`) }}</span>
         </label>
       </div>
+    </fieldset>
+
+    <fieldset class="personnage">
+      <legend>{{ t('reglages.niveau-stats') }}</legend>
+      <p class="aide">{{ t('reglages.niveau-stats-aide') }}</p>
+      <div v-for="r in reglablesPersonnage" :key="r.cle" class="reglable">
+        <label :for="`reglage-${r.cle}`">{{ r.nom }}</label>
+        <span class="bornes">{{ t('reglages.bornes', { min: r.bornes[0], max: r.bornes[1] }) }}</span>
+        <button type="button" :aria-label="`${r.nom} −1`" :disabled="store.verrouille || r.valeur <= r.bornes[0]" @click="r.changer(r.valeur - 1)">−</button>
+        <input
+          :id="`reglage-${r.cle}`"
+          type="number"
+          inputmode="numeric"
+          :min="r.bornes[0]"
+          :max="r.bornes[1]"
+          :value="r.valeur"
+          :disabled="store.verrouille"
+          @change="(ev) => { r.changer(Number((ev.target as HTMLInputElement).value)); (ev.target as HTMLInputElement).value = String(r.valeur) }"
+        >
+        <button type="button" :aria-label="`${r.nom} +1`" :disabled="store.verrouille || r.valeur >= r.bornes[1]" @click="r.changer(r.valeur + 1)">+</button>
+      </div>
+      <p v-if="store.verrouille" class="aide">{{ t('reglages.verrouille') }}</p>
+      <button v-else type="button" class="retablir" @click="store.retablirPersonnage()">{{ t('reglages.retablir-personnage') }}</button>
     </fieldset>
 
     <fieldset>
@@ -119,6 +152,18 @@ input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--or); fle
 }
 .sexe:has(input:checked) { border-color: var(--or); }
 .sexe img { width: 56px; height: 56px; object-fit: contain; }
+.personnage { margin-bottom: 18px; }
+.reglable { display: grid; grid-template-columns: 1fr auto 34px 64px 34px; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+.reglable .bornes { font-size: 12px; font-weight: 600; color: var(--texte-gris); }
+.reglable button { width: 34px; height: 32px; padding: 0; font-size: 16px; font-weight: 800; }
+.reglable input {
+  width: 64px; height: 32px; margin: 0; padding: 0 6px; border-radius: 8px; text-align: center;
+  background: var(--fond-creux); color: var(--texte); border: 1px solid var(--bord-clair); font: inherit; font-weight: 800;
+}
+.reglable input:disabled { opacity: 0.6; }
+/* Sans les flèches natives du champ nombre : les boutons − / + font déjà ce travail */
+.reglable input { appearance: textfield; -moz-appearance: textfield; }
+.reglable input::-webkit-inner-spin-button, .reglable input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .raccourcis { margin-top: 18px; }
 .raccourcis ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
 .raccourcis li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
@@ -127,6 +172,7 @@ input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--or); fle
 .raccourcis .touche { width: 64px; height: 28px; padding: 0; font-size: 12px; font-weight: 800; color: var(--or-clair); }
 .raccourcis .touche.attente { border-color: var(--or); background: #3a2f17; }
 .retablir { height: 34px; font-size: 12px; margin-top: 4px; }
+.personnage .retablir { align-self: flex-start; padding: 0 14px; }
 .boutons { margin-top: 16px; }
 .boutons button { width: 100%; }
 </style>

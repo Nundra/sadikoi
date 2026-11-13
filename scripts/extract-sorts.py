@@ -49,6 +49,16 @@ def main(src: Path) -> None:
         vals = dict(zip(cols, db.execute(f"SELECT {', '.join(cols)} FROM SpellLevelData WHERE id=?", (lv,)).fetchone()))
         return tx(row[0]), tx(row[1]).strip(), vals
 
+    def rangs(spell_id):
+        """Les rangs du sort : niveau du joueur qui le débloque, PA et PO (la PO grandit avec le rang)."""
+        ids = json.loads(db.execute("SELECT spellLevels FROM SpellData WHERE id=?", (spell_id,)).fetchone()[0])
+        out = []
+        for lv in ids:
+            niveau, pa, po_min, po_max = db.execute(
+                "SELECT minPlayerLevel, apCost, minRange, range FROM SpellLevelData WHERE id=?", (lv,)).fetchone()
+            out.append({"niveau": niveau, "pa": pa, "po_min": po_min, "po_max": po_max})
+        return out
+
     def effets(raw):
         out = []
         for e in json.loads(raw):
@@ -93,6 +103,7 @@ def main(src: Path) -> None:
             "relance_initiale": v["initialCooldown"] or None,  # > 0 : pas lançable au T1
             "description": desc,
             "effets": effets(v["effects"]),
+            "rangs": rangs(spell_id),
         }
         fiche.update(roles.get(str(spell_id), {}))
         return fiche
