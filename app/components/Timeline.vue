@@ -179,8 +179,6 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
           <button v-if="store.mode === 'infini'" type="button" :title="t('timeline.rejouer-infini')" @click="store.rejouerSalle()">{{ t('timeline.rejouer') }}</button>
           <!-- Training : on retravaille la même salle -->
           <button v-else type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
-          <!-- Map perso : retour à la construction -->
-          <button v-if="store.mode === 'creation'" type="button" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
         </div>
         <template v-if="store.mode === 'infini'">
           <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">{{ t('resultat.suivante') }}</button>
