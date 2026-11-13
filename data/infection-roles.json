@@ -1,0 +1,222 @@
+{
+ "13564": {
+  "role": "Invocation",
+  "infection": "Remplace un Arbre par La Folle (PO illimitée). La Folle lance Agacement (3 PA, PO 1-4) : infecte la cible.",
+  "duree_infecte": "1 (via Agacement)"
+ },
+ "13515": {
+  "role": "Invocation",
+  "infection": "Invoque directement La Folle (PO 1-3), sans Arbre. La Folle lance Agacement (3 PA, PO 1-4) : infecte la cible.",
+  "duree_infecte": "1 (via Agacement)"
+ },
+ "13519": {
+  "role": "Support",
+  "infection": "Plante un Arbre. Il ne devient Feuillu qu'après 1 tour : au T1, pas de zone autour de lui.",
+  "duree_infecte": null
+ },
+ "13560": {
+  "role": "Support",
+  "infection": "Plante un Arbre Feuillu et rend Feuillus tous les Arbres du lanceur dès T1 (active Ronce, Miasmes, Cigüe… autour d'eux).",
+  "duree_infecte": null
+ },
+ "13516": {
+  "role": "Applique + exploite",
+  "infection": "Infecte la cible. Sur un Arbre Feuillu : effets dans un cercle de 2 autour de l'Arbre. Sur un ennemi : effets aussi sur tous les Infectés.",
+  "duree_infecte": "1"
+ },
+ "13521": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés. Réduit la durée des effets sur la cible (risque de raccourcir l'Infection).",
+  "duree_infecte": null
+ },
+ "13524": {
+  "role": "Conditionnel",
+  "infection": "Infecte seulement si la cible attaque un Arbre du lanceur : aucune infection possible pendant ton T1.",
+  "duree_infecte": "2"
+ },
+ "13571": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur une Poupée : carré de 1 autour. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13526": {
+  "role": "Aucun",
+  "infection": "Pas d'infection (Poupée de blocage, peut échanger de position).",
+  "duree_infecte": null
+ },
+ "13561": {
+  "role": "Aucun",
+  "infection": "Pas d'infection (Poupée de blocage, peut échanger de position).",
+  "duree_infecte": null
+ },
+ "13528": {
+  "role": "Support + exploite",
+  "infection": "N'infecte pas. Sur un Arbre : cercle de 2 et le rend Feuillu (utile T1). Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13563": {
+  "role": "Support",
+  "infection": "N'infecte pas. Rend Feuillus les Arbres dans la zone (carré de 1).",
+  "duree_infecte": null
+ },
+ "13533": {
+  "role": "Applique",
+  "infection": "Infecte la cible (monocible).",
+  "duree_infecte": "3"
+ },
+ "13562": {
+  "role": "Applique (zone)",
+  "infection": "Infecte les ennemis dans un cercle de 2 autour du lanceur, et autour de chaque Arbre Feuillu et Poupée.",
+  "duree_infecte": "1"
+ },
+ "13525": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Arbre Feuillu : cercle de 2. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13565": {
+  "role": "Support",
+  "infection": "Téléporte une invocation Sadida vers le lanceur et plante un Arbre sur la case ciblée (repositionne une Poupée).",
+  "duree_infecte": null
+ },
+ "13530": {
+  "role": "Invocation",
+  "infection": "Remplace un Arbre Feuillu par le Groute : Rejet Sylvestre (4 PA, PO 2-8) infecte et pousse la cible.",
+  "duree_infecte": "2 (via Rejet Sylvestre)"
+ },
+ "13566": {
+  "role": "Invocation",
+  "infection": "Remplace un Arbre Feuillu par le Tréant : Étreinte Sylvestre (4 PA, PO 1-8) infecte et attire la cible.",
+  "duree_infecte": "2 (via Étreinte Sylvestre)"
+ },
+ "13522": {
+  "role": "Invocation",
+  "infection": "Invoque directement La Sacrifiée (PO 1-3). Explosion Ouatée (2 PA) : se sacrifie et infecte en cercle de 2 autour d'elle.",
+  "duree_infecte": "2 (via Explosion Ouatée)"
+ },
+ "13567": {
+  "role": "Invocation",
+  "infection": "Remplace un Arbre par La Sacrifiée. Explosion Ouatée (2 PA) : se sacrifie et infecte en cercle de 2 autour d'elle.",
+  "duree_infecte": "2 (via Explosion Ouatée)"
+ },
+ "13514": {
+  "role": "Support",
+  "infection": "N'infecte pas. Attire de 2 cases vers le centre (cercle de 3 autour du lanceur, d'un Arbre Feuillu ou d'une Poupée) : regroupe les ennemis.",
+  "duree_infecte": null
+ },
+ "13559": {
+  "role": "Applique + exploite",
+  "infection": "Infecte la cible + état Mandragore (2 tours) : la réinfecte si elle subit des dommages de poison ou d'invocation. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": "1 (+ Mandragore 2)"
+ },
+ "13532": {
+  "role": "Aucun",
+  "infection": "Pas d'infection.",
+  "duree_infecte": null
+ },
+ "13579": {
+  "role": "Aucun",
+  "infection": "Pas d'infection.",
+  "duree_infecte": null
+ },
+ "13517": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un ennemi : effets aussi sur tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13531": {
+  "role": "Applique (zone) + exploite",
+  "infection": "Sur une Poupée : la sacrifie et infecte en cercle de 2 autour d'elle. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": "2"
+ },
+ "13575": {
+  "role": "Propage",
+  "infection": "Sur un ennemi Infecté : infecte en cercle de 2 autour de la cible et touche tous les Infectés.",
+  "duree_infecte": "2"
+ },
+ "14396": {
+  "role": "Support",
+  "infection": "N'infecte pas. Rend Feuillus tous les Arbres.",
+  "duree_infecte": null
+ },
+ "13569": {
+  "role": "Consomme",
+  "infection": "Retire l'Infection autour de la cible : à éviter pour l'objectif.",
+  "duree_infecte": null
+ },
+ "13570": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13523": {
+  "role": "Support",
+  "infection": "Pas d'infection. La Gonflable peut repousser de 4 cases (Brise Automnale).",
+  "duree_infecte": null
+ },
+ "13573": {
+  "role": "Support",
+  "infection": "Pas d'infection. La Gonflable peut repousser de 4 cases (Brise Automnale).",
+  "duree_infecte": null
+ },
+ "13527": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "14393": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13534": {
+  "role": "Aucun",
+  "infection": "Pas d'infection (Arbre de Vie).",
+  "duree_infecte": null
+ },
+ "13572": {
+  "role": "Aucun",
+  "infection": "Pas d'infection.",
+  "duree_infecte": null
+ },
+ "13568": {
+  "role": "Aucun",
+  "infection": "Pas d'infection.",
+  "duree_infecte": null
+ },
+ "13574": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Arbre Feuillu : cercle de 2. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13529": {
+  "role": "Applique",
+  "infection": "Infecte la cible (monocible).",
+  "duree_infecte": "1"
+ },
+ "13577": {
+  "role": "Maintient + exploite",
+  "infection": "N'infecte pas un ennemi sain. Sur un Infecté : remet l'Infection à 3 tours et touche tous les Infectés. Sur un Arbre Feuillu : maintient l'Infection en cercle de 2.",
+  "duree_infecte": "3 (maintien)"
+ },
+ "13518": {
+  "role": "Aucun",
+  "infection": "Pas d'infection.",
+  "duree_infecte": null
+ },
+ "13576": {
+  "role": "Exploite",
+  "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+  "duree_infecte": null
+ },
+ "13520": {
+  "role": "Support",
+  "infection": "Pas d'infection directe. La Surpuissante a Choc Hivernal (exploite) et donne des PM.",
+  "duree_infecte": null
+ },
+ "13578": {
+  "role": "Support",
+  "infection": "Pas d'infection directe. La Surpuissante a Choc Hivernal (exploite) et donne des PM.",
+  "duree_infecte": null
+ }
+}

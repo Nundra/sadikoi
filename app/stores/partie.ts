@@ -1,0 +1,482 @@
+import { defineStore } from 'pinia'
+import { computed, ref, shallowRef, watch } from 'vue'
+import { zoneDuSort } from '~~/engine/apercu'
+import { categorie, type Categorie } from '~~/engine/categories'
+import { casesAccessibles, chemin } from '~~/engine/chemins'
+import type { Case } from '~~/engine/grille'
+import {
+  PA_PRYCIPITHON, STATS_DEFAUT, acteurCourant, arretTacle, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
+  type Action, type Bilan, type Entite, type Partie, type Stats,
+} from '~~/engine/partie'
+import type { MapCombat } from '~~/engine/plateau'
+import { casesCiblables } from '~~/engine/portee'
+import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
+import { SORTS_SADIDA, invocation, sort as trouverSort, type Sort } from '~~/engine/sorts'
+import portraits from '~~/data/portraits.json'
+import { useBarreStore } from './barre'
+
+export type Mode = 'infini' | 'map' | 'boss'
+
+/** Meilleur résultat sur une salle. */
+export interface MeilleurScore {
+  points: number
+  etoiles: number
+  paDepenses: number
+}
+
+/** Une action jouée, avec la partie juste avant et juste après, et ce qu'elle a changé. */
+export interface Etape {
+  action: Action
+  avant: Partie
+  apres: Partie
+  bilan: Bilan
+}
+
+/** Les paires de variantes, dans l'ordre de data/sorts.json. */
+export const PAIRES: [Sort, Sort][] = (() => {
+  const parPaire = new Map<number, Sort[]>()
+  for (const s of SORTS_SADIDA) parPaire.set(s.paire!, [...(parPaire.get(s.paire!) ?? []), s])
+  return [...parPaire.values()] as [Sort, Sort][]
+})()
+
+/** Variantes choisies au départ (celles de la maquette). */
+const VARIANTES_DEFAUT = new Set([
+  'La Folle', 'Arbre Feuillu', 'Ronce', 'Fléau', 'La Bloqueuse', 'Larme de Sadida', 'Miasmes', 'Ronce Apaisante',
+  'Puissance Sylvestre', 'La Sacrifiée', 'Mandragore', 'Don Naturel', 'Sacrifice Vaudou', 'Contagion', 'Inoculation',
+  'La Gonflable', 'Ronces Agressives', 'Arbre de Vie', 'Buisson Ardent', 'Vent Empoisonné', 'Malédiction Vaudou',
+  'La Surpuissante',
+])
+
+function lire<T>(cle: string, defaut: T): T {
+  try {
+    const v = localStorage.getItem(`sadikoi:${cle}`)
+    return v ? { ...defaut, ...JSON.parse(v) } : defaut
+  } catch {
+    return defaut
+  }
+}
+
+function ecrire(cle: string, valeur: unknown) {
+  try {
+    localStorage.setItem(`sadikoi:${cle}`, JSON.stringify(valeur))
+  } catch {
+    // stockage indisponible (navigation privée…) : on garde la valeur en mémoire
+  }
+}
+
+/** Par défaut, seulement les maps normales : zones à 10 places, donjons, Songes. */
+const CATEGORIES_DEFAUT: Record<Categorie, boolean> = { zone: true, speciale: false, donjon: true, koli: false, songes: true, autre: false }
+
+/** Mode infini : étoiles nécessaires pour passer à la salle suivante. */
+export const ETOILES_POUR_AVANCER = 3
+
+function auHasard<T>(liste: T[]): T {
+  return liste[Math.floor(Math.random() * liste.length)]!
+}
+
+export const usePartieStore = defineStore('partie', () => {
+  const barre = useBarreStore()
+  const maps = shallowRef<MapCombat[]>([])
+  const mapsBoss = computed(() => maps.value.filter(m => m.boss))
+
+  /** Type de chaque map (calculé une fois au chargement). */
+  const categories = shallowRef(new Map<number, Categorie>())
+  /** Types de map tirés en mode infini et proposés à la recherche. */
+  const categoriesActives = ref<Record<Categorie, boolean>>(lire('categories', CATEGORIES_DEFAUT))
+  watch(categoriesActives, v => ecrire('categories', v), { deep: true })
+  const mapsActives = computed(() => maps.value.filter(m => categoriesActives.value[categories.value.get(m.id) ?? 'zone']))
+  const compteParCategorie = computed(() => {
+    const compte: Record<Categorie, number> = { zone: 0, speciale: 0, donjon: 0, koli: 0, songes: 0, autre: 0 }
+    for (const c of categories.value.values()) compte[c]++
+    return compte
+  })
+
+  /** Active ou coupe un type de map ; on en garde toujours au moins un. */
+  function basculerCategorie(c: Categorie) {
+    const v = { ...categoriesActives.value, [c]: !categoriesActives.value[c] }
+    if (Object.values(v).some(Boolean)) categoriesActives.value = v
+  }
+  const mode = ref<Mode>('infini')
+  /** Map choisie dans les modes « map » et « boss ». */
+  const mapChoisie = ref<number | null>(null)
+  const numeroSalle = ref(0)
+  const map = shallowRef<MapCombat | null>(null)
+  const ennemis = ref<Case[]>([])
+  /** Case du Sadida ; null tant qu'il n'est pas placé. */
+  const sadida = ref<Case | null>(null)
+  /** Personnage du Sadida sur le plateau (purement visuel). */
+  const sexe = ref<'femme' | 'homme'>(lire('apparence', { sexe: 'femme' as 'femme' | 'homme' }).sexe)
+  watch(sexe, v => ecrire('apparence', { sexe: v }))
+  /** Monstre dessiné pour chaque ennemi de la salle (tiré au hasard, purement visuel). */
+  /** Position, dans la liste de data/portraits.json, du monstre dessiné pour chaque ennemi. */
+  const portraitsEnnemis = ref<number[]>([])
+  const monstreDe = (e: Entite) => portraits.ennemis[portraitsEnnemis.value[e.id - 1] ?? 0] ?? portraits.ennemis[0]!
+  /** Le portrait d'une entité (images de public/portraits, voir data/portraits.json). */
+  function portrait(e: Entite): string {
+    if (e.genre === 'sadida') return `/portraits/sadida-${sexe.value}.png`
+    if (e.genre === 'ennemi') return `/portraits/${monstreDe(e).id}.png`
+    return `/portraits/${e.monstre}.png`
+  }
+  /** Nom à afficher : le monstre dessiné pour un ennemi, sinon le nom de l'entité. */
+  function nomAffiche(e: Entite): string {
+    return e.genre === 'ennemi' ? `${monstreDe(e).nom} (E${e.id})` : e.nom
+  }
+  /** D'abord le placement (à valider), puis le tour. */
+  const phase = ref<'placement' | 'tour'>('placement')
+
+  /** Caractéristiques fixes (12 PA / 6 PM / 6 PO) : les mêmes pour tous les joueurs. */
+  const stats = shallowRef<Stats>(STATS_DEFAUT)
+  /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
+  const prycipithon = ref<boolean>(lire('equipement', { prycipithon: false }).prycipithon)
+  watch(prycipithon, v => ecrire('equipement', { prycipithon: v }))
+  /** Caractéristiques de départ du Sadida, Prycipithon comprise. */
+  const statsDepart = computed<Stats>(() => (prycipithon.value ? { ...stats.value, pa: stats.value.pa + PA_PRYCIPITHON } : stats.value))
+  const variantes = ref<Record<number, number>>(lire('variantes', Object.fromEntries(
+    PAIRES.map(([a, b]) => [a.paire!, VARIANTES_DEFAUT.has(a.nom) ? a.id : b.id]),
+  )))
+  watch(variantes, v => ecrire('variantes', v), { deep: true })
+
+  const actions = ref<Action[]>([])
+  const sortChoisi = ref<number | null>(null)
+  const survol = ref<Case | null>(null)
+  const message = ref<string | null>(null)
+  /** Action de la timeline qu'on regarde (son résultat), ou null pour le présent. */
+  const vue = ref<number | null>(null)
+
+  const sortsChoisis = computed(() => Object.values(variantes.value))
+
+  const depart = computed(() => map.value && sadida.value !== null
+    // Copies simples : le moteur clone la partie avec structuredClone, qui refuse les proxys de Vue
+    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...stats.value }, prycipithon: prycipithon.value })
+    : null)
+
+  /** La partie rejouée action par action. S'arrête à la première action devenue impossible. */
+  const deroule = computed(() => {
+    if (!depart.value) return null
+    let partie = depart.value
+    const etapes: Etape[] = []
+    for (const [index, action] of actions.value.entries()) {
+      const r = jouer(partie, action)
+      if (!r.ok) return { partie, etapes, erreur: { index, raison: r.raison } }
+      etapes.push({ action, avant: partie, apres: r.partie, bilan: r.bilan })
+      partie = r.partie
+    }
+    return { partie, etapes, erreur: null }
+  })
+
+  // Une variante ou une stat changée peut rendre une action impossible : on coupe là.
+  watch(() => deroule.value?.erreur, (e) => {
+    if (!e) return
+    message.value = `Action ${e.index + 1} retirée : ${e.raison}`
+    actions.value = actions.value.slice(0, e.index)
+  })
+
+  const partie = computed(() => deroule.value?.partie ?? null)
+  const etapes = computed(() => deroule.value?.etapes ?? [])
+  const termine = computed(() => phase.value === 'tour' && partie.value !== null && estTermine(partie.value))
+  const casesPlacement = computed(() => map.value ? casesDuJoueur(map.value) : [])
+
+  /** Celui qui a la main (null pendant le placement ou une fois tout le monde passé). */
+  const acteur = computed(() => (phase.value === 'tour' && partie.value ? acteurCourant(partie.value) ?? null : null))
+
+  /** L'étape affichée : celle qu'on regarde, sinon la dernière jouée. */
+  const etapeAffichee = computed(() => (vue.value === null ? etapes.value.at(-1) : etapes.value[vue.value]) ?? null)
+  const partieAffichee = computed(() => (vue.value === null ? partie.value : etapeAffichee.value?.apres ?? partie.value))
+
+  /** Les pions à dessiner (avant le placement : seulement les ennemis). */
+  const entites = computed<Entite[]>(() => partieAffichee.value?.entites
+    ?? ennemis.value.map((c, k) => ({ id: k + 1, genre: 'ennemi', nom: `Ennemi ${k + 1}`, case: c, pa: 0, pm: 0 })))
+
+  /** Les entités déplacées par l'étape affichée : d'où elles partent, où elles arrivent. */
+  const deplacements = computed(() => {
+    const e = etapeAffichee.value
+    if (!e) return []
+    return e.apres.entites.flatMap((x) => {
+      const avant = e.avant.entites.find(y => y.id === x.id)
+      return avant && avant.case !== x.case ? [{ id: x.id, de: avant.case, vers: x.case }] : []
+    })
+  })
+
+  /** Les sorts de celui qui joue : la barre du Sadida, ou ceux de l'invocation. */
+  const sortsActeur = computed<Sort[]>(() => {
+    const a = acteur.value
+    if (a && a.genre === 'invocation') return invocation(a.monstre!).sorts
+    // Dans l'ordre des emplacements de la barre, avec la variante choisie
+    return barre.ordre.map((paire) => {
+      const [x, y] = PAIRES.find(([z]) => z.paire === paire)!
+      return variantes.value[paire] === x.id ? x : y
+    })
+  })
+
+  const bonusPo = computed(() => (acteur.value?.genre === 'invocation' ? 0 : stats.value.po))
+  const interactif = computed(() => vue.value === null && acteur.value !== null)
+
+  const ciblables = computed(() => {
+    const p = partie.value
+    if (!p || !acteur.value || !interactif.value || sortChoisi.value === null) return new Set<Case>()
+    // Portée, puis ce que le sort exige de sa cible (un Arbre, une Poupée, soi-même…)
+    const a = acteur.value
+    const id = sortChoisi.value
+    return new Set(casesCiblables(plateau(p), a.case, trouverSort(id), bonusPo.value)
+      .filter(c => refusCibleSpecifique(p, a, id, c) === null))
+  })
+
+  const accessibles = computed(() => {
+    const p = partie.value
+    const a = acteur.value
+    if (!p || !a || !interactif.value || sortChoisi.value !== null) return new Map<Case, number>()
+    return casesAccessibles(plateau(p), a.case, a.pm, arretTacle(p, a))
+  })
+
+  /** Aperçu au survol : zone du sort et ennemis qu'il infecterait, ou chemin du déplacement. */
+  const apercu = computed(() => {
+    const p = partie.value
+    const a = acteur.value
+    const c = survol.value
+    const vide = { zone: new Set<Case>(), infectes: new Set<number>(), chemin: new Set<Case>() }
+    if (!p || !a || c === null || !interactif.value) return vide
+    if (sortChoisi.value !== null) {
+      if (!ciblables.value.has(c)) return vide
+      const r = jouer(p, { type: 'sort', acteur: a.id, sort: sortChoisi.value, cible: c })
+      return { ...vide, zone: new Set(zoneDuSort(p, a.id, sortChoisi.value, c)), infectes: new Set(r.ok ? r.bilan.infectes : []) }
+    }
+    if (accessibles.value.has(c) && c !== a.case) return { ...vide, chemin: new Set(chemin(plateau(p), a.case, c, a.pm, arretTacle(p, a))) }
+    return vide
+  })
+
+  const score = computed(() => partie.value ? calculerScore(partie.value) : null)
+
+  /**
+   * Records par salle : même map, mêmes ennemis, mêmes caractéristiques (on ne compare pas
+   * un tour à 14 PA avec un tour à 12). Gardés dans le navigateur.
+   */
+  const records = ref<Record<string, MeilleurScore>>(lire('records', {}))
+  const cleSalle = computed(() => map.value
+    ? `${map.value.id}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}`
+    : null)
+  const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
+  /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */
+  const recordPrecedent = ref<MeilleurScore | null>(null)
+
+  watch(termine, (fin) => {
+    const sc = score.value
+    if (!fin || !sc || !cleSalle.value) return
+    recordPrecedent.value = record.value
+    if (record.value && record.value.points >= sc.points) return
+    const tous = { ...records.value, [cleSalle.value]: { points: sc.points, etoiles: sc.etoiles, paDepenses: sc.paDepenses } }
+    // On garde les 300 dernières salles améliorées
+    const cles = Object.keys(tous)
+    for (const c of cles.slice(0, Math.max(0, cles.length - 300))) delete tous[c]
+    records.value = tous
+    ecrire('records', tous)
+  })
+
+  async function charger() {
+    if (maps.value.length) return
+    const donnees = await import('~~/data/maps.json')
+    maps.value = (donnees.default as { maps: MapCombat[] }).maps
+    categories.value = new Map(maps.value.map(m => [m.id, categorie(m)]))
+  }
+
+  function nouvelleSalle() {
+    const liste = mode.value === 'boss' ? mapsBoss.value : mode.value === 'infini' ? mapsActives.value : maps.value
+    if (!liste.length) return
+    const choisie = mode.value === 'infini' ? null : liste.find(m => m.id === mapChoisie.value)
+    const m = choisie ?? auHasard(liste)
+    if (mode.value !== 'infini') mapChoisie.value = m.id
+    map.value = m
+    ennemis.value = tirerSalle(m).ennemis
+    portraitsEnnemis.value = ennemis.value.map(() => Math.floor(Math.random() * portraits.ennemis.length))
+    sadida.value = null
+    // En mode infini, le numéro est la place de la salle dans la run
+    numeroSalle.value = mode.value === 'infini' ? serie.value + 1 : numeroSalle.value + 1
+    replacer()
+  }
+
+  /**
+   * Code de la salle en cours, à partager. Il n'est pas gardé dans l'URL : recharger la page
+   * relance un tirage ; seul le lien du bouton « Partager » contient ?salle=….
+   */
+  const code = computed(() => (map.value ? codeSalle(map.value, ennemis.value, portraitsEnnemis.value) : null))
+  const lienPartage = computed(() => {
+    if (!code.value) return null
+    const url = new URL(window.location.pathname, window.location.origin)
+    url.searchParams.set('salle', code.value)
+    return url.toString()
+  })
+
+  /** Charge la salle d'un code partagé ; sinon, une nouvelle salle et un message. */
+  function chargerCode(texte: string) {
+    const salle = lireCodeSalle(texte, maps.value)
+    if (!salle) {
+      nouvelleSalle()
+      message.value = 'Ce code de salle ne correspond à aucune salle : en voici une autre.'
+      return
+    }
+    mode.value = 'map'
+    mapChoisie.value = salle.map.id
+    map.value = salle.map
+    ennemis.value = salle.ennemis
+    portraitsEnnemis.value = salle.portraits.map(k => (k < portraits.ennemis.length ? k : 0))
+    sadida.value = null
+    numeroSalle.value++
+    replacer()
+  }
+
+  /**
+   * Mode infini : une run est une suite de salles. On ne passe à la suivante qu'avec
+   * ETOILES_POUR_AVANCER étoiles ; sinon on rejoue la salle ou on recommence la run.
+   */
+  const serie = ref(0)
+  const meilleureSerie = ref(lire('run', { meilleure: 0 }).meilleure)
+  watch(meilleureSerie, v => ecrire('run', { meilleure: v }))
+  const peutAvancer = computed(() => mode.value !== 'infini' || (termine.value && (score.value?.etoiles ?? 0) >= ETOILES_POUR_AVANCER))
+
+  function salleSuivante() {
+    if (!peutAvancer.value) {
+      message.value = `Il faut ${ETOILES_POUR_AVANCER} étoiles pour passer à la salle suivante.`
+      return
+    }
+    if (mode.value === 'infini') {
+      serie.value++
+      meilleureSerie.value = Math.max(meilleureSerie.value, serie.value)
+    }
+    nouvelleSalle()
+  }
+
+  /**
+   * Rejouer la salle : depuis le mode infini, on passe en training sur cette même salle
+   * (mêmes ennemis) ; la run s'arrête là.
+   */
+  function rejouerSalle() {
+    if (mode.value === 'infini' && map.value) {
+      mode.value = 'map'
+      mapChoisie.value = map.value.id
+      serie.value = 0
+    }
+    recommencer()
+  }
+
+  function nouvelleRun() {
+    serie.value = 0
+    nouvelleSalle()
+  }
+
+  /** Copie le lien de la salle dans le presse-papiers. */
+  async function partager() {
+    try {
+      await navigator.clipboard.writeText(lienPartage.value!)
+      message.value = `Lien de la salle copié (code ${code.value}).`
+    } catch {
+      message.value = `Copie impossible : partage ce lien : ${lienPartage.value}`
+    }
+  }
+
+  /** Retour au placement : le tour est effacé. */
+  function replacer() {
+    phase.value = 'placement'
+    recommencer()
+    message.value = null
+  }
+
+  function recommencer() {
+    actions.value = []
+    sortChoisi.value = null
+    vue.value = null
+    message.value = null
+  }
+
+  function validerPlacement() {
+    if (sadida.value === null) {
+      message.value = 'Place d’abord le Sadida sur une case bleue.'
+      return
+    }
+    phase.value = 'tour'
+    message.value = null
+  }
+
+  function tenter(action: Action): boolean {
+    const p = partie.value
+    if (!p) return false
+    const r = jouer(p, action)
+    if (!r.ok) {
+      message.value = r.raison
+      return false
+    }
+    actions.value = [...actions.value, action]
+    return true
+  }
+
+  function clicCase(c: Case) {
+    message.value = null
+    if (vue.value !== null) {
+      message.value = 'Tu regardes une action passée : reviens au présent pour jouer.'
+      return
+    }
+    if (phase.value === 'placement') {
+      if (!casesPlacement.value.includes(c)) message.value = 'Place le Sadida sur une case bleue.'
+      else sadida.value = c
+      return
+    }
+    const a = acteur.value
+    if (!a) return
+    if (sortChoisi.value !== null) {
+      if (tenter({ type: 'sort', acteur: a.id, sort: sortChoisi.value, cible: c })) sortChoisi.value = null
+      return
+    }
+    if (c !== a.case) tenter({ type: 'deplacement', acteur: a.id, vers: c })
+  }
+
+  function choisirSort(id: number) {
+    message.value = null
+    if (phase.value === 'placement') {
+      message.value = 'Valide d’abord le placement.'
+      return
+    }
+    sortChoisi.value = sortChoisi.value === id ? null : id
+  }
+
+  function finDuTour() {
+    const a = acteur.value
+    if (!a || vue.value !== null) return
+    sortChoisi.value = null
+    tenter({ type: 'fin', acteur: a.id })
+  }
+
+  /** Variantes et caractéristiques sont fixées une fois le placement validé. */
+  const verrouille = computed(() => phase.value === 'tour')
+
+  function changerVariante(paire: number) {
+    if (verrouille.value) return
+    const [a, b] = PAIRES.find(([x]) => x.paire === paire)!
+    const ancien = variantes.value[paire]
+    variantes.value = { ...variantes.value, [paire]: ancien === a.id ? b.id : a.id }
+    if (sortChoisi.value === ancien) sortChoisi.value = variantes.value[paire]!
+  }
+
+  function basculerPrycipithon() {
+    if (verrouille.value) return
+    prycipithon.value = !prycipithon.value
+  }
+
+  function annuler() {
+    actions.value = actions.value.slice(0, -1)
+    vue.value = null
+    message.value = null
+  }
+
+  /** Regarde le résultat d'une action passée (null : retour au présent). */
+  function regarder(index: number | null) {
+    sortChoisi.value = null
+    message.value = null
+    vue.value = index === null || index >= etapes.value.length - 1 ? null : Math.max(0, index)
+  }
+
+  return {
+    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, stats, statsDepart, prycipithon, variantes, actions, sortChoisi, survol,
+    message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
+    sortsActeur, verrouille, bonusPo, interactif, ciblables, accessibles, apercu, score, record, recordPrecedent,
+    sexe, portrait, nomAffiche, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,
+    basculerPrycipithon, annuler, regarder,
+  }
+})

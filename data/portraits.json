@@ -1,0 +1,29 @@
+{
+ "sadida": { "classe": 10, "pose": 0 },
+ "ennemis": [
+  { "id": 491, "nom": "Piou Bleu" },
+  { "id": 489, "nom": "Piou Rouge" },
+  { "id": 490, "nom": "Piou Vert" },
+  { "id": 492, "nom": "Piou Rose" },
+  { "id": 493, "nom": "Piou Jaune" },
+  { "id": 236, "nom": "Piou Violet" },
+  { "id": 101, "nom": "Bouftou" },
+  { "id": 134, "nom": "Boufton Blanc" },
+  { "id": 147, "nom": "Bouftou Royal" },
+  { "id": 98, "nom": "Tofu" },
+  { "id": 31, "nom": "Larve Bleue" },
+  { "id": 52, "nom": "Arakne" },
+  { "id": 106, "nom": "Craqueleur" },
+  { "id": 103, "nom": "Prespic" },
+  { "id": 104, "nom": "Sanglier" },
+  { "id": 61, "nom": "Moskito" },
+  { "id": 59, "nom": "Champ Champ" },
+  { "id": 876, "nom": "Bwork" },
+  { "id": 64, "nom": "Wabbit" },
+  { "id": 54, "nom": "Chafer" },
+  { "id": 47, "nom": "Abraknyde" },
+  { "id": 78, "nom": "Rose Démoniaque" },
+  { "id": 79, "nom": "Pissenlit Diabolique" }
+ ],
+ "invocations": [5894, 5895, 5896, 5897, 5898, 5899, 5900, 5901]
+}

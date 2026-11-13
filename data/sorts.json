@@ -1,0 +1,4604 @@
+{
+ "source": "dofus-sqlite (github.com/ledouxm/dofus-sqlite), dernière release",
+ "etat_infecte": {
+  "id": 263,
+  "nom": "Infecté",
+  "exploitations_max_par_tour": 3
+ },
+ "sorts": [
+  {
+   "id": 13515,
+   "nom": "La Folle Transmutée",
+   "paire": 264,
+   "variante_de": {
+    "id": 13564,
+    "nom": "La Folle"
+   },
+   "niveau": 144,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 3,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Invoque une Poupée maîtrisable qui peut Infecter et appliquer un poison Air de début de tour.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5896
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5896",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    }
+   ],
+   "role": "Invocation",
+   "infection": "Invoque directement La Folle (PO 1-3), sans Arbre. La Folle lance Agacement (3 PA, PO 1-4) : infecte la cible.",
+   "duree_infecte": "1 (via Agacement)"
+  },
+  {
+   "id": 13564,
+   "nom": "La Folle",
+   "paire": 264,
+   "variante_de": {
+    "id": 13515,
+    "nom": "La Folle Transmutée"
+   },
+   "niveau": 144,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre par une Poupée maîtrisable qui peut Infecter et appliquer un poison Air de début de tour.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+   "effets": [
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5896
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5896
+    }
+   ],
+   "role": "Invocation",
+   "infection": "Remplace un Arbre par La Folle (PO illimitée). La Folle lance Agacement (3 PA, PO 1-4) : infecte la cible.",
+   "duree_infecte": "1 (via Agacement)"
+  },
+  {
+   "id": 13519,
+   "nom": "Arbre",
+   "paire": 265,
+   "variante_de": {
+    "id": 13560,
+    "nom": "Arbre Feuillu"
+   },
+   "niveau": 139,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Plante un Arbre.\nUn Arbre devient Feuillu après 1 tour.\n\nIl ne peut y avoir que 6 Arbres par équipe. Le septième Arbre planté entraîne la mort du premier.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "s,U",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    }
+   ],
+   "role": "Support",
+   "infection": "Plante un Arbre. Il ne devient Feuillu qu'après 1 tour : au T1, pas de zone autour de lui.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13560,
+   "nom": "Arbre Feuillu",
+   "paire": 265,
+   "variante_de": {
+    "id": 13519,
+    "nom": "Arbre"
+   },
+   "niveau": 182,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Plante un Arbre Feuillu.\nTous les Arbres invoqués par le lanceur se transforment immédiatement en Arbres Feuillus.\n\nIl ne peut y avoir que 6 Arbres par équipe. Le septième Arbre planté entraîne la mort du premier.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "s,U",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    }
+   ],
+   "role": "Support",
+   "infection": "Plante un Arbre Feuillu et rend Feuillus tous les Arbres du lanceur dès T1 (active Ronce, Miasmes, Cigüe… autour d'eux).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13516,
+   "nom": "Ronce",
+   "paire": 266,
+   "variante_de": {
+    "id": 13521,
+    "nom": "Ronce Insolente"
+   },
+   "niveau": 132,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 3,
+   "lancers_par_cible": 2,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Infecte la cible et occasionne des dommages Terre.\n\nSur un Arbre Feuillu : applique les effets sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi : applique également les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13552
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "a,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Applique + exploite",
+   "infection": "Infecte la cible. Sur un Arbre Feuillu : effets dans un cercle de 2 autour de l'Arbre. Sur un ennemi : effets aussi sur tous les Infectés.",
+   "duree_infecte": "1"
+  },
+  {
+   "id": 13521,
+   "nom": "Ronce Insolente",
+   "paire": 266,
+   "variante_de": {
+    "id": 13516,
+    "nom": "Ronce"
+   },
+   "niveau": 162,
+   "pa": 3,
+   "po_min": 0,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Réduit la durée des effets sur la cible et occasionne des dommages Terre aux ennemis.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1075,
+     "texte": "Durée des effets : -#1{{~1~2 à -}}#2",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés. Réduit la durée des effets sur la cible (risque de raccourcir l'Infection).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13524,
+   "nom": "Forêt Hantée",
+   "paire": 267,
+   "variante_de": {
+    "id": 13571,
+    "nom": "Fléau"
+   },
+   "niveau": 150,
+   "pa": 3,
+   "po_min": 0,
+   "po_max": 7,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": true,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Terre aux ennemis et leur applique l'état Forêt Hantée en zone :\n• Infecte la cible si elle attaque un Arbre du lanceur.\n\nLa zone s'étend dans un carré de taille 1 autour des Arbres Feuillus et les effets ne sont appliqués qu'une seule fois par lancer.",
+   "effets": [
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 4
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5896,
+      "nom": "Forêt Hantée (cible)"
+     }
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 4
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 4
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29643
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 4
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5407,
+      "nom": "Forêt Hantée"
+     }
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "cercle",
+      "taille": 63
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29643
+    },
+    {
+     "action": 951,
+     "texte": "Enlève l'état #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "tout",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "etat": {
+      "id": 5896,
+      "nom": "Forêt Hantée (cible)"
+     }
+    }
+   ],
+   "role": "Conditionnel",
+   "infection": "Infecte seulement si la cible attaque un Arbre du lanceur : aucune infection possible pendant ton T1.",
+   "duree_infecte": "2"
+  },
+  {
+   "id": 13571,
+   "nom": "Fléau",
+   "paire": 267,
+   "variante_de": {
+    "id": 13524,
+    "nom": "Forêt Hantée"
+   },
+   "niveau": 174,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 6,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 3,
+   "lancers_par_cible": 2,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Vole de la vie dans l'élément Eau.\n\nSur une Poupée : applique les effets sur les ennemis dans un carré de taille 1.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5895,F5896,F5897,F5898,F5899,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13592
+    },
+    {
+     "action": 91,
+     "texte": "#1{{~1~2 à }}#2 vol Eau",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 91,
+     "texte": "#1{{~1~2 à }}#2 vol Eau",
+     "cibles": "a,f5895,f5896,f5897,f5898,f5899,f7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur une Poupée : carré de 1 autour. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13526,
+   "nom": "La Bloqueuse Transmutée",
+   "paire": 268,
+   "variante_de": {
+    "id": 13561,
+    "nom": "La Bloqueuse"
+   },
+   "niveau": 140,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 3,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Invoque une Poupée maîtrisable qui peut échanger de position si elle est maîtrisée et bloquer les ennemis.\nElle peut également augmenter ses PM et se rendre Intaclable.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5895
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5895",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection (Poupée de blocage, peut échanger de position).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13561,
+   "nom": "La Bloqueuse",
+   "paire": 268,
+   "variante_de": {
+    "id": 13526,
+    "nom": "La Bloqueuse Transmutée"
+   },
+   "niveau": 140,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre par une Poupée maîtrisable qui peut échanger de position si elle est maîtrisée et bloquer les ennemis.\nElle peut également augmenter ses PM et se rendre Intaclable.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+   "effets": [
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5895
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5895
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection (Poupée de blocage, peut échanger de position).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13528,
+   "nom": "Larme de Sadida",
+   "paire": 269,
+   "variante_de": {
+    "id": 13563,
+    "nom": "Montée de Sève"
+   },
+   "niveau": 133,
+   "pa": 3,
+   "po_min": 0,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": false,
+   "en_ligne": true,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 3,
+   "lancers_par_cible": 2,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Soigne les alliés ou occasionne des dommages Eau aux ennemis.\n\nSur un Arbre : applique les effets dans un cercle de taille 2 et transforme l'Arbre en Arbre Feuillu.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5894,F5900,F5901",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13545
+    },
+    {
+     "action": 2998,
+     "texte": "#1{{~1~2 à }}#2 soins Eau",
+     "cibles": "a,f5894,f5900,f5901",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 792,
+     "texte": "#1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13558
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Support + exploite",
+   "infection": "N'infecte pas. Sur un Arbre : cercle de 2 et le rend Feuillu (utile T1). Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13563,
+   "nom": "Montée de Sève",
+   "paire": 269,
+   "variante_de": {
+    "id": 13528,
+    "nom": "Larme de Sadida"
+   },
+   "niveau": 167,
+   "pa": 4,
+   "po_min": 0,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Vole de la vie dans l'élément Eau aux ennemis et soigne les alliés (hors lanceur) selon les dommages occasionnés en zone.\n\nSur des Arbres : les transforme également en Arbres Feuillus.",
+   "effets": [
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "g",
+     "zone": {
+      "forme": "carre",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 3756,
+      "nom": "Montée de Sève"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "carre",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 24997
+    },
+    {
+     "action": 91,
+     "texte": "#1{{~1~2 à }}#2 vol Eau",
+     "cibles": "A",
+     "zone": {
+      "forme": "carre",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 792,
+     "texte": "#1",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 24997
+    },
+    {
+     "action": 2973,
+     "texte": "Soin : #1{{~1~2 à }}#2% des dommages occasionnés",
+     "cibles": "g,E3756",
+     "zone": {
+      "forme": "carre",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 792,
+     "texte": "#1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "carre",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13558
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "s,U",
+     "zone": {
+      "forme": "carre",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    }
+   ],
+   "role": "Support",
+   "infection": "N'infecte pas. Rend Feuillus les Arbres dans la zone (carré de 1).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13533,
+   "nom": "Sève Paralysante",
+   "paire": 270,
+   "variante_de": {
+    "id": 13562,
+    "nom": "Miasmes"
+   },
+   "niveau": 149,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Infecte, retire de l'Esquive PM et applique un poison Feu de fin de tour sur la cible.",
+   "effets": [
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 3,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 163,
+     "texte": "-#1{{~1~2 à -}}#2 Esquive PM",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 3,
+     "declencheur": "I"
+    },
+    {
+     "action": 3793,
+     "texte": "",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "TE"
+    },
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "TE"
+    }
+   ],
+   "role": "Applique",
+   "infection": "Infecte la cible (monocible).",
+   "duree_infecte": "3"
+  },
+  {
+   "id": 13562,
+   "nom": "Miasmes",
+   "paire": 270,
+   "variante_de": {
+    "id": 13533,
+    "nom": "Sève Paralysante"
+   },
+   "niveau": 192,
+   "pa": 2,
+   "po_min": 0,
+   "po_max": 0,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Infecte et applique un poison Air de fin de tour sur les ennemis en zone.\nLa zone s'étend autour des Arbres Feuillus et des Poupées.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13580
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13580
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5897,F5898,F5895,F5896,F5899,F7934",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13580
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "TE"
+    }
+   ],
+   "role": "Applique (zone)",
+   "infection": "Infecte les ennemis dans un cercle de 2 autour du lanceur, et autour de chaque Arbre Feuillu et Poupée.",
+   "duree_infecte": "1"
+  },
+  {
+   "id": 13525,
+   "nom": "Ronce Apaisante",
+   "paire": 271,
+   "variante_de": {
+    "id": 13565,
+    "nom": "Rempotage"
+   },
+   "niveau": 159,
+   "pa": 2,
+   "po_min": 0,
+   "po_max": 9,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": true,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 4,
+   "relance_initiale": null,
+   "description": "Soigne les alliés ou retire des PM aux ennemis.\n\nSur un Arbre Feuillu : applique les effets dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 6,
+      "nom": "Enraciné"
+     }
+    },
+    {
+     "action": 3002,
+     "texte": "#1{{~1~2 à }}#2 soins du meilleur élément",
+     "cibles": "a,f5894,f5900,f5901",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13546
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13546
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13546
+    },
+    {
+     "action": 1080,
+     "texte": "-#1{{~1~2 à -}}#2 PM",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 2,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Arbre Feuillu : cercle de 2. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13565,
+   "nom": "Rempotage",
+   "paire": 271,
+   "variante_de": {
+    "id": 13525,
+    "nom": "Ronce Apaisante"
+   },
+   "niveau": 135,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 9,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": true,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 2,
+   "relance_initiale": 1,
+   "description": "Soigne une invocation Sadida, la téléporte sur la première case disponible entre le lanceur et elle et plante un Arbre sur la case ciblée.",
+   "effets": [
+    {
+     "action": 1109,
+     "texte": "Soin : #1{{~1~2 à }}#2% des PV max",
+     "cibles": "a,F5894,F5895,F5896,F5897,F5898,F5899,F5900,F5901,F7934,F7933",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1017,
+     "texte": "#1",
+     "cibles": "a,F5894,F5895,F5896,F5897,F5898,F5899,F5900,F5901,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 4,
+     "texte": "Téléporte sur la case ciblée",
+     "cibles": "a,A",
+     "zone": {
+      "forme": 108,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    },
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 0
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    }
+   ],
+   "role": "Support",
+   "infection": "Téléporte une invocation Sadida vers le lanceur et plante un Arbre sur la case ciblée (repositionne une Poupée).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13530,
+   "nom": "Puissance Sylvestre",
+   "paire": 272,
+   "variante_de": {
+    "id": 13566,
+    "nom": "Influence Végétale"
+   },
+   "niveau": 179,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre Feuillu par un Arbre Feuillu contrôlable qui peut :\n• Infecter et pousser une cible.\n• Soigner les alliés et réduire les soins reçus par les ennemis en zone.\n• Réduire la durée des effets sur une cible.\n\nL'Arbre contrôlable est remplacé par un Arbre Feuillu 2 tours après son invocation.",
+   "effets": [
+    {
+     "action": 2796,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5901
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5901",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,F5901",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    }
+   ],
+   "role": "Invocation",
+   "infection": "Remplace un Arbre Feuillu par le Groute : Rejet Sylvestre (4 PA, PO 2-8) infecte et pousse la cible.",
+   "duree_infecte": "2 (via Rejet Sylvestre)"
+  },
+  {
+   "id": 13566,
+   "nom": "Influence Végétale",
+   "paire": 272,
+   "variante_de": {
+    "id": 13530,
+    "nom": "Puissance Sylvestre"
+   },
+   "niveau": 155,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre Feuillu par un Arbre Feuillu contrôlable qui peut :\n• Infecter et attirer une cible.\n• Appliquer un bouclier sur les alliés et retirer des PM aux ennemis en zone.\n• Planter des Ronces Indéplaçables.\n\nL'Arbre contrôlable est remplacé par un Arbre Feuillu 2 tours après son invocation.",
+   "effets": [
+    {
+     "action": 2796,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5900
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5900",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,F5900",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    }
+   ],
+   "role": "Invocation",
+   "infection": "Remplace un Arbre Feuillu par le Tréant : Étreinte Sylvestre (4 PA, PO 1-8) infecte et attire la cible.",
+   "duree_infecte": "2 (via Étreinte Sylvestre)"
+  },
+  {
+   "id": 13522,
+   "nom": "La Sacrifiée Transmutée",
+   "paire": 273,
+   "variante_de": {
+    "id": 13567,
+    "nom": "La Sacrifiée"
+   },
+   "niveau": 160,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 3,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 2,
+   "relance_initiale": null,
+   "description": "Invoque une Poupée maîtrisable qui peut se sacrifier pour Infecter et occasionner des dommages Eau en zone.\nSa Vitalité et ses dommages finaux augmentent au fil des tours.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5898
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 24281
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5898",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    }
+   ],
+   "role": "Invocation",
+   "infection": "Invoque directement La Sacrifiée (PO 1-3). Explosion Ouatée (2 PA) : se sacrifie et infecte en cercle de 2 autour d'elle.",
+   "duree_infecte": "2 (via Explosion Ouatée)"
+  },
+  {
+   "id": 13567,
+   "nom": "La Sacrifiée",
+   "paire": 273,
+   "variante_de": {
+    "id": 13522,
+    "nom": "La Sacrifiée Transmutée"
+   },
+   "niveau": 160,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 2,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre par une Poupée maîtrisable qui peut se sacrifier pour Infecter et occasionner des dommages Eau en zone.\nSa Vitalité et ses dommages finaux augmentent au fil des tours.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+   "effets": [
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5898
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5898
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 24281
+    }
+   ],
+   "role": "Invocation",
+   "infection": "Remplace un Arbre par La Sacrifiée. Explosion Ouatée (2 PA) : se sacrifie et infecte en cercle de 2 autour d'elle.",
+   "duree_infecte": "2 (via Explosion Ouatée)"
+  },
+  {
+   "id": 13514,
+   "nom": "Tremblement",
+   "paire": 274,
+   "variante_de": {
+    "id": 13559,
+    "nom": "Mandragore"
+   },
+   "niveau": 142,
+   "pa": 3,
+   "po_min": 0,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "En zone autour du lanceur, d'un Arbre Feuillu ou d'une Poupée :\n• Occasionne des dommages Terre aux ennemis.\n• Attire les entités vers le centre de la zone.\n• Dévoile les entités invisibles.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13537
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5895,F5896,F5897,F5898,F5899,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13537
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "c",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13537
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "A,F50000",
+     "zone": {
+      "forme": "cercle",
+      "taille": 3
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 6,
+     "texte": "Attire de #1 case{{~ps}}",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 3
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 202,
+     "texte": "Dévoile les entités invisibles",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 3
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Support",
+   "infection": "N'infecte pas. Attire de 2 cases vers le centre (cercle de 3 autour du lanceur, d'un Arbre Feuillu ou d'une Poupée) : regroupe les ennemis.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13559,
+   "nom": "Mandragore",
+   "paire": 274,
+   "variante_de": {
+    "id": 13514,
+    "nom": "Tremblement"
+   },
+   "niveau": 185,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": true,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Air et applique l'état Mandragore sur l'ennemi ciblé :\n• Infecte la cible si elle subit des dommages de poison ou d'invocation.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 5403,
+      "nom": "Mandragore"
+     }
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29641
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Applique + exploite",
+   "infection": "Infecte la cible + état Mandragore (2 tours) : la réinfecte si elle subit des dommages de poison ou d'invocation. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": "1 (+ Mandragore 2)"
+  },
+  {
+   "id": 13532,
+   "nom": "Don Naturel",
+   "paire": 275,
+   "variante_de": {
+    "id": 13579,
+    "nom": "Harmonie"
+   },
+   "niveau": 152,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Sacrifie un Arbre Feuillu ou une Poupée pour partager les dommages entre les alliés et les soigner en zone.\nLe partage de dommages n'affecte pas les invocations statiques.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13544
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5897,F5898,F5895,F5896,F5899,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13544
+    },
+    {
+     "action": 1061,
+     "texte": "Partage les dommages",
+     "cibles": "c,h,d,m,i",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "D"
+    },
+    {
+     "action": 3002,
+     "texte": "#1{{~1~2 à }}#2 soins du meilleur élément",
+     "cibles": "a",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13579,
+   "nom": "Harmonie",
+   "paire": 275,
+   "variante_de": {
+    "id": 13532,
+    "nom": "Don Naturel"
+   },
+   "niveau": 195,
+   "pa": 3,
+   "po_min": 0,
+   "po_max": 0,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 4,
+   "relance_initiale": null,
+   "description": "Enracine le lanceur et partage les dommages entre tous ses Arbres et lui.",
+   "effets": [
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 6,
+      "nom": "Enraciné"
+     }
+    },
+    {
+     "action": 1061,
+     "texte": "Partage les dommages",
+     "cibles": "a",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "D"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5425,
+      "nom": "Harmonie"
+     }
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,P,F5900,F5901,F5894",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5425,
+      "nom": "Harmonie"
+     }
+    },
+    {
+     "action": 792,
+     "texte": "#1",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29639
+    },
+    {
+     "action": 951,
+     "texte": "Enlève l'état #3",
+     "cibles": "a",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "etat": {
+      "id": 5425,
+      "nom": "Harmonie"
+     }
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13517,
+   "nom": "Chardons Ardents",
+   "paire": 276,
+   "variante_de": {
+    "id": 13531,
+    "nom": "Sacrifice Vaudou"
+   },
+   "niveau": 170,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 6,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": null,
+   "description": "Applique l'état Chardons Ardents sur l'ennemi ciblé :\n• Applique un poison Feu de fin de tour sur la cible pour chaque PM qu'elle utilise (cumulable 3 fois).\n\nSur un ennemi : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 5399,
+      "nom": "Chardons Ardents"
+     }
+    },
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "TE"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29640
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un ennemi : effets aussi sur tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13531,
+   "nom": "Sacrifice Vaudou",
+   "paire": 276,
+   "variante_de": {
+    "id": 13517,
+    "nom": "Chardons Ardents"
+   },
+   "niveau": 194,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 3,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Eau.\nLes dommages sont plus importants sur les invocations.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.\n\nSur une Poupée :\n• Sacrifie la Poupée pour soigner les alliés, appliquer les effets sur les ennemis et les Infecter en zone.\n• Réinitialise son temps de relance.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5895,F5896,F5897,F5898,F5899,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13553
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "l,m,L,M",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "J",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "j,f5895,f5896,f5897,f5898,f5899,f7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 141,
+     "texte": "Tue la cible",
+     "cibles": "a,F5897,F5898,F5895,F5896,F5899,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 2998,
+     "texte": "#1{{~1~2 à }}#2 soins Eau",
+     "cibles": "a",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "L,M",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "J",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Applique (zone) + exploite",
+   "infection": "Sur une Poupée : la sacrifie et infecte en cercle de 2 autour d'elle. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": "2"
+  },
+  {
+   "id": 13575,
+   "nom": "Contagion",
+   "paire": 277,
+   "variante_de": {
+    "id": 14396,
+    "nom": "Mangrove"
+   },
+   "niveau": 154,
+   "pa": 4,
+   "po_min": 1,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Air et retire des PM. \n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés en propageant l'Infection en zone autour de la cible.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29633
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29633
+    },
+    {
+     "action": 1080,
+     "texte": "-#1{{~1~2 à -}}#2 PM",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Propage",
+   "infection": "Sur un ennemi Infecté : infecte en cercle de 2 autour de la cible et touche tous les Infectés.",
+   "duree_infecte": "2"
+  },
+  {
+   "id": 14396,
+   "nom": "Mangrove",
+   "paire": 277,
+   "variante_de": {
+    "id": 13575,
+    "nom": "Contagion"
+   },
+   "niveau": 197,
+   "pa": 4,
+   "po_min": 0,
+   "po_max": 6,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Soigne les alliés, occasionne des dommages Eau et retire des PM aux ennemis en zone.\nLa zone s'étend autour des Arbres et les effets sont appliqués qu'une seule fois par lancer.\n\nTransforme également tous les Arbres en Arbres Feuillus.",
+   "effets": [
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "croix",
+      "taille": 2
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5897,
+      "nom": "Mangrove (cible)"
+     }
+    },
+    {
+     "action": 2998,
+     "texte": "#1{{~1~2 à }}#2 soins Eau",
+     "cibles": "a",
+     "zone": {
+      "forme": "croix",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "A",
+     "zone": {
+      "forme": "croix",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "croix",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29634
+    },
+    {
+     "action": 1080,
+     "texte": "-#1{{~1~2 à -}}#2 PM",
+     "cibles": "A",
+     "zone": {
+      "forme": "croix",
+      "taille": 2
+     },
+     "duree": 1,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "s,U",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    },
+    {
+     "action": 792,
+     "texte": "#1",
+     "cibles": "a,F5894,e256,P",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13558
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5900,F5901,F5894",
+     "zone": {
+      "forme": "cercle",
+      "taille": 63
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29634
+    },
+    {
+     "action": 951,
+     "texte": "Enlève l'état #3",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "tout",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "etat": {
+      "id": 5897,
+      "nom": "Mangrove (cible)"
+     }
+    }
+   ],
+   "role": "Support",
+   "infection": "N'infecte pas. Rend Feuillus tous les Arbres.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13569,
+   "nom": "Inoculation",
+   "paire": 278,
+   "variante_de": {
+    "id": 13570,
+    "nom": "Force de la Nature"
+   },
+   "niveau": 147,
+   "pa": 5,
+   "po_min": 1,
+   "po_max": 6,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Augmente les dommages du sort pour chaque ennemi Infecté et occasionne des dommages Air.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.\n\nConsomme toutes les Infections autour de la cible.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29635
+    },
+    {
+     "action": 293,
+     "texte": "#1 : +#3 dégâts de base",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29635
+    },
+    {
+     "action": 951,
+     "texte": "Enlève l'état #3",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    }
+   ],
+   "role": "Consomme",
+   "infection": "Retire l'Infection autour de la cible : à éviter pour l'objectif.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13570,
+   "nom": "Force de la Nature",
+   "paire": 278,
+   "variante_de": {
+    "id": 13569,
+    "nom": "Inoculation"
+   },
+   "niveau": 190,
+   "pa": 5,
+   "po_min": 1,
+   "po_max": 6,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Terre.\nLes dommages du sort sont augmentés pour chaque Arbre Feuillu du lanceur planté.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 293,
+     "texte": "#1 : +#3 dégâts de base",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13523,
+   "nom": "La Gonflable Transmutée",
+   "paire": 279,
+   "variante_de": {
+    "id": 13573,
+    "nom": "La Gonflable"
+   },
+   "niveau": 180,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 3,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 4,
+   "relance_initiale": null,
+   "description": "Invoque une Poupée maîtrisable qui peut soigner, occasionner des dommages Feu et repousser.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5897
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5897",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    }
+   ],
+   "role": "Support",
+   "infection": "Pas d'infection. La Gonflable peut repousser de 4 cases (Brise Automnale).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13573,
+   "nom": "La Gonflable",
+   "paire": 279,
+   "variante_de": {
+    "id": 13523,
+    "nom": "La Gonflable Transmutée"
+   },
+   "niveau": 137,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 4,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre par une Poupée maîtrisable qui peut soigner, occasionner des dommages Feu et repousser.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+   "effets": [
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5897
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5897
+    }
+   ],
+   "role": "Support",
+   "infection": "Pas d'infection. La Gonflable peut repousser de 4 cases (Brise Automnale).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13527,
+   "nom": "Ronces Agressives",
+   "paire": 280,
+   "variante_de": {
+    "id": 14393,
+    "nom": "Fétiches Calcinés"
+   },
+   "niveau": 169,
+   "pa": 4,
+   "po_min": 1,
+   "po_max": 6,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": 1,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Vole des PM et occasionne des dommages Terre.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "CMPAS",
+     "sous_sort": 13554
+    },
+    {
+     "action": 77,
+     "texte": "Vole #1{{~1~2 à }}#2 PM",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13554
+    },
+    {
+     "action": 97,
+     "texte": "#1{{~1~2 à }}#2 dommages Terre",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 406,
+     "texte": "Enlève les effets du sort #2",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 14393,
+   "nom": "Fétiches Calcinés",
+   "paire": 280,
+   "variante_de": {
+    "id": 13527,
+    "nom": "Ronces Agressives"
+   },
+   "niveau": 145,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 6,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Feu et applique l'état Fétiches Calcinés sur l'ennemi ciblé :\n• Une partie des dommages subis par les Arbres du lanceur est renvoyée à la cible.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5437,
+      "nom": "Fétiches Calcinés"
+     }
+    },
+    {
+     "action": 1223,
+     "texte": "Dommages : #1{{~1~2 à }}#2% des dommages finaux subis",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 28792
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13534,
+   "nom": "Arbre de Vie",
+   "paire": 281,
+   "variante_de": {
+    "id": 13572,
+    "nom": "Altruisme Végétal"
+   },
+   "niveau": 198,
+   "pa": 4,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 3,
+   "relance_initiale": 1,
+   "description": "Plante un Arbre de Vie.\nL'Arbre de Vie redevient Feuillu 2 tours après son invocation.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I",
+     "etat": {
+      "id": 256,
+      "nom": "Feuillu"
+     }
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 5179,
+      "nom": "Arbre de Vie"
+     }
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection (Arbre de Vie).",
+   "duree_infecte": null
+  },
+  {
+   "id": 13572,
+   "nom": "Altruisme Végétal",
+   "paire": 281,
+   "variante_de": {
+    "id": 13534,
+    "nom": "Arbre de Vie"
+   },
+   "niveau": 175,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Sacrifie un Arbre Feuillu ou une Poupée pour augmenter la Vitalité des Poupées et soigner le lanceur.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13585
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5897,F5898,F5895,F5896,F5899,F7934",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 13585
+    },
+    {
+     "action": 141,
+     "texte": "Tue la cible",
+     "cibles": "a,F5897,F5898,F5895,F5896,F5899,F7934,F5894",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1078,
+     "texte": "#1{{~1~2 à }}#2% Vitalité",
+     "cibles": "a,F5897,F5898,F5895,F5896,F5899,F7934",
+     "zone": {
+      "forme": 97,
+      "taille": 1
+     },
+     "duree": -1,
+     "declencheur": "I"
+    },
+    {
+     "action": 1109,
+     "texte": "Soin : #1{{~1~2 à }}#2% des PV max",
+     "cibles": "C",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13568,
+   "nom": "Feu de Brousse",
+   "paire": 282,
+   "variante_de": {
+    "id": 13574,
+    "nom": "Buisson Ardent"
+   },
+   "niveau": 172,
+   "pa": 4,
+   "po_min": 0,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 2,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Feu et retire des PM aux ennemis et applique l'état Feu de Brousse sur les Arbres et les ennemis en zone :\n• À la fin du tour de la cible, occasionne des dommages Feu aux ennemis en zone autour d'elle.\n• Peut occasionner des dommages aux Arbres.",
+   "effets": [
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "A",
+     "zone": {
+      "forme": "croix",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1080,
+     "texte": "-#1{{~1~2 à -}}#2 PM",
+     "cibles": "A",
+     "zone": {
+      "forme": "croix",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "croix",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 5614,
+      "nom": "Feu de Brousse"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "croix",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 14394
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,F5894,F5900,F5901",
+     "zone": {
+      "forme": "croix",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 14394
+    },
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "TE"
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13574,
+   "nom": "Buisson Ardent",
+   "paire": 282,
+   "variante_de": {
+    "id": 13568,
+    "nom": "Feu de Brousse"
+   },
+   "niveau": 134,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 3,
+   "lancers_par_cible": 2,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Feu et retire des PM.\n\nSur un Arbre Feuillu : applique les effets sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29630
+    },
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "a,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1080,
+     "texte": "-#1{{~1~2 à -}}#2 PM",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29630
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29630
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Arbre Feuillu : cercle de 2. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13529,
+   "nom": "Vent Empoisonné",
+   "paire": 283,
+   "variante_de": {
+    "id": 13577,
+    "nom": "Cigüe"
+   },
+   "niveau": 177,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Infecte la cible et lui applique un poison Air de début de tour.",
+   "effets": [
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 1,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 3793,
+     "texte": "",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "TB"
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "TB"
+    }
+   ],
+   "role": "Applique",
+   "infection": "Infecte la cible (monocible).",
+   "duree_infecte": "1"
+  },
+  {
+   "id": 13577,
+   "nom": "Cigüe",
+   "paire": 283,
+   "variante_de": {
+    "id": 13529,
+    "nom": "Vent Empoisonné"
+   },
+   "niveau": 136,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 8,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 3,
+   "lancers_par_cible": 2,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Air.\n\nSur un Arbre Feuillu : applique les effets et maintient l'Infection sur les ennemis dans un cercle de taille 2.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés et maintient l'Infection sur la cible.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29632
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 98,
+     "texte": "#1{{~1~2 à }}#2 dommages Air",
+     "cibles": "a,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 3,
+     "declencheur": "I",
+     "etat": {
+      "id": 263,
+      "nom": "Infecté"
+     }
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Maintient + exploite",
+   "infection": "N'infecte pas un ennemi sain. Sur un Infecté : remet l'Infection à 3 tours et touche tous les Infectés. Sur un Arbre Feuillu : maintient l'Infection en cercle de 2.",
+   "duree_infecte": "3 (maintien)"
+  },
+  {
+   "id": 13518,
+   "nom": "Herbes Folles",
+   "paire": 284,
+   "variante_de": {
+    "id": 13576,
+    "nom": "Malédiction Vaudou"
+   },
+   "niveau": 189,
+   "pa": 3,
+   "po_min": 0,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": null,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Feu et retire des PM aux ennemis en zone.",
+   "effets": [
+    {
+     "action": 99,
+     "texte": "#1{{~1~2 à }}#2 dommages Feu",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1080,
+     "texte": "-#1{{~1~2 à -}}#2 PM",
+     "cibles": "A",
+     "zone": {
+      "forme": "cercle",
+      "taille": 2
+     },
+     "duree": 1,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Aucun",
+   "infection": "Pas d'infection.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13576,
+   "nom": "Malédiction Vaudou",
+   "paire": 284,
+   "variante_de": {
+    "id": 13518,
+    "nom": "Herbes Folles"
+   },
+   "niveau": 165,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 7,
+   "po_modifiable": true,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": null,
+   "lancers_par_cible": null,
+   "relance": 2,
+   "relance_initiale": null,
+   "description": "Occasionne des dommages Eau et applique l'état Vaudou sur l'ennemi ciblé :\n• Occasionne des dommages Eau à la cible à la mort d'une Poupée du lanceur.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+   "effets": [
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A,E263",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29615
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 950,
+     "texte": "État #3",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 2,
+     "declencheur": "I",
+     "etat": {
+      "id": 5398,
+      "nom": "Vaudou"
+     }
+    },
+    {
+     "action": 96,
+     "texte": "#1{{~1~2 à }}#2 dommages Eau",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    },
+    {
+     "action": 1160,
+     "texte": "#1",
+     "cibles": "A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "sous_sort": 29638
+    },
+    {
+     "action": 2960,
+     "texte": "#1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I"
+    }
+   ],
+   "role": "Exploite",
+   "infection": "N'infecte pas. Sur un Infecté : touche tous les Infectés.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13520,
+   "nom": "La Surpuissante Transmutée",
+   "paire": 427,
+   "variante_de": {
+    "id": 13578,
+    "nom": "La Surpuissante"
+   },
+   "niveau": 200,
+   "pa": 3,
+   "po_min": 1,
+   "po_max": 3,
+   "po_modifiable": false,
+   "ligne_de_vue": true,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": true,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 4,
+   "relance_initiale": null,
+   "description": "Invoque une Poupée maîtrisable qui peut occasionner des dommages Terre, retirer ou donner des PM.\nElle peut également invoquer une autre Poupée maîtrisable qui peut voler ou donner de la Portée.\n\nLa Poupée est remplacée par un Arbre 3 tours après son invocation.",
+   "effets": [
+    {
+     "action": 181,
+     "texte": "Invoque : #1",
+     "cibles": "a,A",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5899
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5899",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5894
+    }
+   ],
+   "role": "Support",
+   "infection": "Pas d'infection directe. La Surpuissante a Choc Hivernal (exploite) et donne des PM.",
+   "duree_infecte": null
+  },
+  {
+   "id": 13578,
+   "nom": "La Surpuissante",
+   "paire": 427,
+   "variante_de": {
+    "id": 13520,
+    "nom": "La Surpuissante Transmutée"
+   },
+   "niveau": 157,
+   "pa": 2,
+   "po_min": 1,
+   "po_max": 63,
+   "po_modifiable": false,
+   "ligne_de_vue": false,
+   "en_ligne": false,
+   "en_diagonale": false,
+   "case_libre": false,
+   "lancers_par_tour": 1,
+   "lancers_par_cible": null,
+   "relance": 4,
+   "relance_initiale": null,
+   "description": "Remplace un Arbre par une Poupée maîtrisable qui peut occasionner des dommages Terre, retirer ou donner des PM.\nElle peut également invoquer une autre Poupée maîtrisable qui peut voler ou donner de la Portée.\n\nÀ sa mort, la Poupée redevient un Arbre.\nSi elle a été invoquée à partir d'un Arbre Feuillu, l'Arbre à sa mort redevient Feuillu.",
+   "effets": [
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,F5894,e256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5899
+    },
+    {
+     "action": 405,
+     "texte": "Tue la cible et remplace par l'invocation : #1",
+     "cibles": "a,E256",
+     "zone": {
+      "forme": "point",
+      "taille": 1
+     },
+     "duree": 0,
+     "declencheur": "I",
+     "invocation": 5899
+    }
+   ],
+   "role": "Support",
+   "infection": "Pas d'infection directe. La Surpuissante a Choc Hivernal (exploite) et donne des PM.",
+   "duree_infecte": null
+  }
+ ],
+ "ordre": [
+  13516,
+  13528,
+  13574,
+  13577,
+  13519,
+  13564,
+  13533,
+  13575,
+  13525,
+  13561,
+  13527,
+  13571,
+  13530,
+  13567,
+  13518,
+  13531,
+  13534,
+  13573,
+  13514,
+  13569,
+  13532,
+  13578
+ ],
+ "invocations": [
+  {
+   "id": 5896,
+   "nom": "La Folle",
+   "pa": 6,
+   "pm": 5,
+   "sorts": [
+    {
+     "id": 14380,
+     "nom": "Agacement",
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 4,
+     "ligne_de_vue": true,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": 1,
+     "relance_initiale": null,
+     "description": "Infecte et applique un poison Air de début de tour sur la cible.",
+     "effets": [
+      {
+       "action": 3793,
+       "texte": "",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "TB"
+      },
+      {
+       "action": 950,
+       "texte": "État #3",
+       "cibles": "A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 1,
+       "declencheur": "I",
+       "etat": {
+        "id": 263,
+        "nom": "Infecté"
+       }
+      },
+      {
+       "action": 2794,
+       "texte": "#1",
+       "cibles": "h,P",
+       "zone": {
+        "forme": "tout",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 29615
+      },
+      {
+       "action": 98,
+       "texte": "#1{{~1~2 à }}#2 dommages Air",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "TB"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5898,
+   "nom": "La Sacrifiée",
+   "pa": 6,
+   "pm": 4,
+   "sorts": [
+    {
+     "id": 14385,
+     "nom": "Explosion Ouatée",
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 1,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": 1,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Sacrifie la Poupée pour Infecter et occasionner des dommages Eau aux ennemis en zone autour d'elle.\n\nSur la Sacrifiée : applique les effets du sort à la fin de son prochain tour ou à sa mort.",
+     "effets": [
+      {
+       "action": 950,
+       "texte": "État #3",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "cercle",
+        "taille": 2
+       },
+       "duree": 2,
+       "declencheur": "I",
+       "etat": {
+        "id": 263,
+        "nom": "Infecté"
+       }
+      },
+      {
+       "action": 96,
+       "texte": "#1{{~1~2 à }}#2 dommages Eau",
+       "cibles": "A",
+       "zone": {
+        "forme": "cercle",
+        "taille": 2
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 141,
+       "texte": "Tue la cible",
+       "cibles": "C",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "c",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 14384
+      },
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "g,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 14384
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5901,
+   "nom": "Groute",
+   "pa": 4,
+   "pm": 4,
+   "sorts": [
+    {
+     "id": 13538,
+     "nom": "Détoxication",
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 3,
+     "ligne_de_vue": true,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Réduit la durée des effets sur la cible.",
+     "effets": [
+      {
+       "action": 1075,
+       "texte": "Durée des effets : -#1{{~1~2 à -}}#2",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      }
+     ]
+    },
+    {
+     "id": 13539,
+     "nom": "Photosynthèse",
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 0,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Soigne les alliés et réduit les soins reçus par les ennemis en zone autour du Groute.",
+     "effets": [
+      {
+       "action": 1109,
+       "texte": "Soin : #1{{~1~2 à }}#2% des PV max",
+       "cibles": "a",
+       "zone": {
+        "forme": "cercle",
+        "taille": 3
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 1159,
+       "texte": "Soins reçus x#1%",
+       "cibles": "A",
+       "zone": {
+        "forme": "cercle",
+        "taille": 3
+       },
+       "duree": 0,
+       "declencheur": "H"
+      }
+     ]
+    },
+    {
+     "id": 13536,
+     "nom": "Rejet Sylvestre",
+     "pa": 4,
+     "po_min": 2,
+     "po_max": 8,
+     "ligne_de_vue": false,
+     "en_ligne": true,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Infecte et pousse la cible jusqu'à la case ciblée.",
+     "effets": [
+      {
+       "action": 950,
+       "texte": "État #3",
+       "cibles": "A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 2,
+       "declencheur": "I",
+       "etat": {
+        "id": 263,
+        "nom": "Infecté"
+       }
+      },
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "A",
+       "zone": {
+        "forme": 108,
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 30115
+      },
+      {
+       "action": 783,
+       "texte": "Pousse jusqu'à la case visée",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5900,
+   "nom": "Tréant",
+   "pa": 4,
+   "pm": 4,
+   "sorts": [
+    {
+     "id": 29616,
+     "nom": "Mur de Ronces",
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 1,
+     "ligne_de_vue": false,
+     "en_ligne": true,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Plante des Ronces en zone.",
+     "effets": [
+      {
+       "action": 181,
+       "texte": "Invoque : #1",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "rectangle",
+        "taille": 2
+       },
+       "duree": 1,
+       "declencheur": "I",
+       "invocation": 7933
+      }
+     ]
+    },
+    {
+     "id": 13590,
+     "nom": "Canopée",
+     "pa": 4,
+     "po_min": 0,
+     "po_max": 0,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Applique un bouclier sur les alliés et retire des PM aux ennemis en zone autour du Tréant.",
+     "effets": [
+      {
+       "action": 1020,
+       "texte": "Bouclier : #1{{~1~2 à }}#2% du niveau",
+       "cibles": "a",
+       "zone": {
+        "forme": "cercle",
+        "taille": 3
+       },
+       "duree": 1,
+       "declencheur": "I"
+      },
+      {
+       "action": 1080,
+       "texte": "-#1{{~1~2 à -}}#2 PM",
+       "cibles": "A",
+       "zone": {
+        "forme": "cercle",
+        "taille": 3
+       },
+       "duree": 1,
+       "declencheur": "I"
+      }
+     ]
+    },
+    {
+     "id": 13591,
+     "nom": "Étreinte Sylvestre",
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 8,
+     "ligne_de_vue": true,
+     "en_ligne": true,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Infecte et attire la cible jusqu'à la case ciblée.",
+     "effets": [
+      {
+       "action": 950,
+       "texte": "État #3",
+       "cibles": "A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 2,
+       "declencheur": "I",
+       "etat": {
+        "id": 263,
+        "nom": "Infecté"
+       }
+      },
+      {
+       "action": 950,
+       "texte": "État #3",
+       "cibles": "a,A",
+       "zone": {
+        "forme": 108,
+        "taille": 1
+       },
+       "duree": 1,
+       "declencheur": "I",
+       "etat": {
+        "id": 3479,
+        "nom": "Étreinte Sylvestre"
+       }
+      },
+      {
+       "action": 2960,
+       "texte": "#1",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 1043,
+       "texte": "Attire jusqu'à la case visée",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5895,
+   "nom": "La Bloqueuse",
+   "pa": 6,
+   "pm": 5,
+   "sorts": [
+    {
+     "id": 18669,
+     "nom": "Substitution",
+     "pa": 4,
+     "po_min": 1,
+     "po_max": 4,
+     "ligne_de_vue": true,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Échange de position avec l'allié ciblé et augmente le Tacle de la Bloqueuse.\n\nLes effets ne s'appliquent que si l'échange de position est effectué.",
+     "effets": [
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "C",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "MS",
+       "sous_sort": 18668
+      },
+      {
+       "action": 8,
+       "texte": "Échange de positions",
+       "cibles": "a",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 753,
+       "texte": "#1{{~1~2 à }}#2 Tacle",
+       "cibles": "C",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 1,
+       "declencheur": "I"
+      },
+      {
+       "action": 406,
+       "texte": "Enlève les effets du sort #2",
+       "cibles": "C",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      }
+     ]
+    },
+    {
+     "id": 29623,
+     "nom": "Célérité",
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 0,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Augmente les PM de la Bloqueuse et la rend Intaclable.",
+     "effets": [
+      {
+       "action": 128,
+       "texte": "#1{{~1~2 à }}#2 PM",
+       "cibles": "C",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 1,
+       "declencheur": "I"
+      },
+      {
+       "action": 950,
+       "texte": "État #3",
+       "cibles": "C",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 1,
+       "declencheur": "I",
+       "etat": {
+        "id": 96,
+        "nom": "Intaclable"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5897,
+   "nom": "La Gonflable",
+   "pa": 6,
+   "pm": 4,
+   "sorts": [
+    {
+     "id": 14383,
+     "nom": "Souffle Printanier",
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 0,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": 1,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Soigne les alliés en zone autour de la Gonflable.\nSoigne également les alliés au contact d'un Arbre Feuillu.",
+     "effets": [
+      {
+       "action": 108,
+       "texte": "#1{{~1~2 à }}#2 soins Feu",
+       "cibles": "a",
+       "zone": {
+        "forme": "cercle",
+        "taille": 3
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "a,E256",
+       "zone": {
+        "forme": 97,
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 14382
+      }
+     ]
+    },
+    {
+     "id": 29624,
+     "nom": "Brise Automnale",
+     "pa": 2,
+     "po_min": 0,
+     "po_max": 0,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Repousse les cibles et occasionne des dommages Feu aux ennemis en zone.",
+     "effets": [
+      {
+       "action": 5,
+       "texte": "Repousse de #1 case{{~ps}}",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "croix_diag",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 99,
+       "texte": "#1{{~1~2 à }}#2 dommages Feu",
+       "cibles": "A",
+       "zone": {
+        "forme": "croix_diag",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5899,
+   "nom": "La Surpuissante",
+   "pa": 6,
+   "pm": 5,
+   "sorts": [
+    {
+     "id": 29619,
+     "nom": "La Fourbe",
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 1,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": true,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": 1,
+     "description": "Invoque une Poupée maîtrisable qui peut voler ou donner de la Portée.",
+     "effets": [
+      {
+       "action": 181,
+       "texte": "Invoque : #1",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "invocation": 7934
+      }
+     ]
+    },
+    {
+     "id": 14381,
+     "nom": "Ardeur Estivale",
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 6,
+     "ligne_de_vue": false,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": null,
+     "relance_initiale": null,
+     "description": "Augmente les PM de la cible.",
+     "effets": [
+      {
+       "action": 128,
+       "texte": "#1{{~1~2 à }}#2 PM",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 2,
+       "declencheur": "I"
+      }
+     ]
+    },
+    {
+     "id": 14387,
+     "nom": "Choc Hivernal",
+     "pa": 3,
+     "po_min": 1,
+     "po_max": 8,
+     "ligne_de_vue": true,
+     "en_ligne": false,
+     "en_diagonale": false,
+     "case_libre": false,
+     "lancers_par_tour": null,
+     "lancers_par_cible": 1,
+     "relance_initiale": null,
+     "description": "Occasionne des dommages Terre et retire des PM.\n\nSur un ennemi Infecté : applique les effets sur tous les ennemis Infectés.",
+     "effets": [
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "A,E263",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 29615
+      },
+      {
+       "action": 97,
+       "texte": "#1{{~1~2 à }}#2 dommages Terre",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      },
+      {
+       "action": 1080,
+       "texte": "-#1{{~1~2 à -}}#2 PM",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 1,
+       "declencheur": "I"
+      },
+      {
+       "action": 1160,
+       "texte": "#1",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I",
+       "sous_sort": 14386
+      },
+      {
+       "action": 2960,
+       "texte": "#1",
+       "cibles": "a,A",
+       "zone": {
+        "forme": "point",
+        "taille": 1
+       },
+       "duree": 0,
+       "declencheur": "I"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5894,
+   "nom": "Arbre",
+   "pa": 0,
+   "pm": -1,
+   "sorts": []
+  }
+ ]
+}

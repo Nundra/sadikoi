@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sadikoi",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-lc", "PATH=$HOME/.local/bin:$PATH pnpm dev --port 3000"],
+      "port": 3000
+    }
+  ]
+}

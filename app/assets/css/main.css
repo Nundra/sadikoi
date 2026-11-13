@@ -1,0 +1,79 @@
+/* Esprit Dofus 3 : bleu-vert sombre, panneaux arrondis, touches dorées. Aucun asset du jeu. */
+:root {
+  --or: #e0b25a;
+  --or-clair: #f0cd85;
+  /* 4e étoile et repère des ennemis sous Mandragore */
+  --mandragore: #b98cf0;
+  --texte: #ece4cf;
+  --texte-doux: #c8d3d1;
+  --texte-gris: #8fa3a6;
+  --bord: #2f4a52;
+  --bord-clair: #3d5c64;
+  --fond-creux: #0e1c22;
+  --fond-bouton: #22363c;
+  --fond-plateau: #0c181d;
+  --police-titre: 'Marcellus', serif;
+  --police-texte: 'Nunito Sans', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #0b1418;
+  color: var(--texte);
+  font-family: var(--police-texte);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--fond-bouton);
+  color: var(--texte);
+  border: 1px solid var(--bord-clair);
+  font-size: 14px;
+  font-weight: 700;
+}
+button:hover:not(:disabled) { filter: brightness(1.15); }
+button:disabled { opacity: 0.45; cursor: default; }
+button.fin {
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(#e7bf68, #c9963c);
+  color: #2a1d08;
+  border-color: #f3d798;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 0 #7a5a1e;
+}
+
+:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}
+
+.panneau {
+  border-radius: 16px;
+  background: linear-gradient(#18292f, #132227);
+  border: 1px solid var(--bord);
+  padding: 14px 16px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
