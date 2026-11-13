@@ -95,5 +95,6 @@ Application web d'entraînement pour le Sadida de Dofus 3 : une « salle d'entra
 - Lancer : `pnpm dev` (port 3000). Build statique : `pnpm generate` → `.output/public`.
 - Plateau en SVG.
 - Code sur GitHub : https://github.com/Nundra/sadikoi (branche `main`). Versions : V1 = tag `v1.0.0`.
+- En ligne : https://sadikoi.pages.dev/ (Cloudflare Pages, redéployé à chaque push sur `main`).
 - Déploiement : Cloudflare branché directement sur le dépôt GitHub par Jérémie (pas de configuration Cloudflare dans le projet). Site statique : commande de build `pnpm generate`, dossier publié `.output/public`. D1 plus tard pour la V2.
 - Scripts de données en Python, lancés avec `uv run`.
