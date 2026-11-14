@@ -4,58 +4,70 @@ import { bloqueLdv, type Plateau } from './plateau'
 /**
  * Les cases entre a et b (a et b exclues) que la ligne de vue doit traverser.
  *
- * On trace le segment entre les centres des deux cases dans le repère losange, où les
- * cases sont des carrés, et on relève chaque case qu'il traverse. Deux cas particuliers,
- * repris du jeu tel qu'on le comprend (à vérifier en jeu) :
- *   - diagonale exacte (|Δi| = |Δj|) : seules les cases de la diagonale comptent, pas
- *     celles qu'elle frôle par un coin ;
- *   - sinon, quand le segment passe exactement par un coin, les deux cases qui se
- *     touchent à ce coin comptent : il suffit que l'une bloque.
+ * Reprise à l'identique de l'algorithme du client Dofus 2 (`MapTools._createCellsListForCells`,
+ * appelé par `Dofus2Line.getLine`), dans le repère losange où les cases sont des carrés :
+ *   - diagonale exacte (|Δi| = |Δj|) : seulement les cases de la diagonale ;
+ *   - sinon on avance case par case sur l'axe le plus long. Pour chaque colonne traversée,
+ *     on regarde la coordonnée de l'autre axe à l'entrée et à la sortie de la colonne
+ *     (arrondie à 4 décimales, comme le jeu) : si la ligne franchit vraiment un bord, les
+ *     deux cases comptent ; si elle ne fait que toucher un bord (passage exact par un coin),
+ *     seule la case réellement traversée compte. Les deux cases qui se touchent au coin ne
+ *     bloquent donc pas la ligne de vue.
  */
 export function casesSurLaLigne(a: Case, b: Case): Case[] {
+  if (a === b) return []
   const p = versLosange(a)
   const q = versLosange(b)
-  const di = q.i - p.i
-  const dj = q.j - p.j
-  const ni = Math.abs(di)
-  const nj = Math.abs(dj)
-  const si = Math.sign(di)
-  const sj = Math.sign(dj)
   const out: Case[] = []
   const ajouter = (i: number, j: number) => {
     if (i === q.i && j === q.j) return
     const c = depuisLosange(i, j)
     if (c !== null) out.push(c)
   }
+  // Position courante et arrivée, au centre des cases
+  const pos = [p.i + 0.5, p.j + 0.5]
+  const d = [q.i - p.i, q.j - p.j]
 
-  if (ni === nj) {
-    for (let k = 1; k < ni; k++) ajouter(p.i + k * si, p.j + k * sj)
+  if (Math.abs(d[0]!) === Math.abs(d[1]!)) {
+    const pas = [Math.sign(d[0]!), Math.sign(d[1]!)]
+    for (let k = 0; k < Math.abs(d[0]!); k++) {
+      ajouter(Math.floor(pos[0]! + pas[0]!), Math.floor(pos[1]! + pas[1]!))
+      pos[0]! += pas[0]!
+      pos[1]! += pas[1]!
+    }
     return out
   }
 
-  let { i, j } = p
-  let pasI = 0
-  let pasJ = 0
-  while (pasI < ni || pasJ < nj) {
-    // Comparaison, sans division, des moments où le segment franchit le prochain bord
-    // en i et en j : (0,5 + pasI) / ni contre (0,5 + pasJ) / nj.
-    const tI = (1 + 2 * pasI) * nj
-    const tJ = (1 + 2 * pasJ) * ni
-    if (tI === tJ) {
-      ajouter(i + si, j)
-      ajouter(i, j + sj)
-      i += si
-      j += sj
-      pasI++
-      pasJ++
-    } else if (tI < tJ) {
-      i += si
-      pasI++
+  // Axe principal (le plus long) et axe secondaire
+  const M = Math.abs(d[0]!) > Math.abs(d[1]!) ? 0 : 1
+  const m = 1 - M
+  const etapes = Math.abs(d[M]!)
+  const pas = [0, 0]
+  pas[M] = d[M]! >= 0 ? 1 : -1
+  pas[m] = d[m]! / etapes
+  for (let k = 0; k < etapes; k++) {
+    // Coordonnée secondaire à l'entrée et à la sortie de la colonne suivante
+    const entree = Math.round(pos[m]! * 10000 + pas[m]! * 5000) / 10000
+    const sortie = Math.round(pos[m]! * 10000 + pas[m]! * 15000) / 10000
+    const centre = pos[m]! + pas[m]!
+    let secondaires: number[]
+    if (Math.floor(entree) === Math.floor(sortie)) {
+      secondaires = [Math.floor(centre)]
+    } else if (Math.ceil(entree) === Math.ceil(sortie)) {
+      // La ligne touche un bord sans le franchir : seule la case traversée compte
+      let v = Math.ceil(centre)
+      if ((entree === v && sortie < v) || (sortie === v && entree < v)) v = Math.floor(centre)
+      secondaires = [v]
     } else {
-      j += sj
-      pasJ++
+      secondaires = [Math.floor(entree), Math.floor(sortie)]
     }
-    ajouter(i, j)
+    const principal = Math.floor(pos[M]! + pas[M]!)
+    for (const v of secondaires) {
+      if (M === 0) ajouter(principal, v)
+      else ajouter(v, principal)
+    }
+    pos[0]! += pas[0]!
+    pos[1]! += pas[1]!
   }
   return out
 }

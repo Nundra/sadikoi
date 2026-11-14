@@ -73,6 +73,7 @@ export const fr = {
   'legende.toi': 'Placement (toi)',
   'legende.ennemis': 'Placement (ennemis)',
   'legende.portee': 'Portée',
+  'legende.sans-vue': 'Sans ligne de vue',
   'legende.zone': 'Zone du sort',
   'legende.deplacement': 'Déplacement',
   'legende.mandragore': 'Mandragore',

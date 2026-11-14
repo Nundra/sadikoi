@@ -37,14 +37,18 @@ describe('ligne de vue', () => {
     expect(ligneDeVue(plateauTest([[decale(A, 1, 1), '#']]), A, b)).toBe(false)
   })
 
-  it('au passage par un coin, est coupée si une des deux cases bloque', () => {
-    // De (0, 0) à (3, 1), le segment passe par le coin entre (2, 0) et (1, 1).
+  it('au passage exact par un coin, ne compte pas les deux cases qui se touchent au coin (comme le jeu)', () => {
+    // De (0, 0) à (3, 1), le segment passe par le coin entre (2, 0) et (1, 1) : seules (1, 0) et (2, 1) comptent.
     const b = decale(A, 3, 1)
-    expect(new Set(casesSurLaLigne(A, b))).toEqual(new Set([
-      decale(A, 1, 0), decale(A, 2, 0), decale(A, 1, 1), decale(A, 2, 1),
-    ]))
-    expect(ligneDeVue(plateauTest([[decale(A, 1, 1), '#']]), A, b)).toBe(false)
-    expect(ligneDeVue(plateauTest([[decale(A, 2, 0), '#']]), A, b)).toBe(false)
+    expect(casesSurLaLigne(A, b)).toEqual([decale(A, 1, 0), decale(A, 2, 1)])
+    expect(ligneDeVue(plateauTest([[decale(A, 1, 1), '#'], [decale(A, 2, 0), '#']]), A, b)).toBe(true)
+    expect(ligneDeVue(plateauTest([[decale(A, 1, 0), '#']]), A, b)).toBe(false)
+    expect(ligneDeVue(plateauTest([[decale(A, 2, 1), '#']]), A, b)).toBe(false)
+  })
+
+  it('compte les deux cases quand la ligne franchit vraiment un bord', () => {
+    // De (0, 0) à (4, 1) : la ligne passe de la rangée j = 0 à j = 1 au milieu, entre (2, 0) et (2, 1)
+    expect(casesSurLaLigne(A, decale(A, 4, 1))).toEqual([decale(A, 1, 0), decale(A, 2, 0), decale(A, 2, 1), decale(A, 3, 1)])
   })
 
   it('est symétrique', () => {

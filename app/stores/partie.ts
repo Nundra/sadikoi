@@ -9,7 +9,8 @@ import {
   type Action, type Bilan, type Entite, type Partie, type Stats,
 } from '~~/engine/partie'
 import type { MapCombat } from '~~/engine/plateau'
-import { casesCiblables } from '~~/engine/portee'
+import { casesCiblables, refusCible } from '~~/engine/portee'
+import { NB_CASES } from '~~/engine/grille'
 import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
 import {
   carteDepuisSalle, carteVide, codeCarte, ennemisDe, lireCodeCarte, mapPerso, peindre, problemesCarte, type Outil,
@@ -254,6 +255,18 @@ export const usePartieStore = defineStore('partie', () => {
     const id = sortChoisi.value
     return new Set(casesCiblables(plateau(p), a.case, sortDe(p, id) ?? trouverSort(id), bonusPo.value)
       .filter(c => refusCibleSpecifique(p, a, id, c) === null))
+  })
+
+  /** Cases à portée du sort choisi mais sans ligne de vue (affichées à part, comme en jeu). */
+  const sansVue = computed(() => {
+    const p = partie.value
+    const a = acteur.value
+    if (!p || !a || !interactif.value || sortChoisi.value === null) return new Set<Case>()
+    const s = sortDe(p, sortChoisi.value) ?? trouverSort(sortChoisi.value)
+    const pl = plateau(p)
+    const out = new Set<Case>()
+    for (let c = 0; c < NB_CASES; c++) if (refusCible(pl, a.case, c, s, bonusPo.value) === 'pas-de-ldv') out.add(c)
+    return out
   })
 
   const accessibles = computed(() => {
@@ -653,7 +666,7 @@ export const usePartieStore = defineStore('partie', () => {
   return {
     maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
-    sortsActeur, verrouille, bonusPo, interactif, ciblables, accessibles, apercu, score, record, recordPrecedent,
+    sortsActeur, verrouille, bonusPo, interactif, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,
     carteDeZero, carteDeLaSalle, ouvrirCreation, modifierCarte, testerCarte, chargerCarte,
     sexe, portrait, nomAffiche, texte, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,

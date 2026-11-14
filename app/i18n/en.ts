@@ -65,6 +65,7 @@ export const en: DicoLangue = {
   'legende.toi': 'Placement (you)',
   'legende.ennemis': 'Placement (enemies)',
   'legende.portee': 'Range',
+  'legende.sans-vue': 'No line of sight',
   'legende.zone': 'Spell area',
   'legende.deplacement': 'Movement',
   'legende.mandragore': 'Mandrake',

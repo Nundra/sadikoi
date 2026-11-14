@@ -61,6 +61,7 @@ function etat(c: number): string | null {
   if (a.zone.has(c)) return 'zone'
   if (a.chemin.has(c)) return 'chemin'
   if (store.ciblables.has(c)) return 'portee'
+  if (store.sansVue.has(c)) return 'sans-vue'
   if (store.accessibles.has(c) && store.acteur?.case !== c) return 'accessible'
   if (placementLibre.value.has(c)) return 'placement'
   return null
@@ -190,6 +191,7 @@ const aide = computed(() => {
       <li><span class="pastille bleue" />{{ t('legende.toi') }}</li>
       <li><span class="pastille rouge" />{{ t('legende.ennemis') }}</li>
       <li><span class="pastille portee" />{{ t('legende.portee') }}</li>
+      <li><span class="pastille sans-vue" />{{ t('legende.sans-vue') }}</li>
       <li><span class="pastille zone" />{{ t('legende.zone') }}</li>
       <li><span class="pastille accessible" />{{ t('legende.deplacement') }}</li>
       <li><span class="pastille mandragore">{{ t('plateau.mandragore') }}</span>{{ t('legende.mandragore') }}</li>
@@ -244,6 +246,8 @@ svg.edition { cursor: crosshair; }
 /* États par-dessus le fond : sélecteur plus précis que « .case-sol.damier » */
 .cases polygon.etat-placement { fill: #5aa6ec; stroke: var(--or-clair); stroke-width: 1.5; }
 .cases polygon.etat-portee { fill: #2e5a7a; }
+/* À portée mais sans ligne de vue : bleu pâle, comme en jeu */
+.cases polygon.etat-sans-vue { fill: #7f98a6; }
 .cases polygon.etat-accessible { fill: #6f9a4a; }
 .cases polygon.etat-chemin { fill: #a8d27a; }
 .cases polygon.etat-zone { fill: #8b55c7; }
@@ -299,6 +303,7 @@ polygon:hover { filter: brightness(1.18); }
 .pastille.rouge { background: #b94e3a; }
 .pastille.bleue { background: #3c86c9; }
 .pastille.portee { background: #2e5a7a; }
+.pastille.sans-vue { background: #7f98a6; }
 .pastille.zone { background: #8b55c7; }
 .pastille.accessible { background: #6f9a4a; }
 .pastille.tient { background: #7a3fb8; border: 2px solid var(--or-clair); }
