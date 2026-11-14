@@ -17,10 +17,12 @@ function suite(sorts: string[], ennemis: Case[], actions: Action[], obstacles: C
 const caseDe = (p: Partie, nom: string) => p.entites.find(e => e.nom === nom)?.case
 
 describe('direction', () => {
-  it('suit les lignes, les diagonales, et arrondit le reste à la plus proche', () => {
+  it('suit les lignes, la diagonale exacte, et sinon l’axe le plus long (jamais en biais)', () => {
     expect(direction(A, decale(A, 3, 0))).toEqual([1, 0])
     expect(direction(A, decale(A, -2, -2))).toEqual([-1, -1])
     expect(direction(A, decale(A, 3, 1))).toEqual([1, 0])
+    expect(direction(A, decale(A, 1, 2))).toEqual([0, 1])
+    expect(direction(A, decale(A, -1, -2))).toEqual([0, -1])
     expect(direction(A, A)).toBeNull()
   })
 })
@@ -31,6 +33,15 @@ describe('Tremblement', () => {
     expect(caseDe(p, 'Ennemi 1')).toBe(decale(A, 1, 0))
     expect(caseDe(p, 'Ennemi 2')).toBe(decale(A, 0, -1)) // s'arrête au contact
     expect(caseDe(p, 'Ennemi 3')).toBe(decale(A, 4, 0)) // hors zone
+  })
+
+  it('attire en ligne un ennemi décalé d’une case, même si la diagonale est occupée', () => {
+    // Situation remontée en jeu : Tremblement sur La Sacrifiée, E3 au contact, E4 derrière E3,
+    // E2 décalé d'une case. E2 vient au contact en ligne ; E4, bloqué par E3, ne bouge pas.
+    const p = suite(['Tremblement'], [decale(A, 0, -1), decale(A, 0, -2), decale(A, -1, -2)], [sort('Tremblement', A)])
+    expect(caseDe(p, 'Ennemi 1')).toBe(decale(A, 0, -1))
+    expect(caseDe(p, 'Ennemi 2')).toBe(decale(A, 0, -2))
+    expect(caseDe(p, 'Ennemi 3')).toBe(decale(A, -1, 0))
   })
 
   it("s'arrête contre un obstacle ou une autre entité", () => {
@@ -61,6 +72,18 @@ describe('Groute, Tréant et La Gonflable', () => {
     if (!r.ok) return
     expect(caseDe(r.partie, 'Ennemi 1')).toBe(decale(A, 8, 0))
     expect(r.partie.entites.find(e => e.nom === 'Ennemi 1')?.infecte).toBe(true)
+  })
+
+  it('Détoxication (Groute) retire 2 tours à l’Infection de sa cible', () => {
+    // En diagonale du Sadida, à 2 cases du Groute (Détoxication : PO 1-3)
+    const ennemi = decale(A, 2, 2)
+    const p0 = suite(['Arbre Feuillu', 'Puissance Sylvestre', 'Vent Empoisonné'], [ennemi],
+      [sort('Arbre Feuillu', arbre), sort('Vent Empoisonné', ennemi), sort('Puissance Sylvestre', arbre), { type: 'fin', acteur: SADIDA }])
+    expect(p0.entites.find(e => e.nom === 'Ennemi 1')?.infecte).toBe(true)
+    const r = jouer(p0, { type: 'sort', acteur: p0.ordre[1]!, sort: 13538, cible: ennemi })
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect(r.partie.entites.find(e => e.nom === 'Ennemi 1')?.infecte).toBe(false)
   })
 
   it('Étreinte Sylvestre infecte la première entité au-delà de la case visée et l’attire jusqu’à elle', () => {

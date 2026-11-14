@@ -16,6 +16,7 @@ export const INFECTION: Record<Langue, Record<number, string>> = {
     18669: 'Échange de place avec l’allié visé : pour rapprocher des ennemis une invocation qui joue après (La Sacrifiée, La Folle…).',
     29623: '+4 PM à La Bloqueuse, qui devient Intaclable : elle peut quitter le contact d’un ennemi.',
     14381: '+3 PM à la cible : une invocation qui joue après (La Sacrifiée, La Folle…) va plus loin.',
+    13538: 'N’infecte pas. Retire 2 tours aux effets de la cible : enlève une Infection de 1 ou 2 tours (à éviter sur un Infecté).',
   },
   en: {
     13515: 'Summons {i:5896} directly (Range 1-3), without a Tree. {i:5896} casts {s:14380} (3 AP, Range 1-4): infects the target.',
@@ -70,6 +71,7 @@ export const INFECTION: Record<Langue, Record<number, string>> = {
     18669: 'Swaps places with the targeted ally: to bring a summon that plays later ({i:5898}, {i:5896}…) closer to enemies.',
     29623: '+4 MP to {i:5895}, which becomes Unlockable: it can leave contact with an enemy.',
     14381: '+3 MP to the target: a summon that plays later ({i:5898}, {i:5896}…) goes further.',
+    13538: 'Doesn’t infect. Removes 2 turns from the target’s effects: clears an Infection of 1 or 2 turns (avoid it on an Infected enemy).',
   },
   es: {
     13515: 'Invoca directamente a {i:5896} (alcance 1-3), sin Árbol. {i:5896} lanza {s:14380} (3 PA, alcance 1-4): infecta al objetivo.',
@@ -124,5 +126,6 @@ export const INFECTION: Record<Langue, Record<number, string>> = {
     18669: 'Intercambia su sitio con el aliado objetivo: para acercar a los enemigos una invocación que juega después ({i:5898}, {i:5896}…).',
     29623: '+4 PM a {i:5895}, que se vuelve No Placable: puede salir del contacto de un enemigo.',
     14381: '+3 PM al objetivo: una invocación que juega después ({i:5898}, {i:5896}…) llega más lejos.',
+    13538: 'No infecta. Quita 2 turnos a los efectos del objetivo: elimina una Infección de 1 o 2 turnos (a evitar sobre un infectado).',
   },
 }

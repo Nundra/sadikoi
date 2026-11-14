@@ -1,14 +1,11 @@
 import { depuisLosange, distance, versLosange, type Case } from './grille'
 
-/** Les 8 directions du jeu dans le repère losange : 4 en ligne, 4 en diagonale. */
-const DIRECTIONS: [number, number][] = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
-
-// À l'écran, x = i + j et y = i - j : les 8 directions y sont espacées de 45°.
-const angle = (di: number, dj: number) => Math.atan2(di - dj, di + dj)
-
 /**
- * La direction de `a` vers `b` parmi les 8 du jeu : celle dont l'angle à l'écran est le
- * plus proche. Null si les deux cases sont la même.
+ * La direction d'une poussée ou d'une attirance de `a` vers `b`, comme le client Dofus 2
+ * (`MapPoint.advancedOrientationTo`, en 4 directions) : en diagonale seulement si `b` est
+ * exactement en diagonale de `a` ; sinon en ligne, sur l'axe où l'écart est le plus grand
+ * (une entité décalée d'une case avance « en ligne », sans passer en biais). Null si les
+ * deux cases sont la même.
  */
 export function direction(a: Case, b: Case): [number, number] | null {
   const p = versLosange(a)
@@ -16,17 +13,8 @@ export function direction(a: Case, b: Case): [number, number] | null {
   const di = q.i - p.i
   const dj = q.j - p.j
   if (di === 0 && dj === 0) return null
-  const voulu = angle(di, dj)
-  let meilleure = DIRECTIONS[0]!
-  let ecart = Infinity
-  for (const d of DIRECTIONS) {
-    const e = Math.abs(Math.atan2(Math.sin(angle(...d) - voulu), Math.cos(angle(...d) - voulu)))
-    if (e < ecart - 1e-9) {
-      ecart = e
-      meilleure = d
-    }
-  }
-  return meilleure
+  if (Math.abs(di) === Math.abs(dj)) return [Math.sign(di), Math.sign(dj)]
+  return Math.abs(di) > Math.abs(dj) ? [Math.sign(di), 0] : [0, Math.sign(dj)]
 }
 
 export function avancer(c: Case, [di, dj]: [number, number]): Case | null {

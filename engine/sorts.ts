@@ -120,7 +120,7 @@ export type Comportement =
    * fait de même pour les Infectés en cercle de `zoneFeuillu`. N'infecte pas un ennemi sain.
    */
   | { type: 'maintient', duree: number, zoneFeuillu: number }
-  /** Ronce Insolente : réduit de `tours` la durée de l'Infection (sur tous les Infectés si elle exploite). */
+  /** Ronce Insolente, Détoxication : réduit de `tours` la durée de l'Infection (sur tous les Infectés si le sort exploite). */
   | { type: 'reduit', tours: number }
   /** Sur un ennemi Infecté : infecte en cercle autour de lui. */
   | { type: 'propage', rayon: number }
@@ -193,6 +193,7 @@ export const COMPORTEMENTS: Record<number, Comportement> = {
   14380: { type: 'infecte' }, // Agacement (La Folle)
   14385: { type: 'explosion', rayon: 2 }, // Explosion Ouatée (La Sacrifiée)
   13536: { type: 'pousse-jusqua' }, // Rejet Sylvestre (Groute)
+  13538: { type: 'reduit', tours: 2 }, // Détoxication (Groute) : -2 tours aux effets de la cible
   13591: { type: 'attire-jusqua', portee: 7 }, // Étreinte Sylvestre (Tréant)
   29624: { type: 'repousse-autour', distance: 4 }, // Brise Automnale (La Gonflable)
   18669: { type: 'echange' }, // Substitution (La Bloqueuse) : le Tacle gagné n'est pas simulé
