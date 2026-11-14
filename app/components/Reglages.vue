@@ -15,6 +15,7 @@ const emplacements = computed(() => barre.ordre.map((paire, k) => {
   return { k, nom: nomSort(s.id), touche: barre.libelle(barre.touches[k] ?? '') }
 }))
 const dialogue = ref<HTMLDialogElement | null>(null)
+const notes = ref<{ ouvrir: () => void } | null>(null)
 
 /** Niveau puis PA, PM, PO : valeur, bornes et réglage (− / + ou saisie). */
 const reglablesPersonnage = computed(() => [
@@ -33,7 +34,10 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
 
 <template>
   <dialog ref="dialogue" class="reglages" aria-labelledby="titre-reglages">
-    <h2 id="titre-reglages">{{ t('reglages.titre') }}</h2>
+    <div class="entete">
+      <h2 id="titre-reglages">{{ t('reglages.titre') }}</h2>
+      <button type="button" class="lien" @click="notes?.ouvrir()">{{ t('notes.lien') }}</button>
+    </div>
 
     <fieldset>
       <legend>{{ t('reglages.langue') }}</legend>
@@ -120,6 +124,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
     <form method="dialog" class="boutons">
       <button type="submit" class="fin" @click="barre.enAttente = null">{{ t('reglages.fermer') }}</button>
     </form>
+    <NotesVersion ref="notes" />
   </dialog>
 </template>
 
@@ -129,6 +134,9 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
   color: var(--texte); padding: 22px 26px; width: var(--largeur-fenetre); max-height: 90vh;
 }
 .reglages::backdrop { background: rgb(5 10 12 / 0.7); }
+.entete { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.entete h2 { margin: 0; }
+.lien { height: auto; padding: 0; background: none; border: none; color: var(--or-clair); font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 h2 { margin: 0 0 14px; font-family: var(--police-titre); font-size: 24px; font-weight: 400; color: var(--or-clair); }
 fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 8px; }
 legend { padding: 0; font-size: 15px; font-weight: 800; color: var(--or-clair); }
