@@ -19,6 +19,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Avec un sort choisi, les cases à portée mais sans ligne de vue s’affichent en bleu pâle, comme en jeu.',
         'Notes de version, depuis les réglages.',
+        'Sur petit écran (mobile), un écran prévient que l’app n’y est pas adaptée et conseille de jouer sur ordinateur.',
       ],
       corrections: [
         'Ligne de vue calculée comme dans le jeu : une ligne qui passe exactement par un coin n’est plus coupée par les deux cases qui s’y touchent.',
@@ -48,6 +49,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'With a spell selected, cells in range but without line of sight are shown in pale blue, as in game.',
         'Release notes, from the settings.',
+        'On small screens (mobile), a screen warns that the app isn’t made for them and suggests playing on a computer.',
       ],
       corrections: [
         'Line of sight computed as in the game: a line going exactly through a corner is no longer blocked by the two cells touching there.',
@@ -77,6 +79,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Con un hechizo elegido, las casillas a alcance pero sin línea de visión se muestran en azul pálido, como en el juego.',
         'Notas de versión, desde los ajustes.',
+        'En pantallas pequeñas (móvil), una pantalla avisa de que la app no está adaptada y aconseja jugar en un ordenador.',
       ],
       corrections: [
         'Línea de visión calculada como en el juego: una línea que pasa justo por una esquina ya no queda cortada por las dos casillas que se tocan ahí.',
