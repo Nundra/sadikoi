@@ -46,6 +46,7 @@ onMounted(async () => {
       <Caracteristiques />
       <BarreSorts />
     </footer>
+    <PetitEcran />
   </div>
 </template>
 

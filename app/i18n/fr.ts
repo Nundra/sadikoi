@@ -245,6 +245,10 @@ export const fr = {
   'nouveaute.defi': 'Lance un défi à tes amis : qui infecte tout le monde sur ta map ?',
   'nouveaute.plus-tard': 'Plus tard',
   'nouveaute.essayer': 'Essayer le créateur',
+  'petit-ecran.titre': 'Écran trop petit',
+  'petit-ecran.texte': 'Sadikoi n’est pas adapté aux petits écrans : le plateau, la timeline et la barre de sorts ont besoin de place.',
+  'petit-ecran.conseil': 'Pour t’entraîner, mieux vaut jouer sur ordinateur.',
+  'petit-ecran.continuer': 'Continuer quand même',
 
   // Créateur de map
   'choix.creation': 'Créateur de map',
