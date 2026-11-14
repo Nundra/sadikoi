@@ -45,7 +45,8 @@ defineExpose({ ouvrir })
   color: var(--texte); padding: 22px 26px; width: var(--largeur-fenetre); max-height: 90vh;
   font-size: 14px; line-height: 1.5;
 }
-.notes::backdrop { background: rgb(5 10 12 / 0.75); }
+/* Ouverte par-dessus les réglages, qui assombrissent déjà le fond : pas de second voile */
+.notes::backdrop { background: transparent; }
 h2 { margin: 0 0 14px; font-family: var(--police-titre); font-size: 24px; font-weight: 400; color: var(--or-clair); }
 article { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #263b41; }
 h3 { margin: 0 0 6px; font-size: 15px; font-weight: 800; color: var(--or-clair); }
