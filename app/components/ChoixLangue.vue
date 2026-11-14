@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LANGUES, choisirLangue, langue, t, type Langue } from '~/i18n'
+import { LANGUES, choisirLangue, langue, retenirLangue, t, type Langue } from '~/i18n'
 
 /**
  * Choix de la langue : français (/), anglais (/en), espagnol (/es). Un bouton au drapeau de la
@@ -18,6 +18,7 @@ const nomLangue = computed(() => LANGUES.find(l => l.id === langue.value)!.nom)
 async function choisir(l: Langue) {
   ouvert.value = false
   bouton.value?.focus()
+  retenirLangue(l)
   if (l !== langue.value) await choisirLangue(l)
 }
 

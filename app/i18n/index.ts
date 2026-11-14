@@ -41,7 +41,35 @@ export function langueDuChemin(chemin: string): Langue {
 /** Début d'adresse d'une langue ('' en français). */
 export const prefixe = (l: Langue) => (l === 'fr' ? '' : `/${l}`)
 
-export const langue = ref<Langue>(langueDuChemin(window.location.pathname))
+/**
+ * Langue au chargement : celle de l'adresse (/en, /es) ; sur /, celle choisie à une visite
+ * précédente (`sadikoi:langue`), sinon la première langue du navigateur que l'app connaît.
+ */
+function langueInitiale(): Langue {
+  if (/^\/(en|es)(\/|$)/.test(window.location.pathname)) return langueDuChemin(window.location.pathname)
+  try {
+    const choisie = localStorage.getItem('sadikoi:langue')
+    if (choisie && choisie in DICOS) return choisie as Langue
+  } catch {
+    // stockage indisponible : on suit le navigateur
+  }
+  for (const n of navigator.languages ?? [navigator.language]) {
+    const l = n.slice(0, 2).toLowerCase()
+    if (l in DICOS) return l as Langue
+  }
+  return 'fr'
+}
+
+export const langue = ref<Langue>(langueInitiale())
+
+/** Garde le choix fait par le joueur (bouton de langue) pour ses prochaines visites sur /. */
+export function retenirLangue(l: Langue) {
+  try {
+    localStorage.setItem('sadikoi:langue', l)
+  } catch {
+    // stockage indisponible : sans conséquence
+  }
+}
 
 interface TraductionsJeu {
   sorts: Record<string, { nom: string, description: string }>
