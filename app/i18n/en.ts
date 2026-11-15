@@ -110,7 +110,7 @@ export const en: DicoLangue = {
   'resultat.detail': (p: { pts: number, pa: number }) => `100 + ${p.pts} × ${p.pa} AP left`,
   'resultat.detail-tour-2': ' + {n} turn 2',
   'resultat.sans-bonus': '(AP bonus only if every enemy is infected)',
-  'resultat.prycipithon': 'Prycipithon Mate: its 2 AP earn nothing, points × 0.9',
+  'resultat.prycipithon': 'Prycipithon Mate: 10% penalty',
   'resultat.nouveau-record': 'New best on this room!',
   'resultat.ancien-record': 'Previous: {n} points.',
   'resultat.record': 'Best on this room: {n} points ({pa} AP).',

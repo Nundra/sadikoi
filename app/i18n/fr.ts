@@ -120,7 +120,7 @@ export const fr = {
   'resultat.detail': (p: { pts: number, pa: number }) => `100 + ${p.pts} × ${p.pa} PA restant${s(p.pa)}`,
   'resultat.detail-tour-2': ' + {n} tour 2',
   'resultat.sans-bonus': '(bonus de PA seulement si tous les ennemis sont infectés)',
-  'resultat.prycipithon': 'Prycipithon Mate : ses 2 PA ne rapportent rien, points × 0,9',
+  'resultat.prycipithon': 'Prycipithon Mate : malus de 10 %',
   'resultat.nouveau-record': 'Nouveau record sur cette salle !',
   'resultat.ancien-record': 'Ancien : {n} points.',
   'resultat.record': 'Record sur cette salle : {n} points ({pa} PA).',
