@@ -13,8 +13,12 @@ describe('aperçu de zone', () => {
     expect(zoneDuSort(depart, SADIDA, id('Ronce'), decale(A, 4, 0))).toEqual([decale(A, 4, 0)])
   })
 
-  it('donne le cercle de 2 de Contagion (13 cases)', () => {
-    expect(zoneDuSort(depart, SADIDA, id('Contagion'), decale(A, 4, 0))).toHaveLength(13)
+  it('donne le cercle de 2 de Contagion (13 cases) seulement sur un ennemi Infecté', () => {
+    const e = decale(A, 4, 0)
+    expect(zoneDuSort(depart, SADIDA, id('Contagion'), e)).toEqual([e])
+    expect(zoneDuSort(depart, SADIDA, id('Contagion'), decale(A, 2, 0))).toEqual([decale(A, 2, 0)])
+    const r = jouer(depart, { type: 'sort', acteur: SADIDA, sort: id('Ronce'), cible: e })
+    expect(zoneDuSort((r as { partie: Partie }).partie, SADIDA, id('Contagion'), e)).toHaveLength(13)
   })
 
   it('ajoute le cercle autour des Arbres Feuillus pour Miasmes et Ronce', () => {

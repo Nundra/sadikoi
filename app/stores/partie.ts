@@ -247,14 +247,24 @@ export const usePartieStore = defineStore('partie', () => {
   const bonusPo = computed(() => (acteur.value?.genre === 'invocation' ? 0 : stats.value.po))
   const interactif = computed(() => vue.value === null && acteur.value !== null)
 
-  const ciblables = computed(() => {
+  /** Cases de lancement du sort choisi (portée et ligne de vue), affichées en bleu comme en jeu. */
+  const portee = computed(() => {
     const p = partie.value
     if (!p || !acteur.value || !interactif.value || sortChoisi.value === null) return new Set<Case>()
-    // Portée, puis ce que le sort exige de sa cible (un Arbre, une Poupée, soi-même…)
+    const id = sortChoisi.value
+    return new Set(casesCiblables(plateau(p), acteur.value.case, sortDe(p, id) ?? trouverSort(id), bonusPo.value))
+  })
+
+  /**
+   * Parmi elles, celles où le sort se lance vraiment : ce qu'il exige de sa cible (une entité
+   * au contact, un Arbre, une Poupée…). Seules celles-ci montrent la zone au survol.
+   */
+  const ciblables = computed(() => {
+    const p = partie.value
     const a = acteur.value
     const id = sortChoisi.value
-    return new Set(casesCiblables(plateau(p), a.case, sortDe(p, id) ?? trouverSort(id), bonusPo.value)
-      .filter(c => refusCibleSpecifique(p, a, id, c) === null))
+    if (!p || !a || id === null) return new Set<Case>()
+    return new Set([...portee.value].filter(c => refusCibleSpecifique(p, a, id, c) === null))
   })
 
   /** Cases à portée du sort choisi mais sans ligne de vue (affichées à part, comme en jeu). */
@@ -666,7 +676,7 @@ export const usePartieStore = defineStore('partie', () => {
   return {
     maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
-    sortsActeur, verrouille, bonusPo, interactif, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
+    sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,
     carteDeZero, carteDeLaSalle, ouvrirCreation, modifierCarte, testerCarte, chargerCarte,
     sexe, portrait, nomAffiche, texte, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,

@@ -14,9 +14,12 @@ export function zoneDuSort(p: Partie, acteurId: number, sortId: number, cible: C
   switch (comp?.type) {
     case 'infecte':
       return comp.zoneFeuillu && visee?.genre === 'arbre' && visee.feuillu ? zone(cible, 'cercle', comp.zoneFeuillu) : [cible]
+    // La zone ne s'affiche que sur une cible où elle joue vraiment : un ennemi Infecté
+    // (Contagion), une Poupée (Sacrifice Vaudou) ; ailleurs, la seule case visée
     case 'propage':
+      return visee?.genre === 'ennemi' && visee.infecte ? zone(cible, 'cercle', comp.rayon) : [cible]
     case 'sacrifie-poupee':
-      return zone(cible, 'cercle', comp.rayon)
+      return visee && POUPEES.has(visee.monstre!) ? zone(cible, 'cercle', comp.rayon) : [cible]
     case 'explosion': {
       // Visée sur une entité au contact, l'explosion part de La Sacrifiée
       const acteur = p.entites.find(e => e.id === acteurId)

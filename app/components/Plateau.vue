@@ -60,7 +60,7 @@ function etat(c: number): string | null {
   const a = store.apercu
   if (a.zone.has(c)) return 'zone'
   if (a.chemin.has(c)) return 'chemin'
-  if (store.ciblables.has(c)) return 'portee'
+  if (store.portee.has(c)) return 'portee'
   if (store.sansVue.has(c)) return 'sans-vue'
   if (store.accessibles.has(c) && store.acteur?.case !== c) return 'accessible'
   if (placementLibre.value.has(c)) return 'placement'
