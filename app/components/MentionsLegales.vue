@@ -3,13 +3,12 @@ import { choisirLangue, langue, prefixe, t } from '~/i18n'
 
 /**
  * Page des mentions légales, données personnelles et crédits (Ankama), servie sur /legals
- * (/en/legals, /es/legals). L'éditeur est nommé ici ; son SIRET et son adresse sont sur la page
- * de mentions légales de son site (EDITEUR.lien), qui couvre aussi Sadikoi. À compléter avant
- * la mise en ligne.
+ * (/en/legals, /es/legals). Projet personnel et non commercial : édité à titre individuel,
+ * hors de la micro-entreprise de l'éditeur (pas de SIRET ni d'adresse à afficher).
  */
 const EDITEUR = {
-  nom: '[Prénom Nom]',
-  lien: '',
+  nom: 'Jérémie Cieslarczyk',
+  contact: 'contact@jeremie-cieslarczyk.fr',
 }
 
 onMounted(() => choisirLangue(langue.value))
@@ -27,12 +26,9 @@ onMounted(() => choisirLangue(langue.value))
 
       <section>
         <h2>{{ t('legal.editeur') }}</h2>
-        <p>
-          {{ t('legal.editeur-texte', EDITEUR) }}
-          <a v-if="EDITEUR.lien" :href="EDITEUR.lien" target="_blank" rel="noopener">{{ t('legal.editeur-lien') }}<span class="sr-only"> {{ t('lien.nouvel-onglet') }}</span></a>
-        </p>
+        <p>{{ t('legal.editeur-texte', EDITEUR) }}</p>
         <p>{{ t('legal.directeur', EDITEUR) }}</p>
-        <p>{{ t('legal.contact') }}</p>
+        <p>{{ t('legal.contact') }} <a :href="`mailto:${EDITEUR.contact}`">{{ EDITEUR.contact }}</a></p>
       </section>
 
       <section>
