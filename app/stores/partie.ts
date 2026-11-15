@@ -5,7 +5,7 @@ import { categorie, type Categorie } from '~~/engine/categories'
 import { casesAccessibles, chemin } from '~~/engine/chemins'
 import type { Case } from '~~/engine/grille'
 import {
-  PA_PRYCIPITHON, STATS_DEFAUT, acteurCourant, sortDe, arretTacle, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
+  PA_PRYCIPITHON, STATS_DEFAUT, VERSION_REGLES, acteurCourant, sortDe, arretTacle, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
   type Action, type Bilan, type Entite, type Partie, type Stats,
 } from '~~/engine/partie'
 import type { MapCombat } from '~~/engine/plateau'
@@ -306,11 +306,14 @@ export const usePartieStore = defineStore('partie', () => {
 
   /**
    * Records par salle : même map, mêmes ennemis, mêmes caractéristiques (on ne compare pas
-   * un tour à 14 PA avec un tour à 12). Gardés dans le navigateur.
+   * un tour à 14 PA avec un tour à 12), mêmes règles (VERSION_REGLES en tête de la clé ; ceux
+   * d'une version précédente sont oubliés au chargement). Gardés dans le navigateur.
    */
-  const records = ref<Record<string, MeilleurScore>>(lire('records', {}))
+  const prefixeRecords = `v${VERSION_REGLES}|`
+  const records = ref<Record<string, MeilleurScore>>(Object.fromEntries(
+    Object.entries(lire<Record<string, MeilleurScore>>('records', {})).filter(([cle]) => cle.startsWith(prefixeRecords))))
   const cleSalle = computed(() => map.value
-    ? `${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
+    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
     : null)
   const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */

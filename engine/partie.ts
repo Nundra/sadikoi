@@ -205,6 +205,12 @@ export function rejouer(depart: Partie, actions: Action[]): {
 }
 
 export const POINTS_PAR_PA = 10
+/**
+ * Version des règles du moteur et du score. À monter à chaque changement qui modifie le
+ * résultat d'un même tour (sort revu, calcul des points…) : les records d'avant ne servent
+ * plus de référence. 2 : La Sacrifiée et la Prycipithon revues (2026-11-15).
+ */
+export const VERSION_REGLES = 2
 /** Bonus de la 4e étoile : tous les ennemis encore infectés au tour 2. */
 export const POINTS_TOUR_2 = 50
 
