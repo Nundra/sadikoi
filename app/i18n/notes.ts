@@ -15,6 +15,13 @@ export interface NoteDeVersion {
 export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
+      date: '2026-11-15',
+      nouveautes: [],
+      corrections: [
+        'La Sacrifiée : Explosion Ouatée se déclenche en visant une entité à son contact, alliée ou ennemie, et explose autour d’elle (plus besoin de viser sa propre case).',
+      ],
+    },
+    {
       date: '2026-11-14',
       nouveautes: [
         'Avec un sort choisi, les cases à portée mais sans ligne de vue s’affichent en bleu pâle, comme en jeu.',
@@ -46,6 +53,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   ],
   en: [
     {
+      date: '2026-11-15',
+      nouveautes: [],
+      corrections: [
+        'The Sacrificial Doll: its explosion is triggered by targeting an entity in contact with it, ally or enemy, and explodes around the Doll (no more targeting its own cell).',
+      ],
+    },
+    {
       date: '2026-11-14',
       nouveautes: [
         'With a spell selected, cells in range but without line of sight are shown in pale blue, as in game.',
@@ -76,6 +90,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     },
   ],
   es: [
+    {
+      date: '2026-11-15',
+      nouveautes: [],
+      corrections: [
+        'La Sacrificada: su explosión se activa apuntando a una entidad en contacto con ella, aliada o enemiga, y estalla a su alrededor (ya no hay que apuntar a su propia casilla).',
+      ],
+    },
     {
       date: '2026-11-14',
       nouveautes: [

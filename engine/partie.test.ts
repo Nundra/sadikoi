@@ -120,16 +120,22 @@ describe('partie', () => {
     expect(r.ok && termine(r.partie)).toBe(true)
   })
 
-  it("fait exploser La Sacrifiée seulement au contact d'un ennemi", () => {
+  it('fait exploser La Sacrifiée en visant une entité à son contact, centrée sur elle', () => {
     const ennemis = [decale(A, 5, 0), decale(A, 5, 1), decale(A, 9, 0)]
     let p = partie(['La Sacrifiée Transmutée'], ennemis)
     p = suite(p, [sort('La Sacrifiée Transmutée', decale(A, 1, 0)), fin(SADIDA)])
     const s = p.ordre[1]!
     const exploser = (c: Case): Action => ({ type: 'sort', acteur: s, sort: 14385, cible: c })
-    expect(jouer(p, exploser(decale(A, 1, 0)))).toEqual({ ok: false, raison: { code: 'aucun-ennemi-contact' } })
+    // Ni sur elle-même, ni sur une case vide au contact
+    expect(jouer(p, exploser(decale(A, 1, 0)))).toEqual({ ok: false, raison: { code: 'viser-entite-contact' } })
+    expect(jouer(p, exploser(decale(A, 2, 0)))).toEqual({ ok: false, raison: { code: 'viser-entite-contact' } })
+    // Le Sadida, allié au contact, la déclenche aussi : personne n'est à 2 cases d'elle
+    const surAllie = jouer(p, exploser(A))
+    expect(surAllie.ok && surAllie.partie.entites.filter(e => e.infecte)).toEqual([])
     expect(jouer(p, { type: 'deplacement', acteur: s, vers: decale(A, 6, 0) }))
       .toEqual({ ok: false, raison: { code: 'hors-atteinte', p: { pm: 4 } } })
-    p = suite(p, [{ type: 'deplacement', acteur: s, vers: decale(A, 4, 0) }, exploser(decale(A, 4, 0))])
+    // Au contact de l'ennemi en (5, 0) : l'explosion part de (4, 0) et touche aussi (5, 1)
+    p = suite(p, [{ type: 'deplacement', acteur: s, vers: decale(A, 4, 0) }, exploser(decale(A, 5, 0))])
     expect(infectes(p)).toEqual([1, 2])
     expect(p.entites.some(e => e.id === s)).toBe(false)
   })

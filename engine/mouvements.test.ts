@@ -144,7 +144,7 @@ describe('La Bloqueuse et La Surpuissante', () => {
       { type: 'sort', acteur: surpuissante, sort: 14381, cible: sacrifiee }, // Ardeur Estivale
       fin(surpuissante),
       { type: 'deplacement', acteur: s, vers: decale(A, 0, 8) },
-      { type: 'sort', acteur: s, sort: 14385, cible: decale(A, 0, 8) }, // Explosion Ouatée
+      { type: 'sort', acteur: s, sort: 14385, cible: ennemi }, // Explosion Ouatée, sur l'ennemi au contact
     ])
     expect(avec.erreur).toBeUndefined()
     expect(avec.partie.entites.find(e => e.genre === 'ennemi')?.infecte).toBe(true)

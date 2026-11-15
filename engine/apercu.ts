@@ -16,8 +16,12 @@ export function zoneDuSort(p: Partie, acteurId: number, sortId: number, cible: C
       return comp.zoneFeuillu && visee?.genre === 'arbre' && visee.feuillu ? zone(cible, 'cercle', comp.zoneFeuillu) : [cible]
     case 'propage':
     case 'sacrifie-poupee':
-    case 'explosion':
       return zone(cible, 'cercle', comp.rayon)
+    case 'explosion': {
+      // Visée sur une entité au contact, l'explosion part de La Sacrifiée
+      const acteur = p.entites.find(e => e.id === acteurId)
+      return acteur ? zone(acteur.case, 'cercle', comp.rayon) : [cible]
+    }
     case 'miasmes': {
       const acteur = p.entites.find(e => e.id === acteurId)
       const centres = [acteur, ...p.entites.filter(e => (e.genre === 'arbre' && e.feuillu) || POUPEES.has(e.monstre!))]

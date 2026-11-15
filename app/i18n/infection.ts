@@ -9,7 +9,7 @@ import type { Langue } from './index'
 export const INFECTION: Record<Langue, Record<number, string>> = {
   fr: {
     14380: 'Infecte la cible. Un lancer par cible : jusqu’à 2 ennemis par tour.',
-    14385: 'Il faut un ennemi au contact. Infecte en cercle de 2 autour de la case visée, puis La Sacrifiée meurt.',
+    14385: 'Se déclenche en visant une entité à son contact (alliée ou ennemie). Infecte en cercle de 2 autour de La Sacrifiée, puis elle meurt.',
     13536: 'En ligne : la première entité entre le Groute et la case visée est infectée et poussée jusqu’à cette case.',
     13591: 'En ligne : la première entité à partir de la case visée (7 cases au-delà) est infectée et attirée jusqu’à cette case.',
     29624: 'Repousse de 4 cases les entités sur les 4 cases en diagonale autour de La Gonflable.',
@@ -64,7 +64,7 @@ export const INFECTION: Record<Langue, Record<number, string>> = {
     13520: 'No direct infection. {i:5899} has {s:14387} (spreads to Infected enemies) and gives MP.',
     13578: 'No direct infection. {i:5899} has {s:14387} (spreads to Infected enemies) and gives MP.',
     14380: 'Infects the target. One cast per target: up to 2 enemies per turn.',
-    14385: 'Needs an enemy in contact. Infects in a 2-cell circle around the targeted cell, then {i:5898} dies.',
+    14385: 'Triggered by targeting an entity in contact with it (ally or enemy). Infects in a 2-cell circle around {i:5898}, then it dies.',
     13536: 'In line: the first entity between the {i:5901} and the targeted cell is infected and pushed to that cell.',
     13591: 'In line: the first entity from the targeted cell (up to 7 cells beyond) is infected and attracted to that cell.',
     29624: 'Repels entities on the 4 diagonal cells around {i:5897} by 4 cells.',
@@ -119,7 +119,7 @@ export const INFECTION: Record<Langue, Record<number, string>> = {
     13520: 'Sin infección directa. {i:5899} tiene {s:14387} (afecta a los infectados) y da PM.',
     13578: 'Sin infección directa. {i:5899} tiene {s:14387} (afecta a los infectados) y da PM.',
     14380: 'Infecta al objetivo. Un lanzamiento por objetivo: hasta 2 enemigos por turno.',
-    14385: 'Hace falta un enemigo en contacto. Infecta en un círculo de 2 alrededor de la casilla objetivo y luego {i:5898} muere.',
+    14385: 'Se activa apuntando a una entidad en contacto con ella (aliada o enemiga). Infecta en un círculo de 2 alrededor de {i:5898} y luego muere.',
     13536: 'En línea: la primera entidad entre el {i:5901} y la casilla objetivo queda infectada y empujada hasta esa casilla.',
     13591: 'En línea: la primera entidad a partir de la casilla objetivo (hasta 7 casillas más allá) queda infectada y atraída hasta esa casilla.',
     29624: 'Repele 4 casillas a las entidades de las 4 casillas en diagonal alrededor de {i:5897}.',

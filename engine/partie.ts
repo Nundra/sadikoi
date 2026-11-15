@@ -264,9 +264,9 @@ export function refusCibleSpecifique(p: Partie, acteur: Entite, sortId: number, 
       if (comp.feuilluRequis && !visee.feuillu) return msg('viser-arbre-feuillu')
       return null
     case 'explosion':
-      // La Sacrifiée explose sur elle-même, à condition d'avoir un ennemi au contact
-      if (!p.entites.some(e => e.genre === 'ennemi' && distance(e.case, acteur.case) === 1)) return msg('aucun-ennemi-contact')
-      if (cible !== acteur.case) return msg('explose-sur-soi', { e: ref(acteur) })
+      // La Sacrifiée se déclenche en visant une entité à son contact (alliée ou ennemie) ;
+      // l'explosion reste centrée sur elle
+      if (!visee || visee.id === acteur.id || distance(cible, acteur.case) !== 1) return msg('viser-entite-contact')
       return null
     case 'echange':
       if (!visee || visee.id === acteur.id || visee.genre === 'ennemi') return msg('viser-allie')
@@ -500,7 +500,7 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
       }
       break
     case 'explosion':
-      infecter(zone(cible, 'cercle', comp.rayon))
+      infecter(zone(acteur.case, 'cercle', comp.rayon))
       retirer(acteur)
       dire(msg('explose', { e: ref(acteur) }))
       break

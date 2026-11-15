@@ -19,7 +19,7 @@ export type CodeMessage =
   | 'sort-inconnu' | 'sort-absent' | 'niveau-requis' | 'relance-initiale' | 'pa-insuffisants' | 'lancers-par-tour' | 'lancers-par-cible'
   | 'hors-portee' | 'pas-en-ligne' | 'pas-en-diagonale' | 'pas-en-ligne-ni-diagonale' | 'pas-de-ldv'
   | 'case-non-ciblable' | 'case-occupee'
-  | 'viser-arbre' | 'viser-arbre-feuillu' | 'aucun-ennemi-contact' | 'explose-sur-soi' | 'viser-allie'
+  | 'viser-arbre' | 'viser-arbre-feuillu' | 'viser-entite-contact' | 'viser-allie'
   | 'viser-entite' | 'viser-centre-tremblement'
   // Titre d'une action (première ligne du bilan)
   | 'titre-deplacement' | 'titre-sort-entite' | 'titre-sort-case' | 'titre-fin'

@@ -132,7 +132,7 @@ export type Comportement =
   | { type: 'feuillu', forme: 'carre' | 'tous', rayon: number }
   /** Sur un Infecté : retire l'Infection de tous les ennemis. */
   | { type: 'desinfecte' }
-  /** La Sacrifiée : il faut un ennemi au contact ; infecte en cercle et meurt. */
+  /** La Sacrifiée : vise une entité à son contact, infecte en cercle autour d'elle et meurt. */
   | { type: 'explosion', rayon: number }
   /**
    * Tremblement : vise le lanceur, un Arbre Feuillu ou une Poupée, et attire de `distance`
