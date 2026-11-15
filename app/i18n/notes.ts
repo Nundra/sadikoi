@@ -21,6 +21,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Raccourcis : F1 termine le tour (touche réglable dans les réglages), Ctrl+Z annule la dernière action.',
         'Les sorts verrouillés par le niveau portent un cadenas.',
         'Chargement bien plus léger : les maps arrivent par petits paquets au lieu d’un seul gros fichier.',
+        'Mentions légales (depuis les réglages et la bienvenue). Les polices sont désormais hébergées sur le site : plus aucune requête vers un service tiers.',
       ],
       corrections: [
         'Créateur de map : Ctrl+Z marche aussi avec un clavier AZERTY.',
@@ -70,6 +71,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Shortcuts: F1 ends the turn (key adjustable in the settings), Ctrl+Z undoes the last action.',
         'Spells locked by level show a padlock.',
         'Much lighter loading: maps arrive in small packs instead of one big file.',
+        'Legal notice (from the settings and the welcome window). Fonts are now hosted on the site: no more requests to any third-party service.',
       ],
       corrections: [
         'Map creator: Ctrl+Z now also works with an AZERTY keyboard.',
@@ -119,6 +121,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Atajos: F1 termina el turno (tecla ajustable en los ajustes), Ctrl+Z deshace la última acción.',
         'Los hechizos bloqueados por el nivel muestran un candado.',
         'Carga mucho más ligera: los mapas llegan en pequeños paquetes en lugar de un solo archivo grande.',
+        'Aviso legal (desde los ajustes y la bienvenida). Las fuentes ahora se alojan en el sitio: ya no hay peticiones a ningún servicio externo.',
       ],
       corrections: [
         'Creador de mapas: Ctrl+Z ya funciona también con un teclado AZERTY.',

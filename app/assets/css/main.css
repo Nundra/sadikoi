@@ -1,4 +1,4 @@
-/* Esprit Dofus 3 : bleu-vert sombre, panneaux arrondis, touches dorées. Aucun asset du jeu. */
+/* Esprit Dofus 3 : bleu-vert sombre, panneaux arrondis, touches dorées. */
 :root {
   --or: #e0b25a;
   --or-clair: #f0cd85;
@@ -17,6 +17,25 @@
   --largeur-fenetre-large: min(680px, 92vw);
   --police-titre: 'Marcellus', serif;
   --police-texte: 'Nunito Sans', system-ui, sans-serif;
+}
+
+/*
+ * Polices hébergées sur le site (sous-ensemble latin de Google Fonts, licence OFL) : pas de
+ * requête vers Google, donc pas d'adresse IP des visiteurs transmise. Nunito Sans est variable.
+ */
+@font-face {
+  font-family: 'Marcellus';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/polices/marcellus.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/polices/nunito-sans.woff2') format('woff2');
 }
 
 * {

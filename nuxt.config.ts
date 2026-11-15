@@ -10,9 +10,9 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { rel: 'apple-touch-icon', href: '/icone-192.png' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Marcellus&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap' },
+        // Polices hébergées sur le site (public/polices) : aucune requête vers Google
+        { rel: 'preload', href: '/polices/nunito-sans.woff2', as: 'font', type: 'font/woff2', crossorigin: '' },
+        { rel: 'preload', href: '/polices/marcellus.woff2', as: 'font', type: 'font/woff2', crossorigin: '' },
       ],
     },
   },

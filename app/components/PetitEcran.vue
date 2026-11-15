@@ -9,6 +9,7 @@ import { t } from '~/i18n'
 const LARGEUR_MIN = 1024
 
 const dialogue = ref<HTMLDialogElement | null>(null)
+const mentions = ref<{ ouvrir: () => void } | null>(null)
 
 onMounted(() => {
   if (window.matchMedia(`(max-width: ${LARGEUR_MIN - 1}px)`).matches) dialogue.value?.showModal()
@@ -23,6 +24,8 @@ onMounted(() => {
     <p>{{ t('petit-ecran.texte') }}</p>
     <p class="conseil">{{ t('petit-ecran.conseil') }}</p>
     <button type="button" @click="dialogue?.close()">{{ t('petit-ecran.continuer') }}</button>
+    <button type="button" class="lien" @click="mentions?.ouvrir()">{{ t('legal.lien') }}</button>
+    <MentionsLegales ref="mentions" />
   </dialog>
 </template>
 
@@ -41,4 +44,5 @@ h2 { margin: 0 0 10px; font-family: var(--police-titre); font-size: 26px; font-w
 p { margin: 0 0 10px; max-width: 420px; color: var(--texte-doux); }
 .conseil { color: var(--texte); font-weight: 800; }
 button { margin-top: 18px; padding: 0 22px; }
+.lien { height: auto; margin-top: 16px; padding: 0; background: none; border: none; color: var(--or-clair); font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 </style>
