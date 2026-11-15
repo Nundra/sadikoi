@@ -67,7 +67,7 @@ function deposer(k: number) {
         class="sort"
         :class="{ indisponible: x.indisponible }"
         :style="{ '--couleur': x.couleur }"
-        :aria-label="x.touche ? t('barre.bouton-touche', { nom: x.nom, pa: x.s.pa, touche: x.touche }) : t('barre.bouton', { nom: x.nom, pa: x.s.pa })"
+        :aria-label="(x.touche ? t('barre.bouton-touche', { nom: x.nom, pa: x.s.pa, touche: x.touche }) : t('barre.bouton', { nom: x.nom, pa: x.s.pa })) + (x.verrou ? ` · ${t('sort.niveau-requis', { n: x.verrou })}` : '')"
         :aria-pressed="store.sortChoisi === x.s.id"
         :draggable="reorganisable"
         @dragstart="(ev) => { depuis = x.k; ev.dataTransfer?.setData('text/plain', String(x.k)) }"
@@ -77,6 +77,7 @@ function deposer(k: number) {
         <img :src="`/sorts/${x.s.id}.png`" alt="" class="icone" draggable="false">
         <span class="pa">{{ x.s.pa }}</span>
         <span v-if="x.touche" class="touche" aria-hidden="true">{{ x.touche }}</span>
+        <span v-if="x.verrou" class="cadenas" aria-hidden="true" />
       </button>
       <div class="infobulle" :class="x.k % 11 < 3 ? 'a-gauche' : x.k % 11 > 7 ? 'a-droite' : ''" aria-hidden="true">
         <div class="titre">
@@ -154,6 +155,12 @@ function deposer(k: number) {
   background: url('/icones/pa.png') center / contain no-repeat;
   font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px #0b2a44;
   display: flex; align-items: center; justify-content: center; padding-top: 1px;
+}
+/* Sort verrouillé par le niveau : cadenas du jeu au centre de l'icône */
+.cadenas {
+  position: absolute; inset: 0; margin: auto; width: 26px; height: 26px;
+  background: var(--or-clair); filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.9));
+  mask: url('/icones/cadenas.png') center / contain no-repeat; -webkit-mask: url('/icones/cadenas.png') center / contain no-repeat;
 }
 .touche {
   position: absolute; right: 2px; bottom: 2px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 4px;

@@ -18,7 +18,8 @@ const ennemis = computed(() => ennemisDe(store.brouillon).length)
 
 // Ctrl+Z (Cmd+Z) annule le dernier trait
 function surTouche(ev: KeyboardEvent) {
-  if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyZ' && !(ev.target instanceof HTMLInputElement)) {
+  // La lettre Z de la disposition (W physique en AZERTY), pas le code
+  if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'z' && !(ev.target instanceof HTMLInputElement)) {
     ev.preventDefault()
     store.annulerTrait()
   }

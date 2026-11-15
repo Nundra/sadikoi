@@ -18,8 +18,11 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       date: '2026-11-15',
       nouveautes: [
         'Nouvelle caractéristique Invocations (4 par défaut, de 1 à 8 dans les réglages) : au-delà, plus d’invocation possible. Les Arbres ne comptent pas, comme en jeu.',
+        'Raccourcis : F1 termine le tour (touche réglable dans les réglages), Ctrl+Z annule la dernière action.',
+        'Les sorts verrouillés par le niveau portent un cadenas.',
       ],
       corrections: [
+        'Créateur de map : Ctrl+Z marche aussi avec un clavier AZERTY.',
         'La Sacrifiée : Explosion Ouatée se déclenche en visant une entité à son contact, alliée ou ennemie, et explose autour d’elle (plus besoin de viser sa propre case).',
         'Après son explosion, La Sacrifiée garde la main : son tour ne se termine qu’au clic sur « Fin du tour ».',
         'Prycipithon Mate : ses 2 PA ne rapportent plus de points s’ils ne sont pas dépensés. L’activer sans en avoir besoin ne paie plus.',
@@ -63,8 +66,11 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       date: '2026-11-15',
       nouveautes: [
         'New Summons characteristic (4 by default, 1 to 8 in the settings): beyond that, no more summoning. Trees don’t count, as in game.',
+        'Shortcuts: F1 ends the turn (key adjustable in the settings), Ctrl+Z undoes the last action.',
+        'Spells locked by level show a padlock.',
       ],
       corrections: [
+        'Map creator: Ctrl+Z now also works with an AZERTY keyboard.',
         'The Sacrificial Doll: its explosion is triggered by targeting an entity in contact with it, ally or enemy, and explodes around the Doll (no more targeting its own cell).',
         'After exploding, the Sacrificial Doll keeps the turn: it only ends when you click “End turn”.',
         'Prycipithon Mate: its 2 AP no longer earn points when left unspent. Turning it on without needing it no longer pays off.',
@@ -108,8 +114,11 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       date: '2026-11-15',
       nouveautes: [
         'Nueva característica Invocaciones (4 por defecto, de 1 a 8 en los ajustes): por encima, no se puede invocar más. Los Árboles no cuentan, como en el juego.',
+        'Atajos: F1 termina el turno (tecla ajustable en los ajustes), Ctrl+Z deshace la última acción.',
+        'Los hechizos bloqueados por el nivel muestran un candado.',
       ],
       corrections: [
+        'Creador de mapas: Ctrl+Z ya funciona también con un teclado AZERTY.',
         'La Sacrificada: su explosión se activa apuntando a una entidad en contacto con ella, aliada o enemiga, y estalla a su alrededor (ya no hay que apuntar a su propia casilla).',
         'Tras explotar, La Sacrificada conserva el turno: solo termina al hacer clic en «Fin del turno».',
         'Prycipithon Mate: sus 2 PA ya no dan puntos si no se gastan. Activarla sin necesitarla ya no compensa.',

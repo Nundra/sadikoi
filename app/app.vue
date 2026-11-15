@@ -6,14 +6,20 @@ const store = usePartieStore()
 
 useHead({ title: () => t('app.titre'), htmlAttrs: { lang: langue } })
 
-// Raccourcis de la barre : la touche d'un emplacement choisit son sort, Échap le relâche
-useRaccourcis(
-  (k) => {
+// Raccourcis : la touche d'un emplacement choisit son sort, Échap le relâche, F1 (réglable)
+// termine le tour, Ctrl+Z annule la dernière action
+useRaccourcis({
+  choisir: (k) => {
     const s = store.sortsActeur[k]
     if (s) store.choisirSort(s.id)
   },
-  () => (store.sortChoisi = null),
-)
+  echap: () => (store.sortChoisi = null),
+  finDuTour: () => store.finDuTour(),
+  // Le créateur de map a son propre Ctrl+Z (traits de peinture)
+  annuler: () => {
+    if (!store.enEdition && store.actions.length) store.annuler()
+  },
+})
 
 onMounted(async () => {
   // Langue de l'adresse (/en, /es) : ses textes du jeu, chargés avec les maps

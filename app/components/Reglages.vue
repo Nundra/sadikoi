@@ -14,6 +14,7 @@ const emplacements = computed(() => barre.ordre.map((paire, k) => {
   const s = SORTS_SADIDA.find(x => x.id === store.variantes[paire]) ?? SORTS_SADIDA.find(x => x.paire === paire)!
   return { k, nom: nomSort(s.id), touche: barre.libelle(barre.touches[k] ?? '') }
 }))
+const finTouche = computed(() => barre.libelle(barre.toucheFin))
 const dialogue = ref<HTMLDialogElement | null>(null)
 const notes = ref<{ ouvrir: () => void } | null>(null)
 
@@ -103,6 +104,18 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
     <fieldset class="raccourcis">
       <legend>{{ t('reglages.raccourcis') }}</legend>
       <p class="aide">{{ t('reglages.raccourcis-aide') }}</p>
+      <div class="fin-tour">
+        <span class="sort">{{ t('timeline.fin-du-tour') }}</span>
+        <button
+          type="button"
+          class="touche"
+          :class="{ attente: barre.enAttente === 'fin' }"
+          :aria-label="t('reglages.touche-fin', { touche: finTouche || t('reglages.aucune') })"
+          @click="barre.enAttente = barre.enAttente === 'fin' ? null : 'fin'"
+        >
+          {{ barre.enAttente === 'fin' ? t('reglages.appuie') : finTouche || '—' }}
+        </button>
+      </div>
       <ol>
         <li v-for="e in emplacements" :key="e.k">
           <span class="numero">{{ e.k + 1 }}</span>
@@ -173,6 +186,10 @@ input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--or); fle
 .reglable input { appearance: textfield; -moz-appearance: textfield; }
 .reglable input::-webkit-inner-spin-button, .reglable input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .raccourcis { margin-top: 18px; }
+.fin-tour { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+.fin-tour .sort { flex: 1; }
+.fin-tour .touche { width: 64px; height: 28px; padding: 0; font-size: 12px; font-weight: 800; color: var(--or-clair); }
+.fin-tour .touche.attente { border-color: var(--or); background: #3a2f17; }
 .raccourcis ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
 .raccourcis li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .raccourcis .numero { width: 18px; color: var(--texte-gris); font-size: 11px; text-align: right; }
