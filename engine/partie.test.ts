@@ -6,7 +6,7 @@ import { MILIEU as A, decale, plateauTest } from './test-outils'
 
 const id = (nom: string) => SORTS_SADIDA.find(s => s.nom === nom)!.id
 
-function partie(sorts: string[], ennemis: Case[], stats?: Stats): Partie {
+function partie(sorts: string[], ennemis: Case[], stats?: Partial<Stats>): Partie {
   return nouvellePartie({ cases: plateauTest().cases, sadida: A, ennemis, sorts: sorts.map(id), stats })
 }
 
@@ -145,6 +145,15 @@ describe('partie', () => {
       .toEqual({ ok: false, raison: { code: 'acteur-mort', p: { e: { id: s, genre: 'invocation', monstre: 5898 } } } })
     p = suite(p, [fin(s)])
     expect(termine(p)).toBe(true)
+  })
+
+  it('limite les invocations en jeu (les Arbres ne comptent pas)', () => {
+    const p = partie(['Arbre', 'La Folle Transmutée', 'La Sacrifiée Transmutée'], [], { invo: 1 })
+    const un = suite(p, [sort('Arbre', decale(A, 2, 0)), sort('La Folle Transmutée', decale(A, 1, 0))])
+    expect(jouer(un, sort('La Sacrifiée Transmutée', decale(A, 0, 1))))
+      .toEqual({ ok: false, raison: { code: 'limite-invocations', p: { n: 1 } } })
+    expect(jouer(suite(partie(['La Folle Transmutée', 'La Sacrifiée Transmutée'], []), [sort('La Folle Transmutée', decale(A, 1, 0))]),
+      sort('La Sacrifiée Transmutée', decale(A, 0, 1))).ok).toBe(true)
   })
 
   it('remplace un Arbre Feuillu par le Groute, pas un Arbre normal', () => {

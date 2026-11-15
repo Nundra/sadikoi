@@ -176,6 +176,7 @@ export const fr = {
   'carac.pa': 'Points d’action',
   'carac.pm': 'Points de mouvement',
   'carac.po': 'Portée bonus',
+  'carac.invo': 'Invocations',
 
   // Réglages
   'reglages.titre': 'Réglages',
@@ -301,6 +302,7 @@ export const fr = {
   // Messages du moteur : refus
   'm.tour-termine': 'le tour est terminé',
   'm.acteur-mort': '{e} a explosé : il ne reste qu’à terminer son tour',
+  'm.limite-invocations': 'limite d’invocations atteinte ({n})',
   'm.tour-de': 'c’est au tour de {e}',
   'm.ne-se-deplace-pas': '{e} ne se déplace pas',
   'm.deja-sur-case': 'déjà sur cette case',

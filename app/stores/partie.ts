@@ -74,7 +74,7 @@ function ecrire(cle: string, valeur: unknown) {
 const CATEGORIES_DEFAUT: Record<Categorie, boolean> = { zone: true, speciale: false, donjon: true, koli: false, songes: true, autre: false }
 
 /** Bornes des caractéristiques réglables (PA, PM et PO de base, sans la Prycipithon). */
-export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6] }
+export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6], invo: [1, 8] }
 export const NIVEAU_MIN = 1
 
 const borner = (v: number, [min, max]: [number, number]) => Math.min(max, Math.max(min, Math.round(Number.isFinite(v) ? v : max)))
@@ -142,13 +142,14 @@ export const usePartieStore = defineStore('partie', () => {
   const phase = ref<'placement' | 'tour'>('placement')
 
   /**
-   * Niveau et caractéristiques de base du Sadida, réglables (par défaut niveau 200, 12 PA / 6 PM / 6 PO).
+   * Niveau et caractéristiques de base du Sadida, réglables (par défaut niveau 200, 12 PA / 6 PM / 6 PO, 4 invocations).
    * Le niveau débloque les sorts et donne leur rang (PO). Gardés dans `sadikoi:personnage`.
    */
   const personnage = lire('personnage', { niveau: NIVEAU_MAX, ...STATS_DEFAUT })
   const niveau = ref(borner(personnage.niveau, [NIVEAU_MIN, NIVEAU_MAX]))
   const stats = shallowRef<Stats>({
     pa: borner(personnage.pa, LIMITES_STATS.pa), pm: borner(personnage.pm, LIMITES_STATS.pm), po: borner(personnage.po, LIMITES_STATS.po),
+    invo: borner(personnage.invo, LIMITES_STATS.invo),
   })
   watch([niveau, stats], ([n, st]) => ecrire('personnage', { niveau: n, ...st }))
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
@@ -313,7 +314,7 @@ export const usePartieStore = defineStore('partie', () => {
   const records = ref<Record<string, MeilleurScore>>(Object.fromEntries(
     Object.entries(lire<Record<string, MeilleurScore>>('records', {})).filter(([cle]) => cle.startsWith(prefixeRecords))))
   const cleSalle = computed(() => map.value
-    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
+    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}-i${stats.value.invo}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
     : null)
   const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */

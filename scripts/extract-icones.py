@@ -10,7 +10,7 @@ Usage :
 
 - <dossier dofus-sqlite> contient dofus.sqlite, images-spell.zip, images-cosmetic.zip et
   images-monster.zip, téléchargés sur la dernière release de https://github.com/ledouxm/dofus-sqlite.
-- Les pictos d'interface (PA, PM, PO, étoiles, clé des réglages, flèches de variante, point d'interrogation de l'aide) sont lus dans les bundles
+- Les pictos d'interface (PA, PM, PO, invocations, étoiles, clé des réglages, flèches de variante, point d'interrogation de l'aide, cadenas) sont lus dans les bundles
   Unity du client Dofus 3 installé (StreamingAssets/aa/StandaloneLinux64).
   Par défaut : ~/.config/Ankama/Dofus-dofus3/Dofus_Data (client Linux).
 
@@ -40,8 +40,8 @@ CLIENT = Path.home() / ".config/Ankama/Dofus-dofus3/Dofus_Data"
 
 # Nom dans le jeu → nom dans public/icones, par bundle
 PICTOS = {
-    "spriteassets_assets_2x.bundle": {"pa": "pa", "pm": "pm", "po": "po"},
-    "icons_assets_2x.bundle": {"starFilled": "etoile-pleine", "starEmpty": "etoile-vide", "spanner": "reglages", "exchange": "variante", "questionMark": "aide"},
+    "spriteassets_assets_2x.bundle": {"pa": "pa", "pm": "pm", "po": "po", "invocation": "invo"},
+    "icons_assets_2x.bundle": {"starFilled": "etoile-pleine", "starEmpty": "etoile-vide", "spanner": "reglages", "exchange": "variante", "questionMark": "aide", "lock": "cadenas"},
 }
 
 

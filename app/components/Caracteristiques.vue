@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { SADIDA, type Stats } from '~~/engine/partie'
+import { SADIDA, invocationsEnJeu, type Stats } from '~~/engine/partie'
 import { t } from '~/i18n'
 
 const store = usePartieStore()
 
-/** Caractéristiques fixes (12 / 6 / 6) ; la Prycipithon ajoute 2 PA au tour 1. */
+/** Caractéristiques réglées dans les réglages ; la Prycipithon ajoute 2 PA au tour 1. Invocations : places restantes. */
 const lignes = computed(() => {
   const s = store.partie?.entites.find(e => e.id === SADIDA)
   const max = store.statsDepart
@@ -12,6 +12,7 @@ const lignes = computed(() => {
     ['pa', '#6fb4ee', s?.pa],
     ['pm', '#86cf62', s?.pm],
     ['po', '#e7b25a', max.po],
+    ['invo', '#e8925a', store.partie ? max.invo - invocationsEnJeu(store.partie) : max.invo],
   ] as const).map(([cle, couleur, reste]) => ({ cle: cle as keyof Stats, nom: t(`carac.${cle}`), couleur, reste: reste ?? max[cle], max: max[cle] }))
 })
 </script>

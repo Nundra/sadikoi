@@ -20,7 +20,7 @@ const notes = ref<{ ouvrir: () => void } | null>(null)
 /** Niveau puis PA, PM, PO : valeur, bornes et réglage (− / + ou saisie). */
 const reglablesPersonnage = computed(() => [
   { cle: 'niveau', nom: t('reglages.niveau'), valeur: store.niveau, bornes: [NIVEAU_MIN, NIVEAU_MAX] as const, changer: store.changerNiveau },
-  ...(['pa', 'pm', 'po'] as const).map(cle => ({
+  ...(['pa', 'pm', 'po', 'invo'] as const).map(cle => ({
     cle, nom: t(`carac.${cle}`), valeur: store.stats[cle], bornes: LIMITES_STATS[cle], changer: (v: number) => store.changerStat(cle, v),
   })),
 ])

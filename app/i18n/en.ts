@@ -164,6 +164,7 @@ export const en: DicoLangue = {
   'carac.pa': 'Action Points',
   'carac.pm': 'Movement Points',
   'carac.po': 'Bonus Range',
+  'carac.invo': 'Summons',
 
   'reglages.titre': 'Settings',
   'reglages.langue': 'Language',
@@ -285,6 +286,7 @@ export const en: DicoLangue = {
 
   'm.tour-termine': 'the turn is over',
   'm.acteur-mort': '{e} has exploded: all that’s left is to end its turn',
+  'm.limite-invocations': 'summon limit reached ({n})',
   'm.tour-de': 'it’s {e}’s turn',
   'm.ne-se-deplace-pas': '{e} doesn’t move',
   'm.deja-sur-case': 'already on this cell',

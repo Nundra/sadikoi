@@ -164,6 +164,7 @@ export const es: DicoLangue = {
   'carac.pa': 'Puntos de acción',
   'carac.pm': 'Puntos de movimiento',
   'carac.po': 'Alcance adicional',
+  'carac.invo': 'Invocaciones',
 
   'reglages.titre': 'Ajustes',
   'reglages.langue': 'Idioma',
@@ -285,6 +286,7 @@ export const es: DicoLangue = {
 
   'm.tour-termine': 'el turno ha terminado',
   'm.acteur-mort': '{e} ha explotado: solo queda terminar su turno',
+  'm.limite-invocations': 'límite de invocaciones alcanzado ({n})',
   'm.tour-de': 'le toca a {e}',
   'm.ne-se-deplace-pas': '{e} no se desplaza',
   'm.deja-sur-case': 'ya está en esta casilla',

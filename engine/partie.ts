@@ -20,10 +20,12 @@ export interface Stats {
   pm: number
   /** Bonus de PO, ajouté aux sorts à PO modifiable. */
   po: number
+  /** Invocations en jeu en même temps au plus (les Arbres ne comptent pas, comme en jeu). */
+  invo: number
 }
 
 /** Caractéristiques du Sadida : fixes, les mêmes pour tous les joueurs. */
-export const STATS_DEFAUT: Stats = { pa: 12, pm: 6, po: 6 }
+export const STATS_DEFAUT: Stats = { pa: 12, pm: 6, po: 6, invo: 4 }
 /** Prycipithon Mate : +2 PA au premier tour. */
 export const PA_PRYCIPITHON = 2
 /** En échange, les points sont réduits de 10 % (les étoiles ne changent pas). */
@@ -111,14 +113,14 @@ export function nouvellePartie(o: {
   sadida: Case
   ennemis: Case[]
   sorts: number[]
-  stats?: Stats
+  stats?: Partial<Stats>
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
   prycipithon?: boolean
   /** Niveau du Sadida (200 par défaut). */
   niveau?: number
 }): Partie {
   const niveau = o.niveau ?? NIVEAU_MAX
-  const base = o.stats ?? STATS_DEFAUT
+  const base: Stats = { ...STATS_DEFAUT, ...o.stats }
   const stats = o.prycipithon ? { ...base, pa: base.pa + PA_PRYCIPITHON } : base
   const paires = new Set<number>()
   for (const id of o.sorts) {
@@ -159,6 +161,11 @@ export function acteurCourant(p: Partie): Entite | undefined {
     if (e) return e
   }
   return undefined
+}
+
+/** Les invocations en vie (Poupées, Groute, Tréant) : les Arbres ne comptent pas dans la limite. */
+export function invocationsEnJeu(p: Partie): number {
+  return p.entites.filter(e => e.genre === 'invocation').length
 }
 
 export function termine(p: Partie): boolean {
@@ -208,7 +215,7 @@ export const POINTS_PAR_PA = 10
 /**
  * Version des règles du moteur et du score. À monter à chaque changement qui modifie le
  * résultat d'un même tour (sort revu, calcul des points…) : les records d'avant ne servent
- * plus de référence. 2 : La Sacrifiée et la Prycipithon revues (2026-11-15).
+ * plus de référence. 2 : La Sacrifiée et la Prycipithon revues, limite d'invocations (2026-11-15).
  */
 export const VERSION_REGLES = 2
 /** Bonus de la 4e étoile : tous les ennemis encore infectés au tour 2. */
@@ -375,6 +382,9 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
   const comp = COMPORTEMENTS[id]
   const specifique = refusCibleSpecifique(p, acteur, id, cible)
   if (specifique) return refus(specifique)
+  if ((comp?.type === 'invoque' || comp?.type === 'remplace-arbre') && invocationsEnJeu(p) >= p.stats.invo) {
+    return refus(msg('limite-invocations', { n: p.stats.invo }))
+  }
 
   acteur.pa -= s.pa
   p.lancers[cleTour] = (p.lancers[cleTour] ?? 0) + 1

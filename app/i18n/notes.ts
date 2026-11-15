@@ -16,7 +16,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
       date: '2026-11-15',
-      nouveautes: [],
+      nouveautes: [
+        'Nouvelle caractéristique Invocations (4 par défaut, de 1 à 8 dans les réglages) : au-delà, plus d’invocation possible. Les Arbres ne comptent pas, comme en jeu.',
+      ],
       corrections: [
         'La Sacrifiée : Explosion Ouatée se déclenche en visant une entité à son contact, alliée ou ennemie, et explose autour d’elle (plus besoin de viser sa propre case).',
         'Après son explosion, La Sacrifiée garde la main : son tour ne se termine qu’au clic sur « Fin du tour ».',
@@ -59,7 +61,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   en: [
     {
       date: '2026-11-15',
-      nouveautes: [],
+      nouveautes: [
+        'New Summons characteristic (4 by default, 1 to 8 in the settings): beyond that, no more summoning. Trees don’t count, as in game.',
+      ],
       corrections: [
         'The Sacrificial Doll: its explosion is triggered by targeting an entity in contact with it, ally or enemy, and explodes around the Doll (no more targeting its own cell).',
         'After exploding, the Sacrificial Doll keeps the turn: it only ends when you click “End turn”.',
@@ -102,7 +106,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   es: [
     {
       date: '2026-11-15',
-      nouveautes: [],
+      nouveautes: [
+        'Nueva característica Invocaciones (4 por defecto, de 1 a 8 en los ajustes): por encima, no se puede invocar más. Los Árboles no cuentan, como en el juego.',
+      ],
       corrections: [
         'La Sacrificada: su explosión se activa apuntando a una entidad en contacto con ella, aliada o enemiga, y estalla a su alrededor (ya no hay que apuntar a su propia casilla).',
         'Tras explotar, La Sacrificada conserva el turno: solo termina al hacer clic en «Fin del turno».',
