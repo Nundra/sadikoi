@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MapCombat } from '~~/engine/plateau'
+import type { MapIndex } from 'virtual:maps'
 import { langue, nomJeu, t } from '~/i18n'
 import type { Mode } from '~/stores/partie'
 
@@ -15,7 +15,7 @@ const MAX_RESULTATS = 60
 const sansAccents = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
 
 /** Libellé d'une map dans la langue choisie (ou en français, avec `traduire` à faux). */
-function libelle(m: MapCombat, traduire = true): string {
+function libelle(m: MapIndex, traduire = true): string {
   const n = traduire ? nomJeu : (x: string) => x
   if (store.mode === 'boss') return `${n(m.donjon!)} · ${m.boss!.map(n).join(', ')}`
   return m.nom === m.sous_zone ? n(m.nom) : `${n(m.nom)} · ${n(m.sous_zone)}`
@@ -61,7 +61,7 @@ function fermer() {
   ouvert.value = false
 }
 
-function choisir(m: MapCombat | undefined) {
+function choisir(m: MapIndex | undefined) {
   if (!m) return
   store.mapChoisie = m.id
   store.nouvelleSalle()

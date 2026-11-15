@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { zoneDuSort } from '~~/engine/apercu'
-import { categorie, type Categorie } from '~~/engine/categories'
+import type { Categorie } from '~~/engine/categories'
 import { casesAccessibles, chemin } from '~~/engine/chemins'
 import type { Case } from '~~/engine/grille'
 import {
@@ -9,6 +9,7 @@ import {
   type Action, type Bilan, type Entite, type Partie, type Stats,
 } from '~~/engine/partie'
 import type { MapCombat } from '~~/engine/plateau'
+import type { MapIndex } from 'virtual:maps'
 import { casesCiblables, refusCible } from '~~/engine/portee'
 import { NB_CASES } from '~~/engine/grille'
 import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
@@ -88,10 +89,11 @@ function auHasard<T>(liste: T[]): T {
 
 export const usePartieStore = defineStore('partie', () => {
   const barre = useBarreStore()
-  const maps = shallowRef<MapCombat[]>([])
+  /** L'index des maps (sans leurs cases, chargées à la demande : modules/maps.ts). */
+  const maps = shallowRef<MapIndex[]>([])
   const mapsBoss = computed(() => maps.value.filter(m => m.boss))
 
-  /** Type de chaque map (calculé une fois au chargement). */
+  /** Type de chaque map (calculé au build). */
   const categories = shallowRef(new Map<number, Categorie>())
   /** Types de map tirés en mode infini et proposés à la recherche. */
   const categoriesActives = ref<Record<Categorie, boolean>>(lire('categories', CATEGORIES_DEFAUT))
@@ -335,17 +337,30 @@ export const usePartieStore = defineStore('partie', () => {
 
   async function charger() {
     if (maps.value.length) return
-    const donnees = await import('~~/data/maps.json')
-    maps.value = (donnees.default as { maps: MapCombat[] }).maps
-    categories.value = new Map(maps.value.map(m => [m.id, categorie(m)]))
+    const { index } = await import('virtual:maps')
+    maps.value = index
+    categories.value = new Map(index.map(m => [m.id, m.categorie]))
   }
 
-  function nouvelleSalle() {
+  /** La map complète : son paquet de cases est chargé la première fois. */
+  async function avecCases(m: MapIndex): Promise<MapCombat> {
+    const { chargerCases } = await import('virtual:maps')
+    const { categorie: _categorie, paquet: _paquet, ...sansIndex } = m
+    return { ...sansIndex, cases: (await chargerCases(m)) ?? '' }
+  }
+
+  /** Numéro du dernier chargement demandé : un clic plus récent l'emporte sur un chargement en cours. */
+  let chargement = 0
+
+  async function nouvelleSalle() {
     const liste = mode.value === 'boss' ? mapsBoss.value : mode.value === 'infini' ? mapsActives.value : maps.value
     if (!liste.length) return
     const choisie = mode.value === 'infini' ? null : liste.find(m => m.id === mapChoisie.value)
-    const m = choisie ?? auHasard(liste)
-    if (mode.value !== 'infini') mapChoisie.value = m.id
+    const mi = choisie ?? auHasard(liste)
+    if (mode.value !== 'infini') mapChoisie.value = mi.id
+    const numero = ++chargement
+    const m = await avecCases(mi)
+    if (numero !== chargement) return
     map.value = m
     ennemis.value = tirerSalle(m).ennemis
     portraitsEnnemis.value = ennemis.value.map(() => Math.floor(Math.random() * portraits.ennemis.length))
@@ -491,8 +506,13 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   /** Charge la salle d'un code partagé ; sinon, une nouvelle salle et un message. */
-  function chargerCode(texte: string) {
-    const salle = lireCodeSalle(texte, maps.value)
+  async function chargerCode(texte: string) {
+    // L'id de la map est en tête du code (base 36) : on charge ses cases avant de lire le reste
+    const mi = maps.value.find(m => m.id === parseInt(texte.trim().toLowerCase().split('-')[0] ?? '', 36))
+    const numero = ++chargement
+    const complete = mi ? await avecCases(mi) : null
+    if (numero !== chargement) return
+    const salle = complete && lireCodeSalle(texte, [complete])
     if (!salle) {
       nouvelleSalle()
       dire('msg.code-inconnu')

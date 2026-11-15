@@ -20,6 +20,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Nouvelle caractéristique Invocations (4 par défaut, de 1 à 8 dans les réglages) : au-delà, plus d’invocation possible. Les Arbres ne comptent pas, comme en jeu.',
         'Raccourcis : F1 termine le tour (touche réglable dans les réglages), Ctrl+Z annule la dernière action.',
         'Les sorts verrouillés par le niveau portent un cadenas.',
+        'Chargement bien plus léger : les maps arrivent par petits paquets au lieu d’un seul gros fichier.',
       ],
       corrections: [
         'Créateur de map : Ctrl+Z marche aussi avec un clavier AZERTY.',
@@ -68,6 +69,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'New Summons characteristic (4 by default, 1 to 8 in the settings): beyond that, no more summoning. Trees don’t count, as in game.',
         'Shortcuts: F1 ends the turn (key adjustable in the settings), Ctrl+Z undoes the last action.',
         'Spells locked by level show a padlock.',
+        'Much lighter loading: maps arrive in small packs instead of one big file.',
       ],
       corrections: [
         'Map creator: Ctrl+Z now also works with an AZERTY keyboard.',
@@ -116,6 +118,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Nueva característica Invocaciones (4 por defecto, de 1 a 8 en los ajustes): por encima, no se puede invocar más. Los Árboles no cuentan, como en el juego.',
         'Atajos: F1 termina el turno (tecla ajustable en los ajustes), Ctrl+Z deshace la última acción.',
         'Los hechizos bloqueados por el nivel muestran un candado.',
+        'Carga mucho más ligera: los mapas llegan en pequeños paquetes en lugar de un solo archivo grande.',
       ],
       corrections: [
         'Creador de mapas: Ctrl+Z ya funciona también con un teclado AZERTY.',
