@@ -300,6 +300,7 @@ export const fr = {
 
   // Messages du moteur : refus
   'm.tour-termine': 'le tour est terminé',
+  'm.acteur-mort': '{e} a explosé : il ne reste qu’à terminer son tour',
   'm.tour-de': 'c’est au tour de {e}',
   'm.ne-se-deplace-pas': '{e} ne se déplace pas',
   'm.deja-sur-case': 'déjà sur cette case',

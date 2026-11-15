@@ -284,6 +284,7 @@ export const es: DicoLangue = {
   'msg.valider-dabord': 'Primero confirma la colocación.',
 
   'm.tour-termine': 'el turno ha terminado',
+  'm.acteur-mort': '{e} ha explotado: solo queda terminar su turno',
   'm.tour-de': 'le toca a {e}',
   'm.ne-se-deplace-pas': '{e} no se desplaza',
   'm.deja-sur-case': 'ya está en esta casilla',

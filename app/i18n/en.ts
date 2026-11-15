@@ -284,6 +284,7 @@ export const en: DicoLangue = {
   'msg.valider-dabord': 'Confirm the placement first.',
 
   'm.tour-termine': 'the turn is over',
+  'm.acteur-mort': '{e} has exploded: all that’s left is to end its turn',
   'm.tour-de': 'it’s {e}’s turn',
   'm.ne-se-deplace-pas': '{e} doesn’t move',
   'm.deja-sur-case': 'already on this cell',

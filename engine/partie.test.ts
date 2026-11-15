@@ -138,6 +138,13 @@ describe('partie', () => {
     p = suite(p, [{ type: 'deplacement', acteur: s, vers: decale(A, 4, 0) }, exploser(decale(A, 5, 0))])
     expect(infectes(p)).toEqual([1, 2])
     expect(p.entites.some(e => e.id === s)).toBe(false)
+    // Elle garde la main, sans PA ni PM, jusqu'à « Fin du tour »
+    expect(termine(p)).toBe(false)
+    expect(acteurCourant(p)).toMatchObject({ id: s, pa: 0, pm: 0 })
+    expect(jouer(p, { type: 'deplacement', acteur: s, vers: decale(A, 3, 0) }))
+      .toEqual({ ok: false, raison: { code: 'acteur-mort', p: { e: { id: s, genre: 'invocation', monstre: 5898 } } } })
+    p = suite(p, [fin(s)])
+    expect(termine(p)).toBe(true)
   })
 
   it('remplace un Arbre Feuillu par le Groute, pas un Arbre normal', () => {

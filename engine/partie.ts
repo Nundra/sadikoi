@@ -77,6 +77,11 @@ export interface Partie {
   lancers: Record<string, number>
   exploitations: number
   prochainId: number
+  /**
+   * Celui qui a la main et vient de mourir pendant son tour (La Sacrifiée qui explose) :
+   * il garde la main, sans PA ni PM, jusqu'à « Fin du tour ».
+   */
+  mort?: Entite
 }
 
 export type Action =
@@ -143,10 +148,12 @@ export function entiteSur(p: Partie, c: Case): Entite | undefined {
 }
 
 /**
- * Celui qui a la main : le premier encore en vie dans l'ordre à partir du tour courant
- * (La Sacrifiée qui a explosé passe son tour). Undefined quand tout le monde a joué.
+ * Celui qui a la main : le premier encore en vie dans l'ordre à partir du tour courant (une
+ * Poupée sacrifiée avant son tour le passe), ou celui qui est mort pendant son propre tour,
+ * jusqu'à ce qu'il le termine. Undefined quand tout le monde a joué.
  */
 export function acteurCourant(p: Partie): Entite | undefined {
+  if (p.mort && p.ordre[p.tour] === p.mort.id) return p.mort
   for (const id of p.ordre.slice(p.tour)) {
     const e = p.entites.find(x => x.id === id)
     if (e) return e
@@ -167,12 +174,16 @@ export function jouer(depart: Partie, action: Action): Resultat {
   p.tour = p.ordre.indexOf(acteur.id)
   if (action.type === 'fin') {
     p.tour++
+    delete p.mort
     const suivant = acteurCourant(p)
     const texte = [msg('titre-fin', { e: ref(acteur) }), suivant ? msg('au-tour-de', { e: ref(suivant) }) : msg('fin-salle')]
     return { ok: true, partie: p, bilan: { ...bilanVide(), texte, acteur: { ...ref(acteur), pa: acteur.pa, pm: acteur.pm } } }
   }
+  if (p.mort?.id === acteur.id) return refus(msg('acteur-mort', { e: ref(acteur) }))
   const r = action.type === 'deplacement' ? deplacer(p, acteur, action.vers) : lancer(p, acteur, action.sort, action.cible)
-  if (r.ok) r.bilan.acteur = { ...ref(acteur), pa: acteur.pa, pm: acteur.pm }
+  // Mort pendant l'action (La Sacrifiée) : plus de PA ni de PM
+  const apres = p.mort?.id === acteur.id ? p.mort : acteur
+  if (r.ok) r.bilan.acteur = { ...ref(acteur), pa: apres.pa, pm: apres.pm }
   return r
 }
 
@@ -502,6 +513,8 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
     case 'explosion':
       infecter(zone(acteur.case, 'cercle', comp.rayon))
       retirer(acteur)
+      // Elle garde la main jusqu'à « Fin du tour », sans rien pouvoir faire
+      p.mort = { ...acteur, pa: 0, pm: 0 }
       dire(msg('explose', { e: ref(acteur) }))
       break
     case 'attire-centre': {

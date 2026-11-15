@@ -19,6 +19,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [],
       corrections: [
         'La Sacrifiée : Explosion Ouatée se déclenche en visant une entité à son contact, alliée ou ennemie, et explose autour d’elle (plus besoin de viser sa propre case).',
+        'Après son explosion, La Sacrifiée garde la main : son tour ne se termine qu’au clic sur « Fin du tour ».',
         'Avec un sort choisi, toutes ses cases de lancement s’affichent en bleu, comme en jeu, même celles où il ne peut pas se lancer (il faut une cible qui convient).',
         'La zone d’un sort au survol ne s’affiche que sur une cible valide : Contagion sur un ennemi Infecté, Sacrifice Vaudou sur une Poupée…',
       ],
@@ -59,6 +60,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [],
       corrections: [
         'The Sacrificial Doll: its explosion is triggered by targeting an entity in contact with it, ally or enemy, and explodes around the Doll (no more targeting its own cell).',
+        'After exploding, the Sacrificial Doll keeps the turn: it only ends when you click “End turn”.',
         'With a spell selected, all its casting cells are shown in blue, as in game, even where it can’t be cast (it needs a suitable target).',
         'A spell’s area on hover only shows on a valid target: Contagion on an Infected enemy, Voodoo Sacrifice on a Doll…',
       ],
@@ -99,6 +101,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [],
       corrections: [
         'La Sacrificada: su explosión se activa apuntando a una entidad en contacto con ella, aliada o enemiga, y estalla a su alrededor (ya no hay que apuntar a su propia casilla).',
+        'Tras explotar, La Sacrificada conserva el turno: solo termina al hacer clic en «Fin del turno».',
         'Con un hechizo elegido, todas sus casillas de lanzamiento se muestran en azul, como en el juego, incluso donde no se puede lanzar (hace falta un objetivo adecuado).',
         'El área de un hechizo al pasar el ratón solo se muestra sobre un objetivo válido: Contagio sobre un enemigo Infectado, Sacrificio Vudú sobre una Muñeca…',
       ],
