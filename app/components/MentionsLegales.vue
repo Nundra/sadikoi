@@ -1,76 +1,84 @@
 <script setup lang="ts">
-import { t } from '~/i18n'
+import { choisirLangue, langue, prefixe, t } from '~/i18n'
 
 /**
- * Mentions légales, données personnelles et crédits (Ankama). Ouvertes depuis les réglages,
- * la bienvenue et l'écran petit format, par-dessus la fenêtre qui les ouvre (pas de second voile).
- * Identité de l'éditeur : EDITEUR, à compléter avant la mise en ligne.
+ * Page des mentions légales, données personnelles et crédits (Ankama), servie sur /legals
+ * (/en/legals, /es/legals). L'éditeur est nommé ici ; son SIRET et son adresse sont sur la page
+ * de mentions légales de son site (EDITEUR.lien), qui couvre aussi Sadikoi. À compléter avant
+ * la mise en ligne.
  */
 const EDITEUR = {
   nom: '[Prénom Nom]',
-  siret: '[SIRET]',
-  adresse: '[adresse]',
+  lien: '',
 }
 
-const dialogue = ref<HTMLDialogElement | null>(null)
-
-function ouvrir() {
-  dialogue.value?.showModal()
-  if (dialogue.value) dialogue.value.scrollTop = 0
-}
-
-defineExpose({ ouvrir })
+onMounted(() => choisirLangue(langue.value))
 </script>
 
 <template>
-  <dialog ref="dialogue" class="mentions" aria-labelledby="titre-mentions">
-    <h2 id="titre-mentions">{{ t('legal.titre') }}</h2>
+  <div class="page">
+    <header>
+      <a :href="prefixe(langue) || '/'" class="logo"><img src="/logo.png" :alt="t('legal.retour')"></a>
+      <ChoixLangue />
+    </header>
 
-    <section>
-      <h3>{{ t('legal.editeur') }}</h3>
-      <p>{{ t('legal.editeur-texte', EDITEUR) }}</p>
-      <p>{{ t('legal.directeur', EDITEUR) }}</p>
-      <p>{{ t('legal.contact') }}</p>
-    </section>
+    <main>
+      <h1>{{ t('legal.titre') }}</h1>
 
-    <section>
-      <h3>{{ t('legal.hebergeur') }}</h3>
-      <p>{{ t('legal.hebergeur-texte') }}</p>
-    </section>
+      <section>
+        <h2>{{ t('legal.editeur') }}</h2>
+        <p>
+          {{ t('legal.editeur-texte', EDITEUR) }}
+          <a v-if="EDITEUR.lien" :href="EDITEUR.lien" target="_blank" rel="noopener">{{ t('legal.editeur-lien') }}<span class="sr-only"> {{ t('lien.nouvel-onglet') }}</span></a>
+        </p>
+        <p>{{ t('legal.directeur', EDITEUR) }}</p>
+        <p>{{ t('legal.contact') }}</p>
+      </section>
 
-    <section>
-      <h3>{{ t('legal.ankama') }}</h3>
-      <p>{{ t('legal.ankama-texte') }}</p>
-      <p>{{ t('legal.ankama-retrait') }}</p>
-    </section>
+      <section>
+        <h2>{{ t('legal.hebergeur') }}</h2>
+        <p>{{ t('legal.hebergeur-texte') }}</p>
+      </section>
 
-    <section>
-      <h3>{{ t('legal.donnees') }}</h3>
-      <p>{{ t('legal.donnees-texte') }}</p>
-      <p>{{ t('legal.donnees-stockage') }}</p>
-      <p>{{ t('legal.donnees-hebergeur') }}</p>
-    </section>
+      <section>
+        <h2>{{ t('legal.ankama') }}</h2>
+        <p>{{ t('legal.ankama-texte') }}</p>
+        <p>{{ t('legal.ankama-retrait') }}</p>
+      </section>
 
-    <section>
-      <h3>{{ t('legal.credits') }}</h3>
-      <p>{{ t('legal.credits-texte', EDITEUR) }}</p>
-    </section>
+      <section>
+        <h2>{{ t('legal.donnees') }}</h2>
+        <p>{{ t('legal.donnees-texte') }}</p>
+        <p>{{ t('legal.donnees-stockage') }}</p>
+        <p>{{ t('legal.donnees-hebergeur') }}</p>
+      </section>
 
-    <button type="button" class="fin" @click="dialogue?.close()">{{ t('reglages.fermer') }}</button>
-  </dialog>
+      <section>
+        <h2>{{ t('legal.credits') }}</h2>
+        <p>{{ t('legal.credits-texte', EDITEUR) }}</p>
+      </section>
+
+      <a :href="prefixe(langue) || '/'" class="retour">{{ t('legal.retour') }}</a>
+    </main>
+  </div>
 </template>
 
 <style scoped>
-.mentions {
-  border-radius: 16px; border: 1px solid var(--or); background: linear-gradient(#18292f, #132227);
-  color: var(--texte); padding: 22px 26px; width: var(--largeur-fenetre); max-height: 90vh;
-  font-size: 13px; line-height: 1.5; text-align: left;
+.page {
+  min-height: 100vh; padding: 20px 16px 40px;
+  background: radial-gradient(120% 90% at 40% 20%, #16303a 0%, #0e1c22 55%, #0a1317 100%);
 }
-/* Ouverte par-dessus une autre fenêtre, qui assombrit déjà le fond : pas de second voile */
-.mentions::backdrop { background: transparent; }
-h2 { margin: 0 0 14px; font-family: var(--police-titre); font-size: 24px; font-weight: 400; color: var(--or-clair); }
-section { margin-bottom: 14px; }
-h3 { margin: 0 0 4px; font-size: 14px; font-weight: 800; color: var(--or-clair); }
-p { margin: 0 0 6px; color: var(--texte-doux); }
-.fin { width: 100%; }
+header { max-width: 760px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo img { display: block; height: 56px; width: auto; }
+main {
+  max-width: 760px; margin: 0 auto; padding: 26px 30px; border-radius: 16px;
+  border: 1px solid var(--or); background: linear-gradient(#18292f, #132227);
+  font-size: 14px; line-height: 1.6;
+}
+h1 { margin: 0 0 18px; font-family: var(--police-titre); font-size: 30px; font-weight: 400; color: var(--or-clair); }
+section { margin-bottom: 18px; }
+h2 { margin: 0 0 6px; font-size: 16px; font-weight: 800; color: var(--or-clair); }
+p { margin: 0 0 8px; color: var(--texte-doux); }
+p a, .retour { color: var(--or-clair); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.retour { display: inline-block; margin-top: 6px; }
 </style>

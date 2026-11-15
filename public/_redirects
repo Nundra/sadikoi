@@ -3,3 +3,5 @@
 /en/* /index.html 200
 /es /index.html 200
 /es/* /index.html 200
+# Mentions légales : même slug dans toutes les langues
+/legals /index.html 200

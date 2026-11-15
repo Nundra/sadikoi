@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { t } from '~/i18n'
+import { adresseLegale, t } from '~/i18n'
 
 /**
  * Écran d'avertissement sur petit format (mobile, tablette en portrait) : l'app n'y est pas
  * adaptée. Ouvert à chaque visite sous LARGEUR_MIN ; « Continuer quand même » le ferme.
- * Placé en dernier dans app.vue pour s'ouvrir après la bienvenue, donc par-dessus.
+ * Placé en dernier dans Jeu.vue pour s'ouvrir après la bienvenue, donc par-dessus.
  */
 const LARGEUR_MIN = 1024
 
 const dialogue = ref<HTMLDialogElement | null>(null)
-const mentions = ref<{ ouvrir: () => void } | null>(null)
 
 onMounted(() => {
   if (window.matchMedia(`(max-width: ${LARGEUR_MIN - 1}px)`).matches) dialogue.value?.showModal()
@@ -24,8 +23,7 @@ onMounted(() => {
     <p>{{ t('petit-ecran.texte') }}</p>
     <p class="conseil">{{ t('petit-ecran.conseil') }}</p>
     <button type="button" @click="dialogue?.close()">{{ t('petit-ecran.continuer') }}</button>
-    <button type="button" class="lien" @click="mentions?.ouvrir()">{{ t('legal.lien') }}</button>
-    <MentionsLegales ref="mentions" />
+    <a class="lien" :href="adresseLegale()" target="_blank">{{ t('legal.lien') }}<span class="sr-only"> {{ t('lien.nouvel-onglet') }}</span></a>
   </dialog>
 </template>
 
@@ -44,5 +42,5 @@ h2 { margin: 0 0 10px; font-family: var(--police-titre); font-size: 26px; font-w
 p { margin: 0 0 10px; max-width: 420px; color: var(--texte-doux); }
 .conseil { color: var(--texte); font-weight: 800; }
 button { margin-top: 18px; padding: 0 22px; }
-.lien { height: auto; margin-top: 16px; padding: 0; background: none; border: none; color: var(--or-clair); font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.lien { margin-top: 16px; color: var(--or-clair); font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 </style>

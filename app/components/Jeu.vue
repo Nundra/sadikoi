@@ -1,0 +1,76 @@
+<script setup lang="ts">
+import { choisirLangue, langue } from '~/i18n'
+import { useRaccourcis } from '~/stores/barre'
+
+/** L'écran de jeu (tout le site, sauf la page /legals). */
+const store = usePartieStore()
+
+// Raccourcis : la touche d'un emplacement choisit son sort, Échap le relâche, F1 (réglable)
+// termine le tour, Ctrl+Z annule la dernière action
+useRaccourcis({
+  choisir: (k) => {
+    const s = store.sortsActeur[k]
+    if (s) store.choisirSort(s.id)
+  },
+  echap: () => (store.sortChoisi = null),
+  finDuTour: () => store.finDuTour(),
+  // Le créateur de map a son propre Ctrl+Z (traits de peinture)
+  annuler: () => {
+    if (!store.enEdition && store.actions.length) store.annuler()
+  },
+})
+
+onMounted(async () => {
+  // Langue de l'adresse (/en, /es) : ses textes du jeu, chargés avec les maps
+  await Promise.all([store.charger(), choisirLangue(langue.value)])
+  // Lien partagé (ou rechargement) : ?salle=<code> charge cette salle en training,
+  // ?carte=<code> ouvre cette map perso dans le créateur
+  const params = new URLSearchParams(window.location.search)
+  const salle = params.get('salle')
+  const carte = params.get('carte')
+  if (carte) store.chargerCarte(carte)
+  else if (salle) store.chargerCode(salle)
+  else store.nouvelleSalle()
+})
+</script>
+
+<template>
+  <div class="ecran">
+    <Bandeau />
+    <main>
+      <Plateau />
+      <aside>
+        <Editeur v-if="store.enEdition" />
+        <template v-else>
+          <Timeline />
+          <FicheSort />
+        </template>
+      </aside>
+    </main>
+    <footer>
+      <Caracteristiques />
+      <BarreSorts />
+    </footer>
+    <PetitEcran />
+  </div>
+</template>
+
+<style scoped>
+.ecran {
+  height: 100vh;
+  min-height: 760px;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(120% 90% at 40% 45%, #16303a 0%, #0e1c22 55%, #0a1317 100%);
+}
+main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 20px;
+  padding: 16px 24px 12px;
+}
+aside { min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+footer { display: flex; gap: 16px; padding: 0 24px 16px; }
+</style>

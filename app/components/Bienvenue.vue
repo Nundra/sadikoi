@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { POINTS_PAR_PA, POINTS_TOUR_2 } from '~~/engine/partie'
 import { ETOILES_POUR_AVANCER } from '~/stores/partie'
-import { t, type Cle } from '~/i18n'
+import { adresseLegale, t, type Cle } from '~/i18n'
 
 /**
  * Présentation de l'app : ouverte d'office à la première visite (sadikoi:bienvenue),
@@ -10,7 +10,6 @@ import { t, type Cle } from '~/i18n'
  */
 const emit = defineEmits<{ libre: [] }>()
 const dialogue = ref<HTMLDialogElement | null>(null)
-const mentions = ref<{ ouvrir: () => void } | null>(null)
 
 let ouverte = false
 
@@ -88,9 +87,8 @@ defineExpose({ ouvrir })
     <button type="button" class="fin" @click="dialogue?.close(); surFermeture()">{{ t('bienvenue.go') }}</button>
     <p class="pied">
       {{ t('bienvenue.fan') }}
-      <button type="button" class="lien" @click="mentions?.ouvrir()">{{ t('legal.lien') }}</button>
+      <a class="lien" :href="adresseLegale()" target="_blank">{{ t('legal.lien') }}<span class="sr-only"> {{ t('lien.nouvel-onglet') }}</span></a>
     </p>
-    <MentionsLegales ref="mentions" />
   </dialog>
 </template>
 
@@ -112,5 +110,5 @@ ol, ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; g
 .note { margin: 4px 0 16px; padding: 8px 12px; border-radius: 8px; background: var(--fond-creux); border: 1px solid #263b41; font-size: 12px; color: var(--texte-gris); }
 .fin { width: 100%; }
 .pied { margin: 12px 0 0; text-align: center; font-size: 11px; color: var(--texte-gris); }
-.lien { height: auto; padding: 0; background: none; border: none; color: var(--or-clair); font-size: 11px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.lien { color: var(--or-clair); font-size: 11px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 </style>

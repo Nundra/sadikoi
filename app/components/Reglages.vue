@@ -2,7 +2,7 @@
 import { CATEGORIES } from '~~/engine/categories'
 import { SORTS_SADIDA } from '~~/engine/sorts'
 import { useBarreStore } from '~/stores/barre'
-import { nomSort, t } from '~/i18n'
+import { adresseLegale, nomSort, t } from '~/i18n'
 import { LIMITES_STATS, NIVEAU_MIN } from '~/stores/partie'
 import { NIVEAU_MAX } from '~~/engine/sorts'
 
@@ -17,7 +17,6 @@ const emplacements = computed(() => barre.ordre.map((paire, k) => {
 const finTouche = computed(() => barre.libelle(barre.toucheFin))
 const dialogue = ref<HTMLDialogElement | null>(null)
 const notes = ref<{ ouvrir: () => void } | null>(null)
-const mentions = ref<{ ouvrir: () => void } | null>(null)
 
 /** Niveau puis PA, PM, PO : valeur, bornes et réglage (− / + ou saisie). */
 const reglablesPersonnage = computed(() => [
@@ -40,7 +39,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
       <h2 id="titre-reglages">{{ t('reglages.titre') }}</h2>
       <div class="liens">
         <button type="button" class="lien" @click="notes?.ouvrir()">{{ t('notes.lien') }}</button>
-        <button type="button" class="lien" @click="mentions?.ouvrir()">{{ t('legal.lien') }}</button>
+        <a class="lien" :href="adresseLegale()" target="_blank">{{ t('legal.lien') }}<span class="sr-only"> {{ t('lien.nouvel-onglet') }}</span></a>
       </div>
     </div>
 
@@ -142,7 +141,6 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
       <button type="submit" class="fin" @click="barre.enAttente = null">{{ t('reglages.fermer') }}</button>
     </form>
     <NotesVersion ref="notes" />
-    <MentionsLegales ref="mentions" />
   </dialog>
 </template>
 
