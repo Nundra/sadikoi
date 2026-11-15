@@ -235,9 +235,13 @@ export interface Score {
   /** PA du Sadida dépensés et restants (les invocations ont leurs propres PA). */
   paDepenses: number
   paRestants: number
+  /** PA restants qui rapportent des points : ceux de la Prycipithon Mate n'en rapportent pas. */
+  paComptes: number
   /**
-   * 100 × la part d'ennemis infectés, plus POINTS_PAR_PA par PA du Sadida non dépensé
-   * si tous sont infectés : moins on dépense, mieux c'est. Plus POINTS_TOUR_2 avec la 4e étoile.
+   * 100 × la part d'ennemis infectés, plus POINTS_PAR_PA par PA du Sadida non dépensé (hors
+   * Prycipithon) si tous sont infectés : moins on dépense, mieux c'est. Plus POINTS_TOUR_2 avec
+   * la 4e étoile. × FACTEUR_PRYCIPITHON avec la Prycipithon : l'activer sans en avoir besoin
+   * est toujours perdant.
    */
   points: number
 }
@@ -249,6 +253,7 @@ export function score(p: Partie): Score {
   const paRestants = p.entites.find(e => e.id === SADIDA)?.pa ?? 0
   const auTour2 = ennemis.filter(infecteAuTour2).length
   const fixee = part === 1 && auTour2 === ennemis.length
+  const paComptes = Math.max(0, paRestants - (p.prycipithon ? PA_PRYCIPITHON : 0))
   return {
     infectes,
     total: ennemis.length,
@@ -257,7 +262,8 @@ export function score(p: Partie): Score {
     auTour2,
     paDepenses: p.stats.pa - paRestants,
     paRestants,
-    points: Math.round((Math.round(100 * part) + (part === 1 ? POINTS_PAR_PA * paRestants : 0) + (fixee ? POINTS_TOUR_2 : 0))
+    paComptes,
+    points: Math.round((Math.round(100 * part) + (part === 1 ? POINTS_PAR_PA * paComptes : 0) + (fixee ? POINTS_TOUR_2 : 0))
       * (p.prycipithon ? FACTEUR_PRYCIPITHON : 1)),
   }
 }

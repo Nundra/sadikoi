@@ -164,7 +164,7 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
         </p>
         <p class="points">
           <strong>{{ t('resultat.points', { n: store.score.points }) }}</strong>
-          <span v-if="store.score.part === 1">({{ t('resultat.detail', { pts: POINTS_PAR_PA, pa: store.score.paRestants }) }}<template v-if="store.score.etoiles === 4">{{ t('resultat.detail-tour-2', { n: POINTS_TOUR_2 }) }}</template>)</span>
+          <span v-if="store.score.part === 1">({{ t('resultat.detail', { pts: POINTS_PAR_PA, pa: store.score.paComptes }) }}<template v-if="store.score.etoiles === 4">{{ t('resultat.detail-tour-2', { n: POINTS_TOUR_2 }) }}</template>)</span>
           <span v-else>{{ t('resultat.sans-bonus') }}</span>
           <span v-if="store.prycipithon">{{ t('resultat.prycipithon') }}</span>
         </p>

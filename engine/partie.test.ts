@@ -176,7 +176,7 @@ describe('partie', () => {
   it('compte les étoiles', () => {
     const ennemis = [decale(A, 1, 0), decale(A, 0, 1), decale(A, -1, 0), decale(A, 3, 3)]
     const p = partie(['Miasmes', 'Vent Empoisonné'], ennemis)
-    expect(score(p)).toEqual({ infectes: 0, total: 4, part: 0, etoiles: 0, auTour2: 0, paDepenses: 0, paRestants: 12, points: 0 })
+    expect(score(p)).toEqual({ infectes: 0, total: 4, part: 0, etoiles: 0, auTour2: 0, paDepenses: 0, paRestants: 12, paComptes: 12, points: 0 })
     const trois = suite(p, [sort('Miasmes', A)])
     expect(score(trois)).toMatchObject({ infectes: 3, etoiles: 2, paDepenses: 2, points: 75 })
     // tous infectés avec 4 PA : 100 + 10 × 8 PA restants
@@ -246,13 +246,16 @@ describe('partie', () => {
     })
   })
 
-  it('donne 2 PA avec la Prycipithon Mate, contre 10 % des points', () => {
+  it('donne 2 PA avec la Prycipithon Mate, contre 10 % des points et sans points pour ces 2 PA', () => {
     const ennemis = [decale(A, 1, 0), decale(A, 0, 1), decale(A, -1, 0)]
     const avec = nouvellePartie({ cases: plateauTest().cases, sadida: A, ennemis, sorts: [id('Miasmes')], prycipithon: true })
     expect(avec.entites[0]!.pa).toBe(14)
     const p = suite(avec, [sort('Miasmes', A)])
-    // 100 + 10 × 12 PA restants = 220, × 0,9
-    expect(score(p)).toMatchObject({ etoiles: 3, paDepenses: 2, paRestants: 12, points: 198 })
+    // 12 PA restants dont 2 de la Prycipithon : 100 + 10 × 10 = 200, × 0,9
+    expect(score(p)).toMatchObject({ etoiles: 3, paDepenses: 2, paRestants: 12, paComptes: 10, points: 180 })
+    // Sans elle, le même tour vaut plus : l'activer sans en avoir besoin ne paie pas
+    const sans = suite(nouvellePartie({ cases: plateauTest().cases, sadida: A, ennemis, sorts: [id('Miasmes')] }), [sort('Miasmes', A)])
+    expect(score(sans).points).toBe(200)
   })
 
   it("annule en rejouant sans la dernière action, et signale celle qui n'est plus possible", () => {
