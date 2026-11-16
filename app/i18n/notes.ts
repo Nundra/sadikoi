@@ -23,6 +23,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       corrections: [
         'Classement du défi : une seule ligne par score, et « toi » s’affiche sur la ligne qui a les points de ton record, même si quelqu’un l’a fait avant toi.',
         'Il faut au moins 1 étoile pour entrer au classement du défi.',
+        'Classement du défi : tous les scores du jour à la fin, avec le nombre de joueurs pour chacun (un même score refait ne compte qu’une fois), et le nombre de joueurs sous 1 étoile.',
       ],
     },
     {
@@ -84,6 +85,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       corrections: [
         'Challenge ranking: one line per score, and “you” shows on the line matching your best score, even if someone got it before you.',
         'You need at least 1 star to enter the challenge ranking.',
+        'Challenge ranking: every score of the day at the end, with the number of players for each (the same score redone only counts once), and the number of players below 1 star.',
       ],
     },
     {
@@ -145,6 +147,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       corrections: [
         'Clasificación del desafío: una sola línea por puntuación, y «tú» aparece en la línea con los puntos de tu récord, aunque alguien la haya hecho antes.',
         'Hace falta al menos 1 estrella para entrar en la clasificación del desafío.',
+        'Clasificación del desafío: todas las puntuaciones del día al final, con el número de jugadores de cada una (la misma puntuación repetida solo cuenta una vez), y el número de jugadores por debajo de 1 estrella.',
       ],
     },
     {

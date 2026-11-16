@@ -1,6 +1,6 @@
 import type { Categorie } from './categories'
 import type { Case } from './grille'
-import { nouvellePartie, rejouer, score, termine, VERSION_REGLES, type Action } from './partie'
+import { nouvellePartie, rejouer, score, termine, type Action } from './partie'
 import type { MapCombat } from './plateau'
 import { casesDuJoueur, tirerSalle, type Salle } from './salle'
 
@@ -66,38 +66,36 @@ export function salleDuJour(map: MapCombat, jour: string): Salle & { alea: () =>
   return { ...tirerSalle(map, { nombre, alea }), alea }
 }
 
-/** Taille du classement gardé pour chaque jour. */
-export const TAILLE_CLASSEMENT = 5
-
-/** Clé du classement d'un jour : une nouvelle version des règles repart d'un classement vide. */
-export const cleClassement = (jour: string) => `daily:${jour}:v${VERSION_REGLES}`
-
 /** Ce que le navigateur envoie : le tour joué sur la salle du jour, pas son score. */
 export interface TourEnvoye {
   jour: string
+  /** Identifiant tiré au hasard par le navigateur : un même score ne compte qu'une fois par joueur. */
+  joueur: string
   sadida: Case
   sorts: number[]
   prycipithon: boolean
   actions: Action[]
 }
 
-/** Une ligne du classement. Les actions restent pour pouvoir revoir le tour plus tard. */
-export interface EntreeClassement {
-  id: string
+/** Une ligne du classement : un score, et combien de joueurs l'ont atteint. */
+export interface LigneClassement {
   points: number
   etoiles: number
-  paDepenses: number
-  prycipithon: boolean
-  /** Moment de l'envoi (ms), pour départager : à points égaux, le premier garde la place. */
-  date: number
-  tour?: Omit<TourEnvoye, 'jour'>
+  joueurs: number
+}
+
+/** Le classement du jour : les scores validés (ETOILES_DAILY étoiles au moins), du meilleur au moins bon. */
+export interface ClassementDaily {
+  lignes: LigneClassement[]
+  /** Joueurs qui n'ont pas encore validé le défi (aucun tour à ETOILES_DAILY étoiles). */
+  sousLeSeuil: number
 }
 
 /**
  * Rejoue un tour envoyé sur la salle du jour, aux caractéristiques par défaut, et donne son
  * score ; null si le tour n'est pas valable (placement, sorts, action impossible, tour pas fini).
  */
-export function rejouerDefi(salle: Salle, tour: TourEnvoye): Omit<EntreeClassement, 'id' | 'date' | 'tour'> | null {
+export function rejouerDefi(salle: Salle, tour: TourEnvoye): { points: number, etoiles: number, paDepenses: number, prycipithon: boolean } | null {
   if (!casesDuJoueur(salle.map).includes(tour.sadida)) return null
   // Ce qui arrive du réseau peut être n'importe quoi : un tour mal formé est simplement refusé
   try {
@@ -109,16 +107,4 @@ export function rejouerDefi(salle: Salle, tour: TourEnvoye): Omit<EntreeClasseme
   } catch {
     return null
   }
-}
-
-/**
- * Ajoute une entrée au classement : seulement un défi validé (ETOILES_DAILY étoiles au moins),
- * une seule ligne par valeur de points (un même score obtenu autrement ne fait pas de nouvelle
- * ligne, la plus ancienne reste), du meilleur au moins bon, TAILLE_CLASSEMENT lignes au plus.
- * Null si rien ne change.
- */
-export function insererClassement(top: EntreeClassement[], entree: EntreeClassement): EntreeClassement[] | null {
-  if (entree.etoiles < ETOILES_DAILY || top.some(e => e.points === entree.points)) return null
-  const suite = [...top, entree].sort((a, b) => b.points - a.points || a.date - b.date).slice(0, TAILLE_CLASSEMENT)
-  return suite.includes(entree) ? suite : null
 }

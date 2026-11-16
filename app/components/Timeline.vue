@@ -181,11 +181,11 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
           <!-- Training : on retravaille la même salle -->
           <button v-else-if="store.mode !== 'daily'" type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
         </div>
-        <!-- Défi du jour : le top 5 du jour, puis on retente depuis le placement -->
+        <!-- Défi du jour : tous les scores du jour, puis on retente depuis le placement -->
         <section v-if="store.mode === 'daily'" class="top-daily" aria-labelledby="titre-top-daily">
           <h3 id="titre-top-daily">{{ t('daily.classement') }}</h3>
           <p v-if="store.score.etoiles < ETOILES_DAILY" class="sans-etoile">{{ t('daily.etoile-requise', { n: ETOILES_DAILY }) }}</p>
-          <Classement :limite="5" />
+          <Classement />
         </section>
         <button v-if="store.mode === 'daily'" type="button" class="fin" @click="store.replacer()">{{ t('daily.retenter') }}</button>
         <template v-else-if="store.mode === 'infini'">

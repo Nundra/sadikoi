@@ -19,7 +19,7 @@ import {
 import { NIVEAU_MAX, SORTS_SADIDA, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
 import reglagesDaily from '~~/data/daily.json'
-import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour, type EntreeClassement } from '~~/engine/daily'
+import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour, type ClassementDaily } from '~~/engine/daily'
 import type { Message, RefEntite } from '~~/engine/messages'
 import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
 import { useBarreStore } from './barre'
@@ -353,19 +353,23 @@ export const usePartieStore = defineStore('partie', () => {
   /**
    * Défi du jour (/daily) : la même salle pour tous ce jour-là (engine/daily.ts, réglages à la
    * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles : plus
-   * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, et le
-   * meilleur score envoyé au classement. Au classement, « toi » marque la ligne qui a les points
-   * de notre record de la salle du jour (même obtenu autrement : une seule ligne par score).
+   * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, et les
+   * scores déjà envoyés. Chaque tour fini est envoyé une fois par score : le serveur compte les
+   * joueurs de chaque score, un joueur étant un identifiant tiré au hasard (`sadikoi:joueur`).
+   * Au classement, « toi » marque la ligne qui a les points de notre record de la salle du jour.
    */
   const jourDaily = ref(jourDe())
-  const etatVide = () => ({ jour: jourDaily.value, fait: false, envoye: 0 })
+  const etatVide = () => ({ jour: jourDaily.value, fait: false, envoyes: [] as number[] })
   const lu = lire('daily', etatVide())
   const etatDaily = ref(lu.jour === jourDaily.value ? lu : etatVide())
   watch(etatDaily, v => ecrire('daily', v), { deep: true })
   const dailyFait = computed(() => etatDaily.value.fait)
 
+  const joueur = lire('joueur', { id: '' }).id || crypto.randomUUID()
+  ecrire('joueur', { id: joueur })
+
   /** Classement du jour (serveur, functions/api/daily.ts) ; null tant qu'il n'est pas chargé. */
-  const classement = ref<EntreeClassement[] | null>(null)
+  const classement = ref<ClassementDaily | null>(null)
   /** Le classement n'a pas pu être lu ou le tour pas envoyé (hors ligne, en dev sans API…). */
   const classementIndisponible = ref(false)
   /** Le tour a été refusé parce que le défi a changé entre-temps (minuit, heure de Paris). */
@@ -382,8 +386,8 @@ export const usePartieStore = defineStore('partie', () => {
       const r = await fetch('/api/daily', { ...init, signal: arret.signal })
       if (r.status === 409) defiPerime.value = true
       if (!r.ok) throw new Error(String(r.status))
-      const corps = await r.json() as { jour: string, top: EntreeClassement[], salle?: { map: number, ennemis: Case[] } }
-      classement.value = corps.top
+      const corps = await r.json() as { jour: string, classement: ClassementDaily, salle?: { map: number, ennemis: Case[] } }
+      classement.value = corps.classement
       classementIndisponible.value = false
       return corps
     } catch {
@@ -398,12 +402,13 @@ export const usePartieStore = defineStore('partie', () => {
     const sc = score.value
     if (!fin || !sc || mode.value !== 'daily') return
     if (sc.etoiles >= ETOILES_DAILY) etatDaily.value.fait = true
-    // On n'envoie qu'un défi validé qui bat notre meilleur envoi du jour : le serveur rejoue le tour
-    if (sc.etoiles < ETOILES_DAILY || sc.points <= etatDaily.value.envoye || sadida.value === null) return
-    const tour = { jour: jourDaily.value, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
+    // Chaque score n'est envoyé qu'une fois (le serveur ne le compterait pas deux fois) ; il rejoue le tour
+    const envoyes = etatDaily.value.envoyes ?? []
+    if (envoyes.includes(sc.points) || sadida.value === null) return
+    const tour = { jour: jourDaily.value, joueur, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
     const corps = await appelerClassement({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(tour) })
     if (!corps) return
-    etatDaily.value.envoye = Math.max(etatDaily.value.envoye, sc.points)
+    etatDaily.value.envoyes = [...envoyes, sc.points]
   })
 
   /**
