@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { POINTS_PAR_PA, POINTS_TOUR_2 } from '~~/engine/partie'
 import { invocation } from '~~/engine/sorts'
+import { ETOILES_DAILY } from '~~/engine/daily'
 import { t } from '~/i18n'
 import { ETOILES_POUR_AVANCER } from '~/stores/partie'
 
@@ -183,6 +184,7 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
         <!-- Défi du jour : le top 5 du jour, puis on retente depuis le placement -->
         <section v-if="store.mode === 'daily'" class="top-daily" aria-labelledby="titre-top-daily">
           <h3 id="titre-top-daily">{{ t('daily.classement') }}</h3>
+          <p v-if="store.score.etoiles < ETOILES_DAILY" class="sans-etoile">{{ t('daily.etoile-requise', { n: ETOILES_DAILY }) }}</p>
           <Classement :limite="5" />
         </section>
         <button v-if="store.mode === 'daily'" type="button" class="fin" @click="store.replacer()">{{ t('daily.retenter') }}</button>
@@ -252,4 +254,5 @@ button.fin { margin-top: 8px; width: 100%; }
 .resultat .record.nouveau { color: #9fd27a; font-weight: 800; }
 .top-daily { margin: 12px 0 4px; text-align: left; }
 .top-daily h3 { margin: 0 0 6px; font-size: 14px; font-weight: 800; color: var(--or-clair); }
+.sans-etoile { margin: 0 0 6px; font-size: 12px; color: var(--texte-gris); }
 </style>

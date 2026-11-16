@@ -277,6 +277,7 @@ export const en: DicoLangue = {
   'daily.plus-tard': 'Later',
   'daily.relever': 'Take the challenge',
   'daily.classement': 'Today’s ranking',
+  'daily.etoile-requise': 'You need at least {n} star to enter the ranking.',
   'daily.classement-vide': 'No score yet today: your turn!',
   'daily.perime': 'The challenge changed at midnight: reload the page to play today’s.',
   'daily.classement-chargement': 'Loading the ranking…',

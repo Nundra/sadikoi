@@ -14,7 +14,10 @@ import { casesDuJoueur, tirerSalle, type Salle } from './salle'
 export const CATEGORIES_DAILY: Categorie[] = ['zone', 'songes']
 /** Nombre d'ennemis du défi (une map en a au moins autant en cases de placement). */
 export const ENNEMIS_DAILY: [number, number] = [6, 8]
-/** Étoiles pour que le défi compte comme fait (plus d'invitation ce jour-là). */
+/**
+ * Étoiles pour valider le défi : il compte comme fait (plus d'invitation ce jour-là) et le tour
+ * peut entrer au classement.
+ */
 export const ETOILES_DAILY = 1
 
 /** Ce qu'il faut savoir d'une map pour la tirer : son type et ses cases de placement ennemies. */
@@ -109,12 +112,13 @@ export function rejouerDefi(salle: Salle, tour: TourEnvoye): Omit<EntreeClasseme
 }
 
 /**
- * Ajoute une entrée au classement : une seule ligne par valeur de points (un même score obtenu
- * autrement ne fait pas de nouvelle ligne, la plus ancienne reste), du meilleur au moins bon,
- * TAILLE_CLASSEMENT lignes au plus. Null si rien ne change.
+ * Ajoute une entrée au classement : seulement un défi validé (ETOILES_DAILY étoiles au moins),
+ * une seule ligne par valeur de points (un même score obtenu autrement ne fait pas de nouvelle
+ * ligne, la plus ancienne reste), du meilleur au moins bon, TAILLE_CLASSEMENT lignes au plus.
+ * Null si rien ne change.
  */
 export function insererClassement(top: EntreeClassement[], entree: EntreeClassement): EntreeClassement[] | null {
-  if (entree.points <= 0 || top.some(e => e.points === entree.points)) return null
+  if (entree.etoiles < ETOILES_DAILY || top.some(e => e.points === entree.points)) return null
   const suite = [...top, entree].sort((a, b) => b.points - a.points || a.date - b.date).slice(0, TAILLE_CLASSEMENT)
   return suite.includes(entree) ? suite : null
 }

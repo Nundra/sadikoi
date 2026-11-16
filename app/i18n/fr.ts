@@ -291,6 +291,7 @@ export const fr = {
   'daily.plus-tard': 'Plus tard',
   'daily.relever': 'Relever le défi',
   'daily.classement': 'Classement du jour',
+  'daily.etoile-requise': 'Il faut au moins {n} étoile pour entrer au classement.',
   'daily.classement-vide': 'Pas encore de score aujourd’hui : à toi de jouer !',
   'daily.perime': 'Le défi a changé à minuit : recharge la page pour jouer celui du jour.',
   'daily.classement-chargement': 'Chargement du classement…',

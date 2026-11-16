@@ -398,8 +398,8 @@ export const usePartieStore = defineStore('partie', () => {
     const sc = score.value
     if (!fin || !sc || mode.value !== 'daily') return
     if (sc.etoiles >= ETOILES_DAILY) etatDaily.value.fait = true
-    // On n'envoie que ce qui bat notre meilleur envoi du jour : le serveur rejoue le tour
-    if (sc.points <= etatDaily.value.envoye || sadida.value === null) return
+    // On n'envoie qu'un défi validé qui bat notre meilleur envoi du jour : le serveur rejoue le tour
+    if (sc.etoiles < ETOILES_DAILY || sc.points <= etatDaily.value.envoye || sadida.value === null) return
     const tour = { jour: jourDaily.value, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
     const corps = await appelerClassement({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(tour) })
     if (!corps) return

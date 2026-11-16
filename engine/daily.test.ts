@@ -54,10 +54,11 @@ describe('classement du défi', () => {
     expect(insererClassement(top, entree(200, 4))?.map(e => e.points)).toEqual([200, 180, 150])
   })
 
-  it('garde les 5 meilleurs, et refuse un score nul ou trop bas', () => {
+  it('garde les 5 meilleurs, et refuse un score trop bas ou sans étoile', () => {
     const top = [100, 90, 80, 70, 60].map((p, k) => entree(p, k))
     expect(insererClassement(top, entree(50, 9))).toBeNull()
-    expect(insererClassement(top, entree(0, 9))).toBeNull()
+    expect(insererClassement([], { ...entree(43, 9), etoiles: 0 })).toBeNull()
+    expect(insererClassement([], { ...entree(57, 9), etoiles: 1 })?.map(e => e.points)).toEqual([57])
     expect(insererClassement(top, entree(85, 9))?.map(e => e.points)).toEqual([100, 90, 85, 80, 70])
   })
 
