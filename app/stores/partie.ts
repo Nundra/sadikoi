@@ -331,7 +331,13 @@ export const usePartieStore = defineStore('partie', () => {
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */
   const recordPrecedent = ref<MeilleurScore | null>(null)
 
-  watch(termine, (fin) => {
+  /**
+   * Chaque tour terminé, repéré par son placement et ses actions : un nouveau tour compte même
+   * si l'on recommence et termine sans que « terminé » repasse à faux entre-temps.
+   */
+  const tourFini = computed(() => (termine.value ? `${sadida.value}|${JSON.stringify(actions.value)}` : null))
+
+  watch(tourFini, (fin) => {
     const sc = score.value
     if (!fin || !sc || !cleSalle.value) return
     recordPrecedent.value = record.value
@@ -348,8 +354,8 @@ export const usePartieStore = defineStore('partie', () => {
    * Défi du jour (/daily) : la même salle pour tous ce jour-là (engine/daily.ts, réglages à la
    * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles : plus
    * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, et le
-   * meilleur score envoyé au classement. `sadikoi:joueur` : identifiant anonyme tiré au hasard,
-   * envoyé au classement pour n'y avoir qu'une ligne (« toi »).
+   * meilleur score envoyé au classement. Au classement, « toi » marque la ligne qui a les points
+   * de notre record de la salle du jour (même obtenu autrement : une seule ligne par score).
    */
   const jourDaily = ref(jourDe())
   const etatVide = () => ({ jour: jourDaily.value, fait: false, envoye: 0 })
@@ -358,11 +364,8 @@ export const usePartieStore = defineStore('partie', () => {
   watch(etatDaily, v => ecrire('daily', v), { deep: true })
   const dailyFait = computed(() => etatDaily.value.fait)
 
-  const joueur = lire('joueur', { id: '' }).id || crypto.randomUUID()
-  ecrire('joueur', { id: joueur })
-
   /** Classement du jour (serveur, functions/api/daily.ts) ; null tant qu'il n'est pas chargé. */
-  const classement = ref<(EntreeClassement & { moi: boolean })[] | null>(null)
+  const classement = ref<EntreeClassement[] | null>(null)
   /** Le classement n'a pas pu être lu ou le tour pas envoyé (hors ligne, en dev sans API…). */
   const classementIndisponible = ref(false)
   /** Le tour a été refusé parce que le défi a changé entre-temps (minuit, heure de Paris). */
@@ -376,10 +379,10 @@ export const usePartieStore = defineStore('partie', () => {
     const arret = new AbortController()
     const delai = setTimeout(() => arret.abort(), 6000)
     try {
-      const r = await fetch(`/api/daily?joueur=${joueur}`, { ...init, signal: arret.signal })
+      const r = await fetch('/api/daily', { ...init, signal: arret.signal })
       if (r.status === 409) defiPerime.value = true
       if (!r.ok) throw new Error(String(r.status))
-      const corps = await r.json() as { jour: string, top: (EntreeClassement & { moi: boolean })[], salle?: { map: number, ennemis: Case[] } }
+      const corps = await r.json() as { jour: string, top: EntreeClassement[], salle?: { map: number, ennemis: Case[] } }
       classement.value = corps.top
       classementIndisponible.value = false
       return corps
@@ -391,18 +394,13 @@ export const usePartieStore = defineStore('partie', () => {
     }
   }
 
-  /**
-   * Chaque tour du défi terminé, repéré par ses actions : un nouveau tour se déclenche même si
-   * l'on recommence et termine sans que « terminé » repasse à faux entre-temps.
-   */
-  const tourDailyFini = computed(() => (mode.value === 'daily' && termine.value ? `${sadida.value}|${JSON.stringify(actions.value)}` : null))
-  watch(tourDailyFini, async (fin) => {
+  watch(tourFini, async (fin) => {
     const sc = score.value
-    if (!fin || !sc) return
+    if (!fin || !sc || mode.value !== 'daily') return
     if (sc.etoiles >= ETOILES_DAILY) etatDaily.value.fait = true
     // On n'envoie que ce qui bat notre meilleur envoi du jour : le serveur rejoue le tour
     if (sc.points <= etatDaily.value.envoye || sadida.value === null) return
-    const tour = { jour: jourDaily.value, joueur, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
+    const tour = { jour: jourDaily.value, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
     const corps = await appelerClassement({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(tour) })
     if (!corps) return
     etatDaily.value.envoye = Math.max(etatDaily.value.envoye, sc.points)

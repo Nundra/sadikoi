@@ -195,7 +195,7 @@ export const es: DicoLangue = {
   'legal.donnees': 'Datos personales y cookies',
   'legal.donnees-texte': 'Sadikoi no instala cookies, no muestra publicidad, no usa ninguna herramienta de medición de audiencia y no recoge ningún dato personal.',
   'legal.donnees-stockage': 'Tus ajustes y tu progreso (récords, partida, mapa en creación…) se guardan solo en tu navegador (almacenamiento local), para que el juego funcione: nunca se envían. Puedes borrarlos eliminando los datos del sitio en tu navegador.',
-  'legal.donnees-daily': 'Desafío del día: cuando tu puntuación supera tu mejor envío del día, tu turno (colocación, hechizos, acciones) y su puntuación se envían para la clasificación, sin nombre de usuario ni dirección IP, y se guardan 30 días. Se envía también un identificador aleatorio generado por tu navegador: solo sirve para conservar tu mejor línea en la clasificación.',
+  'legal.donnees-daily': 'Desafío del día: cuando tu puntuación supera tu mejor envío del día, tu turno (colocación, hechizos, acciones) y su puntuación se envían para la clasificación, sin nombre de usuario ni dirección IP, y se guardan 30 días.',
   'legal.donnees-hebergeur': 'Como cualquier proveedor de alojamiento, Cloudflare trata la dirección IP de los visitantes para mostrar y proteger el sitio (registros técnicos y de seguridad), según su propia política de privacidad.',
   'legal.credits': 'Créditos',
   'legal.credits-texte': 'Diseño y código: {nom}. Fuentes Marcellus y Nunito Sans (SIL Open Font License), alojadas en el sitio. Datos del juego extraídos con el proyecto libre dofus-sqlite.',

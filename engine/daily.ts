@@ -72,8 +72,6 @@ export const cleClassement = (jour: string) => `daily:${jour}:v${VERSION_REGLES}
 /** Ce que le navigateur envoie : le tour joué sur la salle du jour, pas son score. */
 export interface TourEnvoye {
   jour: string
-  /** Identifiant anonyme tiré au hasard par le navigateur : une seule ligne par joueur. */
-  joueur: string
   sadida: Case
   sorts: number[]
   prycipithon: boolean
@@ -83,15 +81,13 @@ export interface TourEnvoye {
 /** Une ligne du classement. Les actions restent pour pouvoir revoir le tour plus tard. */
 export interface EntreeClassement {
   id: string
-  /** Identifiant anonyme du joueur (jamais renvoyé tel quel par l'API). */
-  joueur?: string
   points: number
   etoiles: number
   paDepenses: number
   prycipithon: boolean
   /** Moment de l'envoi (ms), pour départager : à points égaux, le premier garde la place. */
   date: number
-  tour?: Omit<TourEnvoye, 'jour' | 'joueur'>
+  tour?: Omit<TourEnvoye, 'jour'>
 }
 
 /**
@@ -113,16 +109,12 @@ export function rejouerDefi(salle: Salle, tour: TourEnvoye): Omit<EntreeClasseme
 }
 
 /**
- * Ajoute une entrée au classement : une seule ligne par joueur (son meilleur score remplace
- * l'ancien) et par valeur de points (la plus ancienne reste), du meilleur au moins bon,
+ * Ajoute une entrée au classement : une seule ligne par valeur de points (un même score obtenu
+ * autrement ne fait pas de nouvelle ligne, la plus ancienne reste), du meilleur au moins bon,
  * TAILLE_CLASSEMENT lignes au plus. Null si rien ne change.
  */
 export function insererClassement(top: EntreeClassement[], entree: EntreeClassement): EntreeClassement[] | null {
-  if (entree.points <= 0) return null
-  const sienne = entree.joueur ? top.find(e => e.joueur === entree.joueur) : undefined
-  if (sienne && sienne.points >= entree.points) return null
-  const autres = top.filter(e => e !== sienne)
-  if (autres.some(e => e.points === entree.points)) return null
-  const suite = [...autres, entree].sort((a, b) => b.points - a.points || a.date - b.date).slice(0, TAILLE_CLASSEMENT)
+  if (entree.points <= 0 || top.some(e => e.points === entree.points)) return null
+  const suite = [...top, entree].sort((a, b) => b.points - a.points || a.date - b.date).slice(0, TAILLE_CLASSEMENT)
   return suite.includes(entree) ? suite : null
 }

@@ -3,13 +3,17 @@ import { t } from '~/i18n'
 
 /**
  * Classement du défi du jour (anonyme) : trophée or, argent, bronze pour les trois premiers,
- * points, étoiles, et « vous » sur nos lignes. `limite` : 3 dans le coin du plateau, 5 à la fin.
+ * points, étoiles, et « toi » sur la ligne qui a les points de ton record du jour (une seule
+ * ligne par score : la tienne même si quelqu'un l'a obtenu avant toi, ou autrement).
+ * `limite` : 3 dans le coin du plateau, 5 à la fin.
  */
 const props = defineProps<{ limite: number }>()
 const store = usePartieStore()
 
 const lignes = computed(() => (store.classement ?? []).slice(0, props.limite))
 const COULEURS = ['#f2c14e', '#c9d3d6', '#cd8a52']
+/** Le record du joueur sur la salle du jour (gardé dans son navigateur). */
+const monRecord = computed(() => store.record?.points ?? null)
 </script>
 
 <template>
@@ -18,12 +22,12 @@ const COULEURS = ['#f2c14e', '#c9d3d6', '#cd8a52']
     <p v-if="store.classement === null" class="etat">{{ store.classementIndisponible ? t('daily.classement-indisponible') : t('daily.classement-chargement') }}</p>
     <p v-else-if="!lignes.length" class="etat">{{ t('daily.classement-vide') }}</p>
     <ol v-else>
-      <li v-for="(e, k) in lignes" :key="e.id" :class="{ moi: e.moi }">
+      <li v-for="(e, k) in lignes" :key="e.id" :class="{ moi: e.points === monRecord }">
         <span v-if="k < 3" class="trophee" :style="{ background: COULEURS[k] }" role="img" :aria-label="t('daily.place', { n: k + 1 })" />
         <span v-else class="rang">{{ t('daily.place', { n: k + 1 }) }}</span>
         <strong class="points">{{ t('daily.points', { n: e.points }) }}</strong>
         <Etoiles :nombre="e.etoiles" />
-        <span v-if="e.moi" class="vous">{{ t('daily.vous') }}</span>
+        <span v-if="e.points === monRecord" class="vous">{{ t('daily.vous') }}</span>
       </li>
     </ol>
   </div>
