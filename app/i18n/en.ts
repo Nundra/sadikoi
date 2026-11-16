@@ -195,7 +195,7 @@ export const en: DicoLangue = {
   'legal.donnees': 'Personal data and cookies',
   'legal.donnees-texte': 'Sadikoi sets no cookies, shows no ads, uses no audience measurement tool and collects no personal data.',
   'legal.donnees-stockage': 'Your settings and progress (records, run, map being created…) are saved only in your browser (local storage), to make the game work: they are never sent anywhere. You can erase them by clearing the site’s data in your browser.',
-  'legal.donnees-daily': 'Daily challenge: when your score beats your best submission of the day, your turn (placement, spells, actions) and its score are sent for the ranking, with no username or IP address, and kept for 30 days. A random identifier, kept in your browser, lets the game recognise your ranking lines.',
+  'legal.donnees-daily': 'Daily challenge: when your score beats your best submission of the day, your turn (placement, spells, actions) and its score are sent for the ranking, with no username or IP address, and kept for 30 days. A random identifier drawn by your browser is sent along: it is only used to keep your best line in the ranking.',
   'legal.donnees-hebergeur': 'Like any host, Cloudflare processes visitors’ IP addresses to serve and protect the site (technical and security logs), under its own privacy policy.',
   'legal.credits': 'Credits',
   'legal.credits-texte': 'Design and code: {nom}. Marcellus and Nunito Sans fonts (SIL Open Font License), hosted on the site. Game data extracted with the open-source dofus-sqlite project.',

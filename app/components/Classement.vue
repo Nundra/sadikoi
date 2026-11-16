@@ -18,12 +18,12 @@ const COULEURS = ['#f2c14e', '#c9d3d6', '#cd8a52']
     <p v-if="store.classement === null" class="etat">{{ store.classementIndisponible ? t('daily.classement-indisponible') : t('daily.classement-chargement') }}</p>
     <p v-else-if="!lignes.length" class="etat">{{ t('daily.classement-vide') }}</p>
     <ol v-else>
-      <li v-for="(e, k) in lignes" :key="e.id" :class="{ moi: store.estMoi(e) }">
+      <li v-for="(e, k) in lignes" :key="e.id" :class="{ moi: e.moi }">
         <span v-if="k < 3" class="trophee" :style="{ background: COULEURS[k] }" role="img" :aria-label="t('daily.place', { n: k + 1 })" />
         <span v-else class="rang">{{ t('daily.place', { n: k + 1 }) }}</span>
         <strong class="points">{{ t('daily.points', { n: e.points }) }}</strong>
         <Etoiles :nombre="e.etoiles" />
-        <span v-if="store.estMoi(e)" class="vous">{{ t('daily.vous') }}</span>
+        <span v-if="e.moi" class="vous">{{ t('daily.vous') }}</span>
       </li>
     </ol>
   </div>

@@ -208,7 +208,7 @@ export const fr = {
   'legal.donnees': 'Données personnelles et cookies',
   'legal.donnees-texte': 'Sadikoi ne dépose aucun cookie, n’affiche aucune publicité, n’utilise aucun outil de mesure d’audience et ne collecte aucune donnée personnelle.',
   'legal.donnees-stockage': 'Tes réglages et ta progression (records, run, map en cours de création…) sont enregistrés uniquement dans ton navigateur (stockage local), pour faire fonctionner le jeu : ils ne sont jamais envoyés. Tu peux les effacer en supprimant les données du site dans ton navigateur.',
-  'legal.donnees-daily': 'Défi du jour : quand ton score bat ton meilleur envoi du jour, ton tour (placement, sorts, actions) et son score sont envoyés pour le classement, sans pseudo ni adresse IP, et gardés 30 jours. Un identifiant tiré au hasard, gardé dans ton navigateur, permet de reconnaître tes lignes du classement.',
+  'legal.donnees-daily': 'Défi du jour : quand ton score bat ton meilleur envoi du jour, ton tour (placement, sorts, actions) et son score sont envoyés pour le classement, sans pseudo ni adresse IP, et gardés 30 jours. Un identifiant tiré au hasard dans ton navigateur est envoyé avec : il ne sert qu’à ne garder que ta meilleure ligne au classement.',
   'legal.donnees-hebergeur': 'Comme tout hébergeur, Cloudflare traite l’adresse IP des visiteurs pour afficher le site et le protéger (journaux techniques et de sécurité), selon sa propre politique de confidentialité.',
   'legal.credits': 'Crédits',
   'legal.credits-texte': 'Conception et code : {nom}. Polices Marcellus et Nunito Sans (SIL Open Font License), hébergées sur le site. Données du jeu extraites avec le projet libre dofus-sqlite.',

@@ -347,23 +347,26 @@ export const usePartieStore = defineStore('partie', () => {
   /**
    * Défi du jour (/daily) : la même salle pour tous ce jour-là (engine/daily.ts, réglages à la
    * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles : plus
-   * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, le
-   * meilleur score envoyé au classement et l'id des lignes du classement qui sont les nôtres.
+   * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, et le
+   * meilleur score envoyé au classement. `sadikoi:joueur` : identifiant anonyme tiré au hasard,
+   * envoyé au classement pour n'y avoir qu'une ligne (« toi »).
    */
   const jourDaily = ref(jourDe())
-  const etatVide = () => ({ jour: jourDaily.value, fait: false, envoye: 0, ids: [] as string[] })
+  const etatVide = () => ({ jour: jourDaily.value, fait: false, envoye: 0 })
   const lu = lire('daily', etatVide())
   const etatDaily = ref(lu.jour === jourDaily.value ? lu : etatVide())
   watch(etatDaily, v => ecrire('daily', v), { deep: true })
   const dailyFait = computed(() => etatDaily.value.fait)
 
+  const joueur = lire('joueur', { id: '' }).id || crypto.randomUUID()
+  ecrire('joueur', { id: joueur })
+
   /** Classement du jour (serveur, functions/api/daily.ts) ; null tant qu'il n'est pas chargé. */
-  const classement = ref<EntreeClassement[] | null>(null)
+  const classement = ref<(EntreeClassement & { moi: boolean })[] | null>(null)
   /** Le classement n'a pas pu être lu ou le tour pas envoyé (hors ligne, en dev sans API…). */
   const classementIndisponible = ref(false)
   /** Le tour a été refusé parce que le défi a changé entre-temps (minuit, heure de Paris). */
   const defiPerime = ref(false)
-  const estMoi = (e: EntreeClassement) => etatDaily.value.ids.includes(e.id)
 
   /**
    * Appelle l'API du classement (6 s au plus : un serveur qui ne répond pas ne doit pas laisser
@@ -373,10 +376,10 @@ export const usePartieStore = defineStore('partie', () => {
     const arret = new AbortController()
     const delai = setTimeout(() => arret.abort(), 6000)
     try {
-      const r = await fetch('/api/daily', { ...init, signal: arret.signal })
+      const r = await fetch(`/api/daily?joueur=${joueur}`, { ...init, signal: arret.signal })
       if (r.status === 409) defiPerime.value = true
       if (!r.ok) throw new Error(String(r.status))
-      const corps = await r.json() as { jour: string, top: EntreeClassement[], id?: string | null, salle?: { map: number, ennemis: Case[] } }
+      const corps = await r.json() as { jour: string, top: (EntreeClassement & { moi: boolean })[], salle?: { map: number, ennemis: Case[] } }
       classement.value = corps.top
       classementIndisponible.value = false
       return corps
@@ -388,17 +391,21 @@ export const usePartieStore = defineStore('partie', () => {
     }
   }
 
-  watch(termine, async (fin) => {
+  /**
+   * Chaque tour du défi terminé, repéré par ses actions : un nouveau tour se déclenche même si
+   * l'on recommence et termine sans que « terminé » repasse à faux entre-temps.
+   */
+  const tourDailyFini = computed(() => (mode.value === 'daily' && termine.value ? `${sadida.value}|${JSON.stringify(actions.value)}` : null))
+  watch(tourDailyFini, async (fin) => {
     const sc = score.value
-    if (!fin || mode.value !== 'daily' || !sc) return
+    if (!fin || !sc) return
     if (sc.etoiles >= ETOILES_DAILY) etatDaily.value.fait = true
     // On n'envoie que ce qui bat notre meilleur envoi du jour : le serveur rejoue le tour
     if (sc.points <= etatDaily.value.envoye || sadida.value === null) return
-    const tour = { jour: jourDaily.value, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
+    const tour = { jour: jourDaily.value, joueur, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
     const corps = await appelerClassement({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(tour) })
     if (!corps) return
     etatDaily.value.envoye = Math.max(etatDaily.value.envoye, sc.points)
-    if (corps.id) etatDaily.value.ids.push(corps.id)
   })
 
   /**
@@ -798,7 +805,7 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   return {
-    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, classement, classementIndisponible, defiPerime, estMoi, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
+    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, classement, classementIndisponible, defiPerime, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,

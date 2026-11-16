@@ -1,11 +1,12 @@
 /**
  * Classement du défi du jour (Cloudflare Pages Functions, KV « DAILY », voir wrangler.toml).
- * - GET  /api/daily : le jour, la salle du jour (map et ennemis : elle fait foi pour tous les
- *   navigateurs) et le top du jour, sans les tours.
+ * - GET  /api/daily?joueur=<id> : le jour, la salle du jour (map et ennemis : elle fait foi pour
+ *   tous les navigateurs) et le top du jour, sans les tours ; `moi` sur les lignes de ce joueur.
  * - POST /api/daily : un tour joué sur la salle du jour (pas son score). Le serveur rejoue le tour
  *   avec le moteur et calcule lui-même le score ; il entre au classement s'il y a sa place
- *   (une ligne par valeur de points, la plus ancienne reste).
- * Rien de personnel n'est gardé : ni pseudo, ni adresse IP.
+ *   (une ligne par joueur et par valeur de points).
+ * Rien de personnel n'est gardé : ni pseudo, ni adresse IP ; le joueur n'est qu'un identifiant
+ * tiré au hasard par son navigateur.
  */
 import reglages from '../../data/daily.json'
 import {
@@ -35,8 +36,9 @@ const json = (corps: unknown, status = 200) => new Response(JSON.stringify(corps
   headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
 })
 
-/** Le top du jour, sans les tours (seulement ce qui s'affiche). */
-const public_ = (top: EntreeClassement[]) => top.map(({ tour: _tour, ...e }) => e)
+/** Le top du jour, sans les tours ni les joueurs : seulement ce qui s'affiche, et « moi ». */
+const public_ = (top: EntreeClassement[], joueur: string | null) =>
+  top.map(({ tour: _tour, joueur: j, ...e }) => ({ ...e, moi: Boolean(joueur && j === joueur) }))
 
 async function lireTop(env: Env, jour: string): Promise<EntreeClassement[]> {
   return JSON.parse((await env.DAILY.get(cleClassement(jour))) ?? '[]') as EntreeClassement[]
@@ -61,8 +63,9 @@ async function salleDuJourServeur(env: Env, origine: string, jour: string): Prom
 
 export async function onRequestGet({ request, env }: Contexte): Promise<Response> {
   const jour = jourDe()
+  const joueur = new URL(request.url).searchParams.get('joueur')
   const [salle, top] = await Promise.all([salleDuJourServeur(env, request.url, jour), lireTop(env, jour)])
-  return json({ jour, salle: salle && { map: salle.map.id, ennemis: salle.ennemis }, top: public_(top) })
+  return json({ jour, salle: salle && { map: salle.map.id, ennemis: salle.ennemis }, top: public_(top, joueur) })
 }
 
 export async function onRequestPost({ request, env }: Contexte): Promise<Response> {
@@ -76,6 +79,7 @@ export async function onRequestPost({ request, env }: Contexte): Promise<Respons
   // Envoyé juste après minuit : le défi a changé, le tour ne vaut plus
   if (tour?.jour !== jour) return json({ erreur: 'jour', jour }, 409)
   if (!Array.isArray(tour.actions) || tour.actions.length > 200 || !Array.isArray(tour.sorts)) return json({ erreur: 'format' }, 400)
+  if (typeof tour.joueur !== 'string' || !/^[0-9a-f-]{36}$/.test(tour.joueur)) return json({ erreur: 'joueur' }, 400)
 
   const salle = await salleDuJourServeur(env, request.url, jour)
   if (!salle) return json({ erreur: 'salle' }, 500)
@@ -85,11 +89,12 @@ export async function onRequestPost({ request, env }: Contexte): Promise<Respons
   const top = await lireTop(env, jour)
   const entree: EntreeClassement = {
     id: crypto.randomUUID(),
+    joueur: tour.joueur,
     ...resultat,
     date: Date.now(),
     tour: { sadida: tour.sadida, sorts: tour.sorts, prycipithon: resultat.prycipithon, actions: tour.actions },
   }
   const suite = insererClassement(top, entree)
   if (suite) await env.DAILY.put(cleClassement(jour), JSON.stringify(suite), { expirationTtl: DUREE })
-  return json({ jour, points: resultat.points, id: suite ? entree.id : null, top: public_(suite ?? top) })
+  return json({ jour, points: resultat.points, top: public_(suite ?? top, tour.joueur) })
 }
