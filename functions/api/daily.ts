@@ -1,6 +1,7 @@
 /**
  * Classement du défi du jour (Cloudflare Pages Functions, KV « DAILY », voir wrangler.toml).
- * - GET  /api/daily : le top du jour, sans les tours.
+ * - GET  /api/daily : le jour, la salle du jour (map et ennemis : elle fait foi pour tous les
+ *   navigateurs) et le top du jour, sans les tours.
  * - POST /api/daily : un tour joué sur la salle du jour (pas son score). Le serveur rejoue le tour
  *   avec le moteur et calcule lui-même le score ; il entre au classement s'il y a sa place
  *   (une ligne par valeur de points, la plus ancienne reste).
@@ -58,9 +59,10 @@ async function salleDuJourServeur(env: Env, origine: string, jour: string): Prom
   return salleDuJour(map, jour)
 }
 
-export async function onRequestGet({ env }: Contexte): Promise<Response> {
+export async function onRequestGet({ request, env }: Contexte): Promise<Response> {
   const jour = jourDe()
-  return json({ jour, top: public_(await lireTop(env, jour)) })
+  const [salle, top] = await Promise.all([salleDuJourServeur(env, request.url, jour), lireTop(env, jour)])
+  return json({ jour, salle: salle && { map: salle.map.id, ennemis: salle.ennemis }, top: public_(top) })
 }
 
 export async function onRequestPost({ request, env }: Contexte): Promise<Response> {

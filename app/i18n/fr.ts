@@ -292,6 +292,7 @@ export const fr = {
   'daily.relever': 'Relever le défi',
   'daily.classement': 'Classement du jour',
   'daily.classement-vide': 'Pas encore de score aujourd’hui : à toi de jouer !',
+  'daily.perime': 'Le défi a changé à minuit : recharge la page pour jouer celui du jour.',
   'daily.classement-chargement': 'Chargement du classement…',
   'daily.classement-indisponible': 'Classement indisponible pour le moment.',
   'daily.place': '{n}ᵉ',

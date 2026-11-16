@@ -14,6 +14,7 @@ const COULEURS = ['#f2c14e', '#c9d3d6', '#cd8a52']
 
 <template>
   <div class="classement">
+    <p v-if="store.defiPerime" class="etat">{{ t('daily.perime') }}</p>
     <p v-if="store.classement === null" class="etat">{{ store.classementIndisponible ? t('daily.classement-indisponible') : t('daily.classement-chargement') }}</p>
     <p v-else-if="!lignes.length" class="etat">{{ t('daily.classement-vide') }}</p>
     <ol v-else>

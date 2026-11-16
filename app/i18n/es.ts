@@ -278,6 +278,7 @@ export const es: DicoLangue = {
   'daily.relever': 'Aceptar el desafío',
   'daily.classement': 'Clasificación del día',
   'daily.classement-vide': 'Aún no hay puntuación hoy: ¡te toca!',
+  'daily.perime': 'El desafío cambió a medianoche: recarga la página para jugar el de hoy.',
   'daily.classement-chargement': 'Cargando la clasificación…',
   'daily.classement-indisponible': 'Clasificación no disponible por ahora.',
   'daily.place': '{n}.º',

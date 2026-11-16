@@ -361,23 +361,32 @@ export const usePartieStore = defineStore('partie', () => {
   const classement = ref<EntreeClassement[] | null>(null)
   /** Le classement n'a pas pu être lu ou le tour pas envoyé (hors ligne, en dev sans API…). */
   const classementIndisponible = ref(false)
+  /** Le tour a été refusé parce que le défi a changé entre-temps (minuit, heure de Paris). */
+  const defiPerime = ref(false)
   const estMoi = (e: EntreeClassement) => etatDaily.value.ids.includes(e.id)
 
+  /**
+   * Appelle l'API du classement (6 s au plus : un serveur qui ne répond pas ne doit pas laisser
+   * « Chargement… » à l'écran). Le serveur donne aussi le jour et la salle du jour, qui font foi.
+   */
   async function appelerClassement(init?: RequestInit) {
+    const arret = new AbortController()
+    const delai = setTimeout(() => arret.abort(), 6000)
     try {
-      const r = await fetch('/api/daily', init)
+      const r = await fetch('/api/daily', { ...init, signal: arret.signal })
+      if (r.status === 409) defiPerime.value = true
       if (!r.ok) throw new Error(String(r.status))
-      const corps = await r.json() as { jour: string, top: EntreeClassement[], id?: string | null }
-      if (corps.jour !== jourDaily.value) return null
+      const corps = await r.json() as { jour: string, top: EntreeClassement[], id?: string | null, salle?: { map: number, ennemis: Case[] } }
       classement.value = corps.top
       classementIndisponible.value = false
       return corps
     } catch {
       classementIndisponible.value = true
       return null
+    } finally {
+      clearTimeout(delai)
     }
   }
-  const chargerClassement = () => appelerClassement()
 
   watch(termine, async (fin) => {
     const sc = score.value
@@ -392,22 +401,30 @@ export const usePartieStore = defineStore('partie', () => {
     if (corps.id) etatDaily.value.ids.push(corps.id)
   })
 
+  /**
+   * Charge le défi du jour. Le serveur donne le jour et la salle (une seule source pour tous,
+   * même avec une horloge déréglée ou une ancienne version du site en cache) ; sans lui (hors
+   * ligne, en dev), le navigateur fait le même tirage de son côté.
+   */
   async function chargerDaily() {
     mode.value = 'daily'
-    jourDaily.value = jourDe()
-    if (etatDaily.value.jour !== jourDaily.value) etatDaily.value = etatVide()
-    chargerClassement()
-    const jour = jourDaily.value
     const numero = ++chargement
+    const serveur = await appelerClassement()
+    if (numero !== chargement) return
+    const jour = serveur?.jour ?? jourDe()
+    jourDaily.value = jour
+    if (etatDaily.value.jour !== jour) etatDaily.value = etatVide()
     const imposee = (reglagesDaily.salles as Record<string, string>)[jour]
-    const mi = imposee
-      ? maps.value.find(m => m.id === parseInt(imposee.split('-')[0] ?? '', 36))
-      : mapDuJour(candidatsDaily(maps.value, new Set(reglagesDaily.exclues)), jour)
+    const mi = serveur?.salle
+      ? maps.value.find(m => m.id === serveur.salle!.map)
+      : imposee
+        ? maps.value.find(m => m.id === parseInt(imposee.split('-')[0] ?? '', 36))
+        : mapDuJour(candidatsDaily(maps.value, new Set(reglagesDaily.exclues)), jour)
     if (!mi) return
     const complete = await avecCases(mi)
     if (numero !== chargement) return
-    const salle = imposee ? lireCodeSalle(imposee, [complete]) : null
-    const tiree = salle ?? salleDuJour(complete, jour)
+    const salle = !serveur?.salle && imposee ? lireCodeSalle(imposee, [complete]) : null
+    const tiree = serveur?.salle ? { ennemis: serveur.salle.ennemis } : salle ?? salleDuJour(complete, jour)
     const alea = aleaDe(`portraits:${jour}`)
     map.value = complete
     ennemis.value = tiree.ennemis
@@ -781,7 +798,7 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   return {
-    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, classement, classementIndisponible, estMoi, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
+    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, classement, classementIndisponible, defiPerime, estMoi, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,
