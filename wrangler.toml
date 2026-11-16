@@ -1,8 +1,9 @@
 # Cloudflare Pages (projet « sadikoi », compte « Jeremie CZK ») : le site statique et l'API du
 # classement du défi du jour (functions/). Une fois ce fichier présent, les liaisons (KV) se
-# règlent ici, plus dans le tableau de bord. Build : `pnpm generate` (réglé dans Cloudflare).
+# règlent ici, plus dans le tableau de bord. Build : `pnpm generate` (réglé dans Cloudflare) ;
+# sur Cloudflare, Nuxt prend le preset cloudflare-pages-static et écrit le site dans `dist`.
 name = "sadikoi"
-pages_build_output_dir = ".output/public"
+pages_build_output_dir = "dist"
 compatibility_date = "2026-11-01"
 
 # Classements du défi du jour : une clé par jour et par version des règles

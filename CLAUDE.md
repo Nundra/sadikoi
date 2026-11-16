@@ -113,5 +113,5 @@ Application web d'entraînement pour le Sadida de Dofus 3 : une « salle d'entra
 - Code sur GitHub : https://github.com/Nundra/sadikoi (branche `main`). Versions : V1 = tag `v1.0.0`.
 - En ligne : https://sadikoi.pages.dev/ (Cloudflare Pages, redéployé à chaque push sur `main`).
 - **Compte Cloudflare** : « Jeremie CZK », account ID `d8f138e4b2710953fdb599f6d8569965`, projet Pages `sadikoi`, KV `sadikoi-daily` (id `03f35064d1c64c79a452785ab36fb44b`, liaison `DAILY` dans `wrangler.toml`, qui règle les liaisons à la place du tableau de bord). Toute commande wrangler qui écrit passe `CLOUDFLARE_ACCOUNT_ID=d8f138e4b2710953fdb599f6d8569965` (ou `account_id` du `wrangler.toml`).
-- Déploiement : Cloudflare branché directement sur le dépôt GitHub par Jérémie. Site statique : commande de build `pnpm generate`, dossier publié `.output/public`. D1 plus tard pour la V2.
+- Déploiement : Cloudflare branché directement sur le dépôt GitHub par Jérémie. Site statique : commande de build `pnpm generate`, dossier publié `dist` (sur Cloudflare, Nuxt prend le preset `cloudflare-pages-static` et écrit dans `dist` ; en local, `.output/public`, avec un lien `dist` vers lui ; `pages_build_output_dir` du `wrangler.toml`). D1 plus tard pour la V2.
 - Scripts de données en Python, lancés avec `uv run`.
