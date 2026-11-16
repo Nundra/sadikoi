@@ -1,9 +1,12 @@
-# Cloudflare Pages : /en et /es servent la même app (une seule page), qui lit la langue dans l’adresse
-/en /index.html 200
-/en/* /index.html 200
-/es /index.html 200
-/es/* /index.html 200
-# Mentions légales : même slug dans toutes les langues
-/legals /index.html 200
-# Défi du jour : même slug dans toutes les langues
-/daily /index.html 200
+# Cloudflare Pages : une seule page (index.html) pour toutes les adresses de l'app, qui lit la
+# langue et la page dans l'adresse. Réécriture vers « / » et non « /index.html » : Cloudflare
+# redirige /index.html vers / (on perdrait l'adresse) et ignore les règles « /en/* » (boucle).
+# Une ligne par adresse : / (jeu), /legals, /daily, et les mêmes sous /en et /es.
+/en / 200
+/es / 200
+/legals / 200
+/daily / 200
+/en/legals / 200
+/en/daily / 200
+/es/legals / 200
+/es/daily / 200
