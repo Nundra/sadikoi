@@ -1,0 +1,5 @@
+{
+  "_aide": "Défi du jour (engine/daily.ts). exclues : id de maps à ne jamais tirer. salles : salle imposée pour un jour, \"AAAA-MM-JJ\": \"<code de salle>\" (bouton Partager en training).",
+  "exclues": [],
+  "salles": {}
+}

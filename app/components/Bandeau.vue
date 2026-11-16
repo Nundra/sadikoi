@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nomJeu, t } from '~/i18n'
+import { adresse, nomJeu, t } from '~/i18n'
 
 const store = usePartieStore()
 
@@ -15,13 +15,16 @@ const lieu = computed(() => {
 const reglages = ref<{ ouvrir: () => void } | null>(null)
 const bienvenue = ref<{ ouvrir: () => void } | null>(null)
 const nouveautes = ref<{ ouvrirSiNouvelle: () => void } | null>(null)
+const invitation = ref<{ ouvrirSiAFaire: () => void } | null>(null)
 </script>
 
 <template>
   <header class="bandeau">
     <h1 class="titre"><img src="/logo.png" alt="Sadikoi" width="140" height="58"></h1>
 
-    <div class="pilule">
+    <!-- Défi du jour : pas de choix de mode, on en sort vers le jeu habituel -->
+    <a v-if="store.mode === 'daily'" class="quitter" :href="adresse()">{{ t('daily.quitter') }}</a>
+    <div v-else class="pilule">
       <span class="mode">{{ t(`mode.${store.mode}`) }}</span><span aria-hidden="true">·</span><span v-if="store.mode === 'creation'">{{ t(store.edition ? 'creation.construction' : 'creation.test') }}</span><span v-else>{{ t('bandeau.salle', { n: store.numeroSalle }) }}</span>
       <template v-if="store.mode === 'infini' && store.meilleureSerie">
         <span aria-hidden="true">·</span><span class="record" :title="t('bandeau.record-run-aide')">{{ t('bandeau.record-run', { n: store.meilleureSerie }) }}</span>
@@ -32,6 +35,7 @@ const nouveautes = ref<{ ouvrirSiNouvelle: () => void } | null>(null)
       <div class="map-courante">
         <span>{{ t('bandeau.objectif') }}</span>
         <span v-if="store.map" class="nom-map">
+          <template v-if="store.mode === 'daily'">{{ t('daily.map-du-jour') }} · </template>
           <template v-if="store.mode === 'creation'">{{ t('creation.nom-map') }}</template>
           <template v-else>{{ nomJeu(store.map.nom) }}</template><template v-if="store.map.boss"> · {{ t('bandeau.boss', { boss: store.map.boss.map(nomJeu).join(', ') }) }}</template>
         </span>
@@ -55,7 +59,7 @@ const nouveautes = ref<{ ouvrirSiNouvelle: () => void } | null>(null)
         <button v-if="store.edition" type="button" :disabled="store.problemes.length > 0" @click="store.testerCarte()">{{ t('creation.tester') }}</button>
         <button v-else type="button" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">{{ t('creation.modifier') }}</button>
       </template>
-      <button v-else type="button" @click="store.nouvelleSalle()">{{ t('bandeau.autres-ennemis') }}</button>
+      <button v-else-if="store.mode !== 'daily'" type="button" @click="store.nouvelleSalle()">{{ t('bandeau.autres-ennemis') }}</button>
       <button type="button" :title="store.lienPartage ? t('bandeau.partager-aide', { lien: store.lienPartage }) : undefined" @click="store.partager()">{{ t('bandeau.partager') }}</button>
       <ChoixLangue />
       <button type="button" class="engrenage" :aria-label="t('bandeau.reglages')" :title="t('bandeau.reglages')" @click="reglages?.ouvrir()">
@@ -66,7 +70,8 @@ const nouveautes = ref<{ ouvrirSiNouvelle: () => void } | null>(null)
       </button>
       <Reglages ref="reglages" />
       <Bienvenue ref="bienvenue" @libre="nouveautes?.ouvrirSiNouvelle()" />
-      <Nouveautes ref="nouveautes" />
+      <Nouveautes ref="nouveautes" @libre="invitation?.ouvrirSiAFaire()" />
+      <InvitationDaily ref="invitation" />
     </div>
   </header>
 </template>
@@ -83,6 +88,12 @@ const nouveautes = ref<{ ouvrirSiNouvelle: () => void } | null>(null)
   background: var(--fond-creux); border: 1px solid var(--bord-clair); font-size: 14px; font-weight: 700;
 }
 .pilule .mode { color: #9fd27a; }
+.quitter {
+  display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 10px;
+  background: var(--fond-bouton); border: 1px solid var(--or); color: var(--or-clair);
+  font-size: 14px; font-weight: 800; text-decoration: none;
+}
+.quitter:hover { background: #2a4048; }
 .pilule span[aria-hidden] { color: var(--texte-gris); }
 .objectif { flex: 1; min-width: 300px; display: flex; justify-content: center; align-items: center; gap: 16px; }
 .map-courante { display: flex; flex-direction: column; font-size: 14px; color: #b9c6c4; }

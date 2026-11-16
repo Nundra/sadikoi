@@ -5,3 +5,5 @@
 /es/* /index.html 200
 # Mentions légales : même slug dans toutes les langues
 /legals /index.html 200
+# Défi du jour : même slug dans toutes les langues
+/daily /index.html 200

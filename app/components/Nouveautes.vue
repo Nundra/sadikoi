@@ -4,12 +4,14 @@ import { t } from '~/i18n'
 /**
  * Nouveauté de l'app, montrée une seule fois, après la bienvenue (`sadikoi:nouveaute` garde
  * la dernière vue) : dès l'arrivée si la bienvenue a déjà été vue, sinon quand on la referme
- * (le bandeau appelle `ouvrirSiNouvelle`). Pour annoncer la suivante : changer NOUVEAUTE et
- * les textes « nouveaute.* ».
+ * (le bandeau appelle `ouvrirSiNouvelle`). Émet `libre` une fois fermée, ou tout de suite s'il
+ * n'y a rien à montrer (l'invitation au défi du jour suit). Pour annoncer la suivante : changer
+ * NOUVEAUTE et les textes « nouveaute.* ».
  */
 const NOUVEAUTE = 'createur-de-map'
 
 const store = usePartieStore()
+const emit = defineEmits<{ libre: [] }>()
 const dialogue = ref<HTMLDialogElement | null>(null)
 
 function ouvrirSiNouvelle() {
@@ -21,10 +23,17 @@ function ouvrirSiNouvelle() {
     vue = true
   }
   if (!vue) dialogue.value?.showModal()
+  else emit('libre')
 }
 
 /** Vue pour de bon : à la fermeture (boutons, ou Échap par l'événement `close`). */
+let liberee = false
 function surFermeture() {
+  // Une seule fois : le bouton appelle cette fonction, et l'événement `close` aussi (s'il vient)
+  if (!liberee) {
+    liberee = true
+    emit('libre')
+  }
   try {
     localStorage.setItem('sadikoi:nouveaute', NOUVEAUTE)
   } catch {
@@ -38,6 +47,7 @@ function fermer() {
 }
 
 function essayer() {
+  liberee = true
   fermer()
   store.ouvrirCreation()
 }

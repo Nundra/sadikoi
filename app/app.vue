@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { langue, t } from '~/i18n'
+import { langue, pageDuChemin, t } from '~/i18n'
 
 /**
- * Une seule page servie partout (Cloudflare Pages) : le jeu, ou les mentions légales sur
- * /legals (même adresse dans toutes les langues : /legals, /en/legals, /es/legals).
+ * Une seule page servie partout (Cloudflare Pages) : le jeu (le défi du jour sur /daily), ou
+ * les mentions légales sur /legals (même slug dans toutes les langues : /legals, /en/legals…).
  */
-const legal = /\/legals\/?$/.test(window.location.pathname)
+const legal = pageDuChemin(window.location.pathname) === 'legals'
 
 useHead({ title: () => (legal ? `${t('legal.titre')} · Sadikoi` : t('app.titre')), htmlAttrs: { lang: langue } })
 </script>

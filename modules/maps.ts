@@ -1,12 +1,14 @@
 import { readFileSync } from 'node:fs'
 import { addVitePlugin, defineNuxtModule } from 'nuxt/kit'
 import { categorie } from '../engine/categories'
-import type { MapCombat } from '../engine/plateau'
+import { creerPlateau, placements, type MapCombat } from '../engine/plateau'
+import { equipes } from '../engine/salle'
 
 /**
  * Découpe data/maps.json au build, pour ne pas tout charger à l'arrivée (2,6 Mo, plus le calcul
  * du type de chaque map) :
- * - `virtual:maps` : l'index (tout sauf les cases, avec le type de la map déjà calculé), et
+ * - `virtual:maps` : l'index (tout sauf les cases, avec le type de la map et son nombre de cases
+ *   de placement ennemies déjà calculés, pour le défi du jour), et
  *   `chargerCases(id)` qui charge le paquet de cases de la map ;
  * - PAQUETS paquets de cases (la map n° k de la liste va dans le paquet k modulo PAQUETS : les
  *   id, eux, se répartissent mal), chargés à la demande (import dynamique).
@@ -32,7 +34,8 @@ export default defineNuxtModule({
         if (id === `\0${ID}`) {
           const index = lire().map((m, k) => {
             const { cases: _cases, ...sansCases } = m
-            return { ...sansCases, categorie: categorie(m), paquet: k % PAQUETS }
+            const places = placements(creerPlateau(m.cases), equipes(m).ennemie).length
+            return { ...sansCases, categorie: categorie(m), places, paquet: k % PAQUETS }
           })
           const chargeurs = Array.from({ length: PAQUETS }, (_, k) => `() => import('${PAQUET}${k}')`).join(',\n  ')
           return `export const index = JSON.parse(${JSON.stringify(JSON.stringify(index))})

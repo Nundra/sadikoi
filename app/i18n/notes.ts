@@ -15,6 +15,13 @@ export interface NoteDeVersion {
 export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
+      date: '2026-11-16',
+      nouveautes: [
+        'Défi du jour (/daily) : chaque jour, la même salle pour tous les joueurs, une map de zone ou de Songe avec 6 à 8 ennemis, au niveau 200 et aux caractéristiques par défaut. Une invitation s’affiche à l’arrivée tant qu’il n’est pas fait.',
+      ],
+      corrections: [],
+    },
+    {
       date: '2026-11-15',
       nouveautes: [
         'Nouvelle caractéristique Invocations (4 par défaut, de 1 à 8 dans les réglages) : au-delà, plus d’invocation possible. Les Arbres ne comptent pas, comme en jeu.',
@@ -65,6 +72,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   ],
   en: [
     {
+      date: '2026-11-16',
+      nouveautes: [
+        'Daily challenge (/daily): every day, the same room for every player, a zone or Dream map with 6 to 8 enemies, at level 200 with default characteristics. An invitation shows on arrival until it is done.',
+      ],
+      corrections: [],
+    },
+    {
       date: '2026-11-15',
       nouveautes: [
         'New Summons characteristic (4 by default, 1 to 8 in the settings): beyond that, no more summoning. Trees don’t count, as in game.',
@@ -114,6 +128,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     },
   ],
   es: [
+    {
+      date: '2026-11-16',
+      nouveautes: [
+        'Desafío del día (/daily): cada día, la misma sala para todos los jugadores, un mapa de zona o de Sueño con 6 a 8 enemigos, a nivel 200 y con las características por defecto. Una invitación aparece al llegar mientras no esté hecho.',
+      ],
+      corrections: [],
+    },
     {
       date: '2026-11-15',
       nouveautes: [

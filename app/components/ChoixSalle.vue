@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MapIndex } from 'virtual:maps'
-import { langue, nomJeu, t } from '~/i18n'
+import { adresse, langue, nomJeu, t } from '~/i18n'
 import type { Mode } from '~/stores/partie'
 
 /**
@@ -82,6 +82,8 @@ function changerMode(ev: Event) {
   const choisi = (ev.target as HTMLSelectElement).value as Mode
   fermer()
   if (choisi === 'creation') return store.ouvrirCreation()
+  // Le défi du jour a sa propre adresse
+  if (choisi === 'daily') return window.location.assign(adresse('daily'))
   store.mode = choisi
   store.mapChoisie = null
   if (store.mode === 'infini') store.nouvelleRun()
@@ -98,13 +100,15 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
 </script>
 
 <template>
-  <div ref="racine" class="choix-salle">
+  <PanneauDaily v-if="store.mode === 'daily'" />
+  <div v-else ref="racine" class="choix-salle">
     <label class="sr-only" for="choix-mode">{{ t('choix.mode') }}</label>
     <select id="choix-mode" :value="store.mode" @change="changerMode">
       <option value="infini">{{ t('choix.infini') }}</option>
       <option value="map">{{ t('choix.map') }}</option>
       <option value="boss">{{ t('choix.boss') }}</option>
       <option value="creation">{{ t('choix.creation') }}</option>
+      <option value="daily">{{ t('choix.daily') }}</option>
     </select>
 
     <button v-if="store.mode === 'creation' && !store.edition" type="button" class="editer" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">

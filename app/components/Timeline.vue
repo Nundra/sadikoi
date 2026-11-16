@@ -178,9 +178,11 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
           <!-- Mode infini : rejouer passe en training sur cette salle (la run s'arrête) -->
           <button v-if="store.mode === 'infini'" type="button" :title="t('timeline.rejouer-infini')" @click="store.rejouerSalle()">{{ t('timeline.rejouer') }}</button>
           <!-- Training : on retravaille la même salle -->
-          <button v-else type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
+          <button v-else-if="store.mode !== 'daily'" type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
         </div>
-        <template v-if="store.mode === 'infini'">
+        <!-- Défi du jour : on le retente depuis le placement -->
+        <button v-if="store.mode === 'daily'" type="button" class="fin" @click="store.replacer()">{{ t('daily.retenter') }}</button>
+        <template v-else-if="store.mode === 'infini'">
           <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">{{ t('resultat.suivante') }}</button>
           <button v-else type="button" class="fin" @click="store.nouvelleRun()">{{ t('resultat.nouvelle-run') }}</button>
         </template>

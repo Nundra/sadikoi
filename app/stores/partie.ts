@@ -18,11 +18,13 @@ import {
 } from '~~/engine/creation'
 import { NIVEAU_MAX, SORTS_SADIDA, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
+import reglagesDaily from '~~/data/daily.json'
+import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour } from '~~/engine/daily'
 import type { Message, RefEntite } from '~~/engine/messages'
 import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
 import { useBarreStore } from './barre'
 
-export type Mode = 'infini' | 'map' | 'boss' | 'creation'
+export type Mode = 'infini' | 'map' | 'boss' | 'creation' | 'daily'
 
 /** Meilleur résultat sur une salle. */
 export interface MeilleurScore {
@@ -157,8 +159,15 @@ export const usePartieStore = defineStore('partie', () => {
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
   const prycipithon = ref<boolean>(lire('equipement', { prycipithon: false }).prycipithon)
   watch(prycipithon, v => ecrire('equipement', { prycipithon: v }))
+  /**
+   * Défi du jour : niveau et caractéristiques imposés (ceux par défaut), pour que tous les
+   * joueurs se comparent à armes égales. Les réglages du joueur restent gardés à côté.
+   */
+  const statsImposees = computed(() => mode.value === 'daily')
+  const niveauJeu = computed(() => (statsImposees.value ? NIVEAU_MAX : niveau.value))
+  const statsJeu = computed<Stats>(() => (statsImposees.value ? STATS_DEFAUT : stats.value))
   /** Caractéristiques de départ du Sadida, Prycipithon comprise. */
-  const statsDepart = computed<Stats>(() => (prycipithon.value ? { ...stats.value, pa: stats.value.pa + PA_PRYCIPITHON } : stats.value))
+  const statsDepart = computed<Stats>(() => (prycipithon.value ? { ...statsJeu.value, pa: statsJeu.value.pa + PA_PRYCIPITHON } : statsJeu.value))
   const variantes = ref<Record<number, number>>(lire('variantes', Object.fromEntries(
     PAIRES.map(([a, b]) => [a.paire!, VARIANTES_DEFAUT.has(a.nom) ? a.id : b.id]),
   )))
@@ -177,15 +186,15 @@ export const usePartieStore = defineStore('partie', () => {
   const vue = ref<number | null>(null)
 
   /** Le sort est débloqué au niveau choisi (les sorts d'invocation le sont toujours). */
-  const debloque = (s: Sort) => niveauRequis(s) <= niveau.value
+  const debloque = (s: Sort) => niveauRequis(s) <= niveauJeu.value
   /** Variantes choisies et débloquées au niveau : celles qu'on joue. */
   const sortsChoisis = computed(() => Object.values(variantes.value).filter(id => debloque(trouverSort(id))))
   /** Un sort tel qu'il se lance au niveau choisi (PO du rang), ou au dernier rang s'il n'est pas débloqué. */
-  const sortAffiche = (id: number) => sortAuNiveau(trouverSort(id), niveau.value) ?? trouverSort(id)
+  const sortAffiche = (id: number) => sortAuNiveau(trouverSort(id), niveauJeu.value) ?? trouverSort(id)
 
   const depart = computed(() => map.value && sadida.value !== null
     // Copies simples : le moteur clone la partie avec structuredClone, qui refuse les proxys de Vue
-    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...stats.value }, prycipithon: prycipithon.value, niveau: niveau.value })
+    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...statsJeu.value }, prycipithon: prycipithon.value, niveau: niveauJeu.value })
     : null)
 
   /** La partie rejouée action par action. S'arrête à la première action devenue impossible. */
@@ -247,7 +256,7 @@ export const usePartieStore = defineStore('partie', () => {
     })
   })
 
-  const bonusPo = computed(() => (acteur.value?.genre === 'invocation' ? 0 : stats.value.po))
+  const bonusPo = computed(() => (acteur.value?.genre === 'invocation' ? 0 : statsJeu.value.po))
   const interactif = computed(() => vue.value === null && acteur.value !== null)
 
   /** Cases de lancement du sort choisi (portée et ligne de vue), affichées en bleu comme en jeu. */
@@ -316,7 +325,7 @@ export const usePartieStore = defineStore('partie', () => {
   const records = ref<Record<string, MeilleurScore>>(Object.fromEntries(
     Object.entries(lire<Record<string, MeilleurScore>>('records', {})).filter(([cle]) => cle.startsWith(prefixeRecords))))
   const cleSalle = computed(() => map.value
-    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${stats.value.pa}-${stats.value.pm}-${stats.value.po}-i${stats.value.invo}${niveau.value < NIVEAU_MAX ? `|n${niveau.value}` : ''}`
+    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${statsJeu.value.pa}-${statsJeu.value.pm}-${statsJeu.value.po}-i${statsJeu.value.invo}${niveauJeu.value < NIVEAU_MAX ? `|n${niveauJeu.value}` : ''}`
     : null)
   const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */
@@ -334,6 +343,42 @@ export const usePartieStore = defineStore('partie', () => {
     records.value = tous
     ecrire('records', tous)
   })
+
+  /**
+   * Défi du jour (/daily) : la même salle pour tous ce jour-là (engine/daily.ts, réglages à la
+   * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles (`sadikoi:daily`
+   * garde le jour) : plus d'invitation à l'arrivée ce jour-là.
+   */
+  const jourDaily = ref(jourDe())
+  const dailyFait = ref(lire('daily', { jour: '' }).jour === jourDaily.value)
+  watch(termine, (fin) => {
+    if (!fin || mode.value !== 'daily' || (score.value?.etoiles ?? 0) < ETOILES_DAILY) return
+    dailyFait.value = true
+    ecrire('daily', { jour: jourDaily.value })
+  })
+
+  async function chargerDaily() {
+    mode.value = 'daily'
+    jourDaily.value = jourDe()
+    const jour = jourDaily.value
+    const numero = ++chargement
+    const imposee = (reglagesDaily.salles as Record<string, string>)[jour]
+    const mi = imposee
+      ? maps.value.find(m => m.id === parseInt(imposee.split('-')[0] ?? '', 36))
+      : mapDuJour(candidatsDaily(maps.value, new Set(reglagesDaily.exclues)), jour)
+    if (!mi) return
+    const complete = await avecCases(mi)
+    if (numero !== chargement) return
+    const salle = imposee ? lireCodeSalle(imposee, [complete]) : null
+    const tiree = salle ?? salleDuJour(complete, jour)
+    const alea = aleaDe(`portraits:${jour}`)
+    map.value = complete
+    ennemis.value = tiree.ennemis
+    portraitsEnnemis.value = salle ? salle.portraits : tiree.ennemis.map(() => Math.floor(alea() * portraits.ennemis.length))
+    sadida.value = null
+    numeroSalle.value = 1
+    replacer()
+  }
 
   async function charger() {
     if (maps.value.length) return
@@ -474,7 +519,7 @@ export const usePartieStore = defineStore('partie', () => {
     try {
       const url = new URL(window.location.href)
       url.searchParams.delete(m === 'creation' ? 'salle' : 'carte')
-      if (m === 'infini') url.searchParams.delete('salle')
+      if (m === 'infini' || m === 'daily') url.searchParams.delete('salle')
       else url.searchParams.set(parametre.value, c)
       window.history.replaceState(null, '', url)
     } catch {
@@ -482,6 +527,7 @@ export const usePartieStore = defineStore('partie', () => {
     }
   })
   const lienPartage = computed(() => {
+    if (mode.value === 'daily') return new URL(`${prefixe(langue.value)}/daily`, window.location.origin).toString()
     if (!code.value) return null
     const url = new URL(prefixe(langue.value) || '/', window.location.origin)
     url.searchParams.set(parametre.value, code.value)
@@ -698,7 +744,7 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   return {
-    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
+    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,

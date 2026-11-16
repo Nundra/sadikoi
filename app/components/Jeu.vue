@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { choisirLangue, langue } from '~/i18n'
+import { choisirLangue, langue, pageDuChemin } from '~/i18n'
 import { useRaccourcis } from '~/stores/barre'
 
 /** L'écran de jeu (tout le site, sauf la page /legals). */
@@ -23,12 +23,13 @@ useRaccourcis({
 onMounted(async () => {
   // Langue de l'adresse (/en, /es) : ses textes du jeu, chargés avec les maps
   await Promise.all([store.charger(), choisirLangue(langue.value)])
-  // Lien partagé (ou rechargement) : ?salle=<code> charge cette salle en training,
-  // ?carte=<code> ouvre cette map perso dans le créateur
+  // /daily : le défi du jour. Lien partagé (ou rechargement) : ?salle=<code> charge cette
+  // salle en training, ?carte=<code> ouvre cette map perso dans le créateur
   const params = new URLSearchParams(window.location.search)
   const salle = params.get('salle')
   const carte = params.get('carte')
-  if (carte) store.chargerCarte(carte)
+  if (pageDuChemin(window.location.pathname) === 'daily') store.chargerDaily()
+  else if (carte) store.chargerCarte(carte)
   else if (salle) store.chargerCode(salle)
   else store.nouvelleSalle()
 })

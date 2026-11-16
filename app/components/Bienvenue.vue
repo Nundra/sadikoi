@@ -74,6 +74,7 @@ defineExpose({ ouvrir })
     <section>
       <h3>{{ t('bienvenue.modes') }}</h3>
       <ul>
+        <li v-html="t('bienvenue.modes-daily')" />
         <li v-html="t('bienvenue.modes-1', { n: ETOILES_POUR_AVANCER })" />
         <li v-html="t('bienvenue.modes-2')" />
         <li v-html="t('bienvenue.modes-creation')" />

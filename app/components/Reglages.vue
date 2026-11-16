@@ -14,6 +14,8 @@ const emplacements = computed(() => barre.ordre.map((paire, k) => {
   const s = SORTS_SADIDA.find(x => x.id === store.variantes[paire]) ?? SORTS_SADIDA.find(x => x.paire === paire)!
   return { k, nom: nomSort(s.id), touche: barre.libelle(barre.touches[k] ?? '') }
 }))
+/** Niveau et caractéristiques non modifiables : pendant le tour, ou imposés par le défi du jour. */
+const bloque = computed(() => store.verrouille || store.statsImposees)
 const finTouche = computed(() => barre.libelle(barre.toucheFin))
 const dialogue = ref<HTMLDialogElement | null>(null)
 const notes = ref<{ ouvrir: () => void } | null>(null)
@@ -65,7 +67,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
       <div v-for="r in reglablesPersonnage" :key="r.cle" class="reglable">
         <label :for="`reglage-${r.cle}`">{{ r.nom }}</label>
         <span class="bornes">{{ t('reglages.bornes', { min: r.bornes[0], max: r.bornes[1] }) }}</span>
-        <button type="button" :aria-label="`${r.nom} −1`" :disabled="store.verrouille || r.valeur <= r.bornes[0]" @click="r.changer(r.valeur - 1)">−</button>
+        <button type="button" :aria-label="`${r.nom} −1`" :disabled="bloque || r.valeur <= r.bornes[0]" @click="r.changer(r.valeur - 1)">−</button>
         <input
           :id="`reglage-${r.cle}`"
           type="number"
@@ -73,12 +75,13 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
           :min="r.bornes[0]"
           :max="r.bornes[1]"
           :value="r.valeur"
-          :disabled="store.verrouille"
+          :disabled="bloque"
           @change="(ev) => { r.changer(Number((ev.target as HTMLInputElement).value)); (ev.target as HTMLInputElement).value = String(r.valeur) }"
         >
-        <button type="button" :aria-label="`${r.nom} +1`" :disabled="store.verrouille || r.valeur >= r.bornes[1]" @click="r.changer(r.valeur + 1)">+</button>
+        <button type="button" :aria-label="`${r.nom} +1`" :disabled="bloque || r.valeur >= r.bornes[1]" @click="r.changer(r.valeur + 1)">+</button>
       </div>
-      <p v-if="store.verrouille" class="aide">{{ t('reglages.verrouille') }}</p>
+      <p v-if="store.statsImposees" class="aide">{{ t('reglages.imposees-daily') }}</p>
+      <p v-else-if="store.verrouille" class="aide">{{ t('reglages.verrouille') }}</p>
       <button v-else type="button" class="retablir" @click="store.retablirPersonnage()">{{ t('reglages.retablir-personnage') }}</button>
     </fieldset>
 

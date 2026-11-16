@@ -3,8 +3,11 @@ declare module 'virtual:maps' {
   import type { Categorie } from '~~/engine/categories'
   import type { MapCombat } from '~~/engine/plateau'
 
-  /** Une map sans ses cases, avec son type et le paquet qui contient ses cases. */
-  export type MapIndex = Omit<MapCombat, 'cases'> & { categorie: Categorie, paquet: number }
+  /**
+   * Une map sans ses cases, avec son type, son nombre de cases de placement ennemies et le
+   * paquet qui contient ses cases.
+   */
+  export type MapIndex = Omit<MapCombat, 'cases'> & { categorie: Categorie, places: number, paquet: number }
   export const index: MapIndex[]
   /** Les cases d'une map (son paquet est chargé la première fois). */
   export function chargerCases(m: MapIndex): Promise<string | undefined>

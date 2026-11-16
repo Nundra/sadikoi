@@ -41,8 +41,19 @@ export function langueDuChemin(chemin: string): Langue {
 /** Début d'adresse d'une langue ('' en français). */
 export const prefixe = (l: Langue) => (l === 'fr' ? '' : `/${l}`)
 
+/** Pages à part, au même slug dans toutes les langues : /legals, /en/legals… */
+export type Page = 'legals' | 'daily'
+
+/** La page d'une adresse (null : le jeu, sur /). */
+export function pageDuChemin(chemin: string): Page | null {
+  return (/\/(legals|daily)\/?$/.exec(chemin)?.[1] as Page | undefined) ?? null
+}
+
+/** Adresse d'une page (ou du jeu) dans la langue choisie. */
+export const adresse = (page: Page | null = null) => (page ? `${prefixe(langue.value)}/${page}` : prefixe(langue.value) || '/')
+
 /** Adresse de la page des mentions légales dans la langue choisie (même slug partout). */
-export const adresseLegale = () => `${prefixe(langue.value)}/legals`
+export const adresseLegale = () => adresse('legals')
 
 /**
  * Langue au chargement : celle de l'adresse (/en, /es) ; sur /, celle choisie à une visite
@@ -92,9 +103,10 @@ export async function choisirLangue(l: Langue) {
   // Le titre et l'attribut lang de la page suivent `langue` (useHead, app.vue)
   langue.value = l
   try {
-    // L'adresse garde la langue : /en?salle=… ; du reste du chemin, seule la page /legals compte
+    // L'adresse garde la langue : /en?salle=… ; du reste du chemin, seule la page (/legals, /daily) compte
     const url = new URL(window.location.href)
-    url.pathname = /\/legals\/?$/.test(url.pathname) ? `${prefixe(l)}/legals` : prefixe(l) || '/'
+    const page = pageDuChemin(url.pathname)
+    url.pathname = page ? `${prefixe(l)}/${page}` : prefixe(l) || '/'
     window.history.replaceState(null, '', url)
   } catch {
     // adresse non modifiable (aperçu, iframe…) : sans conséquence
