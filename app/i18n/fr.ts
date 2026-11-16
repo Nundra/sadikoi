@@ -9,6 +9,7 @@ const s = (n: number) => (n > 1 ? 's' : '')
 
 export const fr = {
   'app.titre': 'Sadikoi – entraînement à l’infection au tour 1',
+  'app.description': 'Entraîne-toi à infecter tous les ennemis dès le tour 1 avec le Sadida de Dofus 3 : défi du jour avec classement, mode infini, training sur toutes les maps et créateur de map. Gratuit, sans pub.',
   'langue.choisir': 'Langue',
 
   // Entités

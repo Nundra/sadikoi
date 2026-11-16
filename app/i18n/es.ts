@@ -5,6 +5,7 @@ const s = (n: number) => (n > 1 ? 's' : '')
 
 export const es: DicoLangue = {
   'app.titre': 'Sadikoi – entrenamiento de infección en el turno 1',
+  'app.description': 'Entrénate para infectar a todos los enemigos desde el turno 1 con el Sadida de Dofus 3: desafío del día con clasificación, modo infinito, entrenamiento en todos los mapas y creador de mapas. Gratis, sin publicidad.',
   'langue.choisir': 'Idioma',
 
   'entite.arbre': 'Árbol',

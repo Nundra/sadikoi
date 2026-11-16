@@ -7,7 +7,11 @@ import { langue, pageDuChemin, t } from '~/i18n'
  */
 const legal = pageDuChemin(window.location.pathname) === 'legals'
 
-useHead({ title: () => (legal ? `${t('legal.titre')} · Sadikoi` : t('app.titre')), htmlAttrs: { lang: langue } })
+useHead({
+  title: () => (legal ? `${t('legal.titre')} · Sadikoi` : t('app.titre')),
+  htmlAttrs: { lang: langue },
+  meta: [{ name: 'description', content: () => t('app.description') }],
+})
 </script>
 
 <template>
