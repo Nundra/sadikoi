@@ -180,7 +180,11 @@ const regardee = computed(() => store.vue ?? store.etapes.length - 1)
           <!-- Training : on retravaille la même salle -->
           <button v-else-if="store.mode !== 'daily'" type="button" :title="t('resultat.recommencer-aide')" @click="store.replacer()">{{ t('resultat.recommencer') }}</button>
         </div>
-        <!-- Défi du jour : on le retente depuis le placement -->
+        <!-- Défi du jour : le top 5 du jour, puis on retente depuis le placement -->
+        <section v-if="store.mode === 'daily'" class="top-daily" aria-labelledby="titre-top-daily">
+          <h3 id="titre-top-daily">{{ t('daily.classement') }}</h3>
+          <Classement :limite="5" />
+        </section>
         <button v-if="store.mode === 'daily'" type="button" class="fin" @click="store.replacer()">{{ t('daily.retenter') }}</button>
         <template v-else-if="store.mode === 'infini'">
           <button v-if="store.peutAvancer" type="button" class="fin" @click="store.salleSuivante()">{{ t('resultat.suivante') }}</button>
@@ -246,4 +250,6 @@ button.fin { margin-top: 8px; width: 100%; }
 .resultat .fixation { font-size: 13px; }
 .resultat .fixation.ok { color: var(--mandragore); font-weight: 800; }
 .resultat .record.nouveau { color: #9fd27a; font-weight: 800; }
+.top-daily { margin: 12px 0 4px; text-align: left; }
+.top-daily h3 { margin: 0 0 6px; font-size: 14px; font-weight: 800; color: var(--or-clair); }
 </style>

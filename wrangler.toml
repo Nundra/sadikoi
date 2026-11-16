@@ -1,0 +1,11 @@
+# Cloudflare Pages (projet « sadikoi », compte « Jeremie CZK ») : le site statique et l'API du
+# classement du défi du jour (functions/). Une fois ce fichier présent, les liaisons (KV) se
+# règlent ici, plus dans le tableau de bord. Build : `pnpm generate` (réglé dans Cloudflare).
+name = "sadikoi"
+pages_build_output_dir = ".output/public"
+compatibility_date = "2026-11-01"
+
+# Classements du défi du jour : une clé par jour et par version des règles
+[[kv_namespaces]]
+binding = "DAILY"
+id = "03f35064d1c64c79a452785ab36fb44b"

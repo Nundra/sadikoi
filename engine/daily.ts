@@ -1,10 +1,13 @@
 import type { Categorie } from './categories'
+import type { Case } from './grille'
+import { nouvellePartie, rejouer, score, termine, VERSION_REGLES, type Action } from './partie'
 import type { MapCombat } from './plateau'
-import { tirerSalle, type Salle } from './salle'
+import { casesDuJoueur, tirerSalle, type Salle } from './salle'
 
 /**
  * Défi du jour : la même salle pour tous les joueurs, tirée à partir de la date (heure de
- * Paris). Aucun serveur : chaque navigateur fait le même tirage avec le même hasard.
+ * Paris). Chaque navigateur fait le même tirage avec le même hasard ; le serveur du classement
+ * (functions/api/daily.ts) aussi, pour rejouer les tours envoyés.
  */
 
 /** Types de map tirés pour le défi. */
@@ -46,8 +49,8 @@ export function candidatsDaily<T extends CandidatDaily>(maps: T[], exclues: Read
     .sort((a, b) => a.id - b.id)
 }
 
-/** La map du jour parmi les candidates. */
-export function mapDuJour<T extends CandidatDaily>(candidats: T[], jour: string): T | undefined {
+/** La map du jour parmi les candidates (déjà filtrées et triées par id). */
+export function mapDuJour<T extends { id: number }>(candidats: T[], jour: string): T | undefined {
   const alea = aleaDe(`map:${jour}`)
   return candidats[Math.floor(alea() * candidats.length)]
 }
@@ -58,4 +61,59 @@ export function salleDuJour(map: MapCombat, jour: string): Salle & { alea: () =>
   const [min, max] = ENNEMIS_DAILY
   const nombre = min + Math.floor(alea() * (max - min + 1))
   return { ...tirerSalle(map, { nombre, alea }), alea }
+}
+
+/** Taille du classement gardé pour chaque jour. */
+export const TAILLE_CLASSEMENT = 5
+
+/** Clé du classement d'un jour : une nouvelle version des règles repart d'un classement vide. */
+export const cleClassement = (jour: string) => `daily:${jour}:v${VERSION_REGLES}`
+
+/** Ce que le navigateur envoie : le tour joué sur la salle du jour, pas son score. */
+export interface TourEnvoye {
+  jour: string
+  sadida: Case
+  sorts: number[]
+  prycipithon: boolean
+  actions: Action[]
+}
+
+/** Une ligne du classement. Les actions restent pour pouvoir revoir le tour plus tard. */
+export interface EntreeClassement {
+  id: string
+  points: number
+  etoiles: number
+  paDepenses: number
+  prycipithon: boolean
+  /** Moment de l'envoi (ms), pour départager : à points égaux, le premier garde la place. */
+  date: number
+  tour?: Omit<TourEnvoye, 'jour'>
+}
+
+/**
+ * Rejoue un tour envoyé sur la salle du jour, aux caractéristiques par défaut, et donne son
+ * score ; null si le tour n'est pas valable (placement, sorts, action impossible, tour pas fini).
+ */
+export function rejouerDefi(salle: Salle, tour: TourEnvoye): Omit<EntreeClassement, 'id' | 'date' | 'tour'> | null {
+  if (!casesDuJoueur(salle.map).includes(tour.sadida)) return null
+  // Ce qui arrive du réseau peut être n'importe quoi : un tour mal formé est simplement refusé
+  try {
+    const depart = nouvellePartie({ cases: salle.map.cases, sadida: tour.sadida, ennemis: salle.ennemis, sorts: tour.sorts, prycipithon: tour.prycipithon === true })
+    const r = rejouer(depart, tour.actions)
+    if (r.erreur || !termine(r.partie)) return null
+    const s = score(r.partie)
+    return { points: s.points, etoiles: s.etoiles, paDepenses: s.paDepenses, prycipithon: tour.prycipithon === true }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Ajoute une entrée au classement : une seule ligne par valeur de points (la plus ancienne
+ * reste), du meilleur au moins bon, TAILLE_CLASSEMENT lignes au plus. Null si rien ne change.
+ */
+export function insererClassement(top: EntreeClassement[], entree: EntreeClassement): EntreeClassement[] | null {
+  if (entree.points <= 0 || top.some(e => e.points === entree.points)) return null
+  const suite = [...top, entree].sort((a, b) => b.points - a.points || a.date - b.date).slice(0, TAILLE_CLASSEMENT)
+  return suite.includes(entree) ? suite : null
 }

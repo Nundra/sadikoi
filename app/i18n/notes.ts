@@ -18,6 +18,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       date: '2026-11-16',
       nouveautes: [
         'Défi du jour (/daily) : chaque jour, la même salle pour tous les joueurs, une map de zone ou de Songe avec 6 à 8 ennemis, au niveau 200 et aux caractéristiques par défaut. Une invitation s’affiche à l’arrivée tant qu’il n’est pas fait.',
+        'Classement du jour : le top 3 dans le coin du plateau, le top 5 à la fin, anonyme. Le serveur rejoue chaque tour envoyé avant de le classer.',
       ],
       corrections: [],
     },
@@ -75,6 +76,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       date: '2026-11-16',
       nouveautes: [
         'Daily challenge (/daily): every day, the same room for every player, a zone or Dream map with 6 to 8 enemies, at level 200 with default characteristics. An invitation shows on arrival until it is done.',
+        'Daily ranking: top 3 in the corner of the board, top 5 at the end, anonymous. The server replays every submitted turn before ranking it.',
       ],
       corrections: [],
     },
@@ -132,6 +134,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       date: '2026-11-16',
       nouveautes: [
         'Desafío del día (/daily): cada día, la misma sala para todos los jugadores, un mapa de zona o de Sueño con 6 a 8 enemigos, a nivel 200 y con las características por defecto. Una invitación aparece al llegar mientras no esté hecho.',
+        'Clasificación del día: el top 3 en la esquina del tablero, el top 5 al final, anónima. El servidor repite cada turno enviado antes de clasificarlo.',
       ],
       corrections: [],
     },

@@ -19,7 +19,7 @@ import {
 import { NIVEAU_MAX, SORTS_SADIDA, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
 import reglagesDaily from '~~/data/daily.json'
-import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour } from '~~/engine/daily'
+import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour, type EntreeClassement } from '~~/engine/daily'
 import type { Message, RefEntite } from '~~/engine/messages'
 import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
 import { useBarreStore } from './barre'
@@ -346,20 +346,57 @@ export const usePartieStore = defineStore('partie', () => {
 
   /**
    * Défi du jour (/daily) : la même salle pour tous ce jour-là (engine/daily.ts, réglages à la
-   * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles (`sadikoi:daily`
-   * garde le jour) : plus d'invitation à l'arrivée ce jour-là.
+   * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles : plus
+   * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, le
+   * meilleur score envoyé au classement et l'id des lignes du classement qui sont les nôtres.
    */
   const jourDaily = ref(jourDe())
-  const dailyFait = ref(lire('daily', { jour: '' }).jour === jourDaily.value)
-  watch(termine, (fin) => {
-    if (!fin || mode.value !== 'daily' || (score.value?.etoiles ?? 0) < ETOILES_DAILY) return
-    dailyFait.value = true
-    ecrire('daily', { jour: jourDaily.value })
+  const etatVide = () => ({ jour: jourDaily.value, fait: false, envoye: 0, ids: [] as string[] })
+  const lu = lire('daily', etatVide())
+  const etatDaily = ref(lu.jour === jourDaily.value ? lu : etatVide())
+  watch(etatDaily, v => ecrire('daily', v), { deep: true })
+  const dailyFait = computed(() => etatDaily.value.fait)
+
+  /** Classement du jour (serveur, functions/api/daily.ts) ; null tant qu'il n'est pas chargé. */
+  const classement = ref<EntreeClassement[] | null>(null)
+  /** Le classement n'a pas pu être lu ou le tour pas envoyé (hors ligne, en dev sans API…). */
+  const classementIndisponible = ref(false)
+  const estMoi = (e: EntreeClassement) => etatDaily.value.ids.includes(e.id)
+
+  async function appelerClassement(init?: RequestInit) {
+    try {
+      const r = await fetch('/api/daily', init)
+      if (!r.ok) throw new Error(String(r.status))
+      const corps = await r.json() as { jour: string, top: EntreeClassement[], id?: string | null }
+      if (corps.jour !== jourDaily.value) return null
+      classement.value = corps.top
+      classementIndisponible.value = false
+      return corps
+    } catch {
+      classementIndisponible.value = true
+      return null
+    }
+  }
+  const chargerClassement = () => appelerClassement()
+
+  watch(termine, async (fin) => {
+    const sc = score.value
+    if (!fin || mode.value !== 'daily' || !sc) return
+    if (sc.etoiles >= ETOILES_DAILY) etatDaily.value.fait = true
+    // On n'envoie que ce qui bat notre meilleur envoi du jour : le serveur rejoue le tour
+    if (sc.points <= etatDaily.value.envoye || sadida.value === null) return
+    const tour = { jour: jourDaily.value, sadida: sadida.value, sorts: [...sortsChoisis.value], prycipithon: prycipithon.value, actions: actions.value.map(a => ({ ...a })) }
+    const corps = await appelerClassement({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(tour) })
+    if (!corps) return
+    etatDaily.value.envoye = Math.max(etatDaily.value.envoye, sc.points)
+    if (corps.id) etatDaily.value.ids.push(corps.id)
   })
 
   async function chargerDaily() {
     mode.value = 'daily'
     jourDaily.value = jourDe()
+    if (etatDaily.value.jour !== jourDaily.value) etatDaily.value = etatVide()
+    chargerClassement()
     const jour = jourDaily.value
     const numero = ++chargement
     const imposee = (reglagesDaily.salles as Record<string, string>)[jour]
@@ -744,7 +781,7 @@ export const usePartieStore = defineStore('partie', () => {
   }
 
   return {
-    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
+    maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, classement, classementIndisponible, estMoi, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
     sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,

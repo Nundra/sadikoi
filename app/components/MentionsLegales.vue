@@ -46,6 +46,7 @@ onMounted(() => choisirLangue(langue.value))
         <h2>{{ t('legal.donnees') }}</h2>
         <p>{{ t('legal.donnees-texte') }}</p>
         <p>{{ t('legal.donnees-stockage') }}</p>
+        <p>{{ t('legal.donnees-daily') }}</p>
         <p>{{ t('legal.donnees-hebergeur') }}</p>
       </section>
 

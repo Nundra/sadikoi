@@ -1,6 +1,8 @@
-import { readFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { addVitePlugin, defineNuxtModule } from 'nuxt/kit'
 import { categorie } from '../engine/categories'
+import { candidatsDaily } from '../engine/daily'
 import { creerPlateau, placements, type MapCombat } from '../engine/plateau'
 import { equipes } from '../engine/salle'
 
@@ -12,6 +14,9 @@ import { equipes } from '../engine/salle'
  *   `chargerCases(id)` qui charge le paquet de cases de la map ;
  * - PAQUETS paquets de cases (la map n° k de la liste va dans le paquet k modulo PAQUETS : les
  *   id, eux, se répartissent mal), chargés à la demande (import dynamique).
+ * - pour le classement du défi du jour (functions/api/daily.ts), dans le site publié :
+ *   `_daily/candidats.json` (id des maps qui peuvent sortir, triés) et `_daily/cases/<id>.txt`
+ *   (cases de chacune) : le serveur ne lit que la map du jour, sans charger les 2,6 Mo.
  * data/maps.json reste la source (scripts, tests du moteur).
  */
 const PAQUETS = 32
@@ -21,9 +26,20 @@ const PAQUET = 'virtual:maps/paquet/'
 
 export default defineNuxtModule({
   meta: { name: 'maps' },
-  setup() {
+  setup(_options, nuxt) {
     let maps: MapCombat[] | null = null
     const lire = () => (maps ??= (JSON.parse(readFileSync(SOURCE, 'utf-8')) as { maps: MapCombat[] }).maps)
+
+    nuxt.hook('nitro:build:public-assets', (nitro) => {
+      const reglages = JSON.parse(readFileSync(new URL('../data/daily.json', import.meta.url), 'utf-8')) as { exclues: number[] }
+      const index = lire().map(m => ({ id: m.id, categorie: categorie(m), places: placements(creerPlateau(m.cases), equipes(m).ennemie).length }))
+      const candidats = candidatsDaily(index, new Set(reglages.exclues)).map(m => m.id)
+      const dossier = join(nitro.options.output.publicDir, '_daily')
+      mkdirSync(join(dossier, 'cases'), { recursive: true })
+      writeFileSync(join(dossier, 'candidats.json'), JSON.stringify(candidats))
+      const parId = new Map(lire().map(m => [m.id, m.cases]))
+      for (const id of candidats) writeFileSync(join(dossier, 'cases', `${id}.txt`), parId.get(id)!)
+    })
 
     addVitePlugin({
       name: 'sadikoi-maps',
