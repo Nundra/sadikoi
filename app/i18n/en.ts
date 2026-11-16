@@ -250,12 +250,6 @@ export const en: DicoLangue = {
   'bienvenue.go': 'Let’s go',
 
   // Fenêtre des nouveautés (une fois, après la bienvenue)
-  'nouveaute.etiquette': 'New',
-  'nouveaute.titre': 'The map creator',
-  'nouveaute.texte': 'Draw your own map: free cells, voids, obstacles, starting cells and enemies wherever you want. Test it, then share it with a simple link.',
-  'nouveaute.defi': 'Challenge your friends: who can infect everyone on your map?',
-  'nouveaute.plus-tard': 'Later',
-  'nouveaute.essayer': 'Try the creator',
   'petit-ecran.titre': 'Screen too small',
   'petit-ecran.texte': 'Sadikoi isn’t made for small screens: the board, the timeline and the spell bar need room.',
   'petit-ecran.conseil': 'To train, you’d better play on a computer.',

@@ -3,8 +3,8 @@ import { adresse, pageDuChemin, t } from '~/i18n'
 
 /**
  * Invitation au défi du jour, à l'arrivée sur le jeu (pas sur /daily) tant que le défi n'est pas
- * fait aujourd'hui : après la bienvenue et la nouveauté (le bandeau appelle `ouvrirSiAFaire`
- * quand elles sont fermées ou qu'il n'y a rien à montrer). Une fois par chargement de page.
+ * fait aujourd'hui : dès l'arrivée si la bienvenue a déjà été vue, sinon quand on la referme (le
+ * bandeau appelle `ouvrirSiAFaire`). Une fois par chargement de page.
  */
 const store = usePartieStore()
 const dialogue = ref<HTMLDialogElement | null>(null)
@@ -15,6 +15,16 @@ function ouvrirSiAFaire() {
   montree = true
   dialogue.value?.showModal()
 }
+
+onMounted(() => {
+  let bienvenueVue = false
+  try {
+    bienvenueVue = localStorage.getItem('sadikoi:bienvenue') === 'vue'
+  } catch {
+    // stockage indisponible : la bienvenue s'ouvre, l'invitation attendra qu'on la referme
+  }
+  if (bienvenueVue) ouvrirSiAFaire()
+})
 
 defineExpose({ ouvrirSiAFaire })
 </script>

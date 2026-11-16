@@ -250,12 +250,6 @@ export const es: DicoLangue = {
   'bienvenue.go': '¡Vamos!',
 
   // Fenêtre des nouveautés (une fois, après la bienvenue)
-  'nouveaute.etiquette': 'Novedad',
-  'nouveaute.titre': 'El creador de mapas',
-  'nouveaute.texte': 'Dibuja tu propio mapa: casillas libres, vacíos, obstáculos, casillas de salida y enemigos donde quieras. Pruébalo y compártelo con un simple enlace.',
-  'nouveaute.defi': 'Reta a tus amigos: ¿quién infecta a todos en tu mapa?',
-  'nouveaute.plus-tard': 'Más tarde',
-  'nouveaute.essayer': 'Probar el creador',
   'petit-ecran.titre': 'Pantalla demasiado pequeña',
   'petit-ecran.texte': 'Sadikoi no está adaptado a pantallas pequeñas: el tablero, la línea de tiempo y la barra de hechizos necesitan espacio.',
   'petit-ecran.conseil': 'Para entrenar, mejor juega en un ordenador.',
