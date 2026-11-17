@@ -111,6 +111,12 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', clicDehors))
       <option value="daily">{{ t('choix.daily') }}</option>
     </select>
 
+    <!-- Où on en est : salle de la run (et record) ou du training, ou étape du créateur -->
+    <p v-if="store.map" class="infos">
+      <template v-if="store.mode === 'creation'">{{ t(store.edition ? 'creation.construction' : 'creation.test') }}</template>
+      <template v-else>{{ t('bandeau.salle', { n: store.numeroSalle }) }}</template>
+      <template v-if="store.mode === 'infini' && store.meilleureSerie"> · <span :title="t('bandeau.record-run-aide')">{{ t('bandeau.record-run', { n: store.meilleureSerie }) }}</span></template>
+    </p>
     <button v-if="store.mode === 'creation' && !store.edition" type="button" class="editer" :title="t('creation.modifier-aide')" @click="store.modifierCarte()">
       <span class="crayon" aria-hidden="true">✎</span>{{ t('creation.modifier') }}
     </button>
@@ -178,6 +184,10 @@ input { border-color: var(--or); }
 .courante { display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; }
 .courante span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chevron { color: var(--or); }
+.infos {
+  margin: 0; padding: 4px 10px; border-radius: 8px; background: rgb(10 19 23 / 0.92); border: 1px solid var(--bord-clair);
+  font-size: 12px; font-weight: 700; color: var(--texte-doux);
+}
 .editer { display: flex; align-items: center; justify-content: center; gap: 8px; border-color: var(--or); color: var(--or-clair); }
 .crayon { font-size: 15px; }
 .combo { position: relative; }

@@ -21,14 +21,10 @@ const invitation = ref<{ ouvrirSiAFaire: () => void } | null>(null)
   <header class="bandeau">
     <h1 class="titre"><img src="/logo.png" alt="Sadikoi" width="140" height="58"></h1>
 
-    <!-- Défi du jour : pas de choix de mode, on en sort vers le jeu habituel -->
-    <a v-if="store.mode === 'daily'" class="quitter" :href="adresse()">{{ t('daily.quitter') }}</a>
-    <div v-else class="pilule">
-      <span class="mode">{{ t(`mode.${store.mode}`) }}</span><span aria-hidden="true">·</span><span v-if="store.mode === 'creation'">{{ t(store.edition ? 'creation.construction' : 'creation.test') }}</span><span v-else>{{ t('bandeau.salle', { n: store.numeroSalle }) }}</span>
-      <template v-if="store.mode === 'infini' && store.meilleureSerie">
-        <span aria-hidden="true">·</span><span class="record" :title="t('bandeau.record-run-aide')">{{ t('bandeau.record-run', { n: store.meilleureSerie }) }}</span>
-      </template>
-    </div>
+    <!-- À côté du logo : on entre dans le défi du jour, ou on en sort vers le jeu habituel
+         (le numéro de salle et le record de run sont sous le choix du mode, ChoixSalle) -->
+    <a v-if="store.mode === 'daily'" class="lien-defi" :href="adresse()">{{ t('daily.quitter') }}</a>
+    <a v-else class="lien-defi" :href="adresse('daily')"><span class="trophee" aria-hidden="true" />{{ t('daily.titre') }}</a>
 
     <div class="objectif">
       <div class="map-courante">
@@ -81,18 +77,15 @@ const invitation = ref<{ ouvrirSiAFaire: () => void } | null>(null)
 }
 .titre { margin: 0; display: flex; align-items: center; }
 .titre img { height: 58px; width: auto; display: block; }
-.pilule {
-  display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px;
-  background: var(--fond-creux); border: 1px solid var(--bord-clair); font-size: 14px; font-weight: 700;
-}
-.pilule .mode { color: #9fd27a; }
-.quitter {
+.lien-defi {
   display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 10px;
   background: var(--fond-bouton); border: 1px solid var(--or); color: var(--or-clair);
   font-size: 14px; font-weight: 800; text-decoration: none;
 }
-.quitter:hover { background: #2a4048; }
-.pilule span[aria-hidden] { color: var(--texte-gris); }
+.lien-defi:hover { background: #2a4048; }
+.lien-defi { gap: 8px; }
+/* Trophée blanc du jeu, coloré par masque */
+.trophee { width: 18px; height: 18px; flex: none; background: var(--or); mask: url('/icones/trophee.png') center / contain no-repeat; -webkit-mask: url('/icones/trophee.png') center / contain no-repeat; }
 .objectif { flex: 1; min-width: 300px; display: flex; justify-content: center; align-items: center; gap: 16px; }
 .map-courante { display: flex; flex-direction: column; font-size: 14px; color: #b9c6c4; }
 .nom-map { font-size: 12px; color: var(--texte-doux); font-weight: 700; }
