@@ -131,6 +131,8 @@ export const usePartieStore = defineStore('partie', () => {
   function portrait(e: Entite): string {
     if (e.genre === 'sadida') return `/portraits/sadida-${sexe.value}.png`
     if (e.genre === 'ennemi') return `/portraits/${monstreDe(e).id}.png`
+    // L'Arbre Feuillu n'a pas de portrait à lui dans le jeu : on prend celui de l'Arbre Asservi
+    if (e.genre === 'arbre' && e.feuillu) return `/portraits/${portraits.arbreFeuillu}.png`
     return `/portraits/${e.monstre}.png`
   }
   /** Nom à afficher, dans la langue choisie : le monstre dessiné pour un ennemi (« Piou Bleu (E2) »). */

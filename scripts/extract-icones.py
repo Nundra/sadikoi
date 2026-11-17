@@ -22,7 +22,7 @@ Sortie :
 - public/portraits/sadida-femme.png et sadida-homme.png : le personnage en pied (pose de repos) de la
   classe et de la pose choisies dans data/portraits.json (images-cosmetic.zip,
   idles/2x/<classe><0 homme|1 femme>_<pose>.png).
-- public/portraits/<id du monstre>.png : les ennemis et les invocations de data/portraits.json.
+- public/portraits/<id du monstre>.png : les ennemis, les invocations et l'Arbre Feuillu de data/portraits.json.
   Dans images-monster.zip, l'image est nommée par l'identifiant graphique (MonsterData.gfxId).
 """
 import json
@@ -117,7 +117,7 @@ def portraits(src: Path) -> int:
     n = 2
     with zipfile.ZipFile(src / "images-monster.zip") as z:
         noms = set(z.namelist())
-        for mid in [e["id"] for e in liste["ennemis"]] + liste["invocations"]:
+        for mid in [e["id"] for e in liste["ennemis"]] + liste["invocations"] + [liste["arbreFeuillu"]]:
             (gfx,) = db.execute("SELECT gfxId FROM MonsterData WHERE id=?", (mid,)).fetchone()
             nom = f"2x/{gfx}.png"
             if nom not in noms:

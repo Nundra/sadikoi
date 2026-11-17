@@ -25,5 +25,7 @@
   { "id": 78, "nom": "Rose Démoniaque" },
   { "id": 79, "nom": "Pissenlit Diabolique" }
  ],
- "invocations": [5894, 5895, 5896, 5897, 5898, 5899, 5900, 5901]
+ "invocations": [5894, 5895, 5896, 5897, 5898, 5899, 5900, 5901],
+ "_arbre-feuillu": "4309 (Arbre Asservi) : portrait de l'Arbre Feuillu, qui n'a pas de portrait à lui dans le jeu",
+ "arbreFeuillu": 4309
 }
