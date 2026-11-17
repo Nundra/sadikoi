@@ -286,6 +286,7 @@ export const fr = {
   'daily.plus-tard': 'Plus tard',
   'daily.relever': 'Relever le défi',
   'daily.classement': 'Classement du jour',
+  'daily.voir-tout': 'Voir tout le classement',
   'daily.joueurs': (p: { n: number }) => `${p.n} joueur${s(p.n)}`,
   'daily.sous-le-seuil': (p: { n: number }) => `${p.n} joueur${s(p.n)} sous 1 étoile`,
   'daily.etoile-requise': 'Il faut au moins {n} étoile pour entrer au classement.',

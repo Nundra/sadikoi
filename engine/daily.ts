@@ -77,7 +77,7 @@ export interface TourEnvoye {
   actions: Action[]
 }
 
-/** Une ligne du classement : un score, et combien de joueurs l'ont atteint. */
+/** Une ligne du classement : un score, et combien de joueurs l'ont pour meilleur score du jour. */
 export interface LigneClassement {
   points: number
   etoiles: number

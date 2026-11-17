@@ -2,10 +2,10 @@
  * Classement du défi du jour (Cloudflare Pages Functions, base D1 « DB », voir wrangler.toml et
  * migrations/).
  * - GET  /api/daily : le jour, la salle du jour (map et ennemis : elle fait foi pour tous les
- *   navigateurs) et le classement : chaque score validé avec son nombre de joueurs, et le nombre
- *   de joueurs qui n'ont pas encore validé.
+ *   navigateurs) et le classement : chaque score validé avec le nombre de joueurs dont c'est le
+ *   meilleur score du jour, et le nombre de joueurs qui n'ont pas encore validé.
  * - POST /api/daily : un tour joué sur la salle du jour (pas son score). Le serveur rejoue le tour
- *   avec le moteur et calcule lui-même le score ; il compte une fois par joueur et par score.
+ *   avec le moteur et calcule lui-même le score ; il le garde une fois par joueur et par score.
  * Rien de personnel n'est gardé : ni pseudo, ni adresse IP ; le joueur n'est que l'empreinte
  * d'un identifiant tiré au hasard par son navigateur.
  */
@@ -50,14 +50,20 @@ async function empreinte(joueur: string): Promise<string> {
   return [...new Uint8Array(octets)].map(o => o.toString(16).padStart(2, '0')).join('')
 }
 
+/**
+ * Le meilleur score de chaque joueur pour le jour : seul lui compte au classement (un joueur qui
+ * a fait 150 puis 100 n'est compté qu'à 150). Avec un seul MAX, SQLite prend les autres colonnes
+ * (étoiles) sur la ligne du maximum.
+ */
+const MEILLEURS = `SELECT joueur, MAX(points) AS points, etoiles FROM resultats
+  WHERE jour = ? AND version = ? GROUP BY joueur`
+
 async function classement(env: Env, jour: string): Promise<ClassementDaily> {
   const [lignes, sous] = await Promise.all([
-    env.DB.prepare(`SELECT points, MAX(etoiles) AS etoiles, COUNT(*) AS joueurs
-      FROM resultats WHERE jour = ? AND version = ? AND etoiles >= ?
-      GROUP BY points ORDER BY points DESC`)
+    env.DB.prepare(`SELECT points, MAX(etoiles) AS etoiles, COUNT(*) AS joueurs FROM (${MEILLEURS})
+      WHERE etoiles >= ? GROUP BY points ORDER BY points DESC`)
       .bind(jour, VERSION_REGLES, ETOILES_DAILY).all<LigneClassement>(),
-    env.DB.prepare(`SELECT COUNT(*) AS n FROM (SELECT joueur FROM resultats WHERE jour = ? AND version = ?
-      GROUP BY joueur HAVING MAX(etoiles) < ?)`)
+    env.DB.prepare(`SELECT COUNT(*) AS n FROM (${MEILLEURS}) WHERE etoiles < ?`)
       .bind(jour, VERSION_REGLES, ETOILES_DAILY).first<{ n: number }>(),
   ])
   return { lignes: lignes.results, sousLeSeuil: sous?.n ?? 0 }

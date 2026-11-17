@@ -272,6 +272,7 @@ export const en: DicoLangue = {
   'daily.plus-tard': 'Later',
   'daily.relever': 'Take the challenge',
   'daily.classement': 'Today’s ranking',
+  'daily.voir-tout': 'See the full ranking',
   'daily.joueurs': (p: { n: number }) => `${p.n} player${s(p.n)}`,
   'daily.sous-le-seuil': (p: { n: number }) => `${p.n} player${s(p.n)} below 1 star`,
   'daily.etoile-requise': 'You need at least {n} star to enter the ranking.',

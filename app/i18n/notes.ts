@@ -15,6 +15,15 @@ export interface NoteDeVersion {
 export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
+      date: '2026-11-17',
+      nouveautes: [
+        'Défi du jour : « Voir tout le classement » sous le top 3 ouvre la liste de tous les scores.',
+      ],
+      corrections: [
+        'Classement du défi : seul ton meilleur score du jour compte. Si tu fais 150 puis 100, tu n’apparais qu’à 150.',
+      ],
+    },
+    {
       date: '2026-11-16',
       nouveautes: [
         'Défi du jour (/daily) : chaque jour, la même salle pour tous les joueurs, une map de zone ou de Songe avec 6 à 8 ennemis, au niveau 200 et aux caractéristiques par défaut. Une invitation s’affiche à l’arrivée tant qu’il n’est pas fait.',
@@ -77,6 +86,15 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   ],
   en: [
     {
+      date: '2026-11-17',
+      nouveautes: [
+        'Daily challenge: “See the full ranking” under the top 3 opens the list of every score.',
+      ],
+      corrections: [
+        'Challenge ranking: only your best score of the day counts. If you get 150 then 100, you only show up at 150.',
+      ],
+    },
+    {
       date: '2026-11-16',
       nouveautes: [
         'Daily challenge (/daily): every day, the same room for every player, a zone or Dream map with 6 to 8 enemies, at level 200 with default characteristics. An invitation shows on arrival until it is done.',
@@ -138,6 +156,15 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     },
   ],
   es: [
+    {
+      date: '2026-11-17',
+      nouveautes: [
+        'Desafío del día: «Ver toda la clasificación» bajo el top 3 abre la lista de todas las puntuaciones.',
+      ],
+      corrections: [
+        'Clasificación del desafío: solo cuenta tu mejor puntuación del día. Si haces 150 y luego 100, solo apareces en 150.',
+      ],
+    },
     {
       date: '2026-11-16',
       nouveautes: [
