@@ -101,7 +101,8 @@ const pions = computed(() => [...store.entites]
     tient: infecteAuTour2(e),
     badge: t('plateau.infecte', { n: e.dureeInfection ?? 1 }),
     // La Sadida est en pied (image avec plus de marge), les monstres en portrait
-    taille: e.genre === 'sadida' ? 72 : 44,
+    // L'Arbre Feuillu, plein de feuilles, un peu plus grand que les autres invocations
+    taille: e.genre === 'sadida' ? 72 : e.genre === 'arbre' && e.feuillu ? 58 : 44,
   })))
 
 /** Les déplacements de l'action affichée : case de départ en pointillés et flèche. */
