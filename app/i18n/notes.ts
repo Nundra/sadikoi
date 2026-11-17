@@ -19,6 +19,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Défi du jour : « Voir tout le classement » sous le top 3 ouvre la liste de tous les scores.',
         'Bouton « Défi du jour » à côté du logo ; le numéro de salle et le record de run passent sous le choix du mode.',
+        'Les obstacles qui bloquent la ligne de vue s’affichent en petites dalles en relief, comme en mode tactique.',
       ],
       corrections: [
         'Classement du défi : seul ton meilleur score du jour compte. Si tu fais 150 puis 100, tu n’apparais qu’à 150.',
@@ -91,6 +92,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Daily challenge: “See the full ranking” under the top 3 opens the list of every score.',
         '“Daily challenge” button next to the logo; the room number and run record move under the mode picker.',
+        'Obstacles that block line of sight now show as small raised slabs, like in tactical mode.',
       ],
       corrections: [
         'Challenge ranking: only your best score of the day counts. If you get 150 then 100, you only show up at 150.',
@@ -163,6 +165,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Desafío del día: «Ver toda la clasificación» bajo el top 3 abre la lista de todas las puntuaciones.',
         'Botón «Desafío del día» junto al logo; el número de sala y el récord de partida pasan bajo el selector de modo.',
+        'Los obstáculos que bloquean la línea de visión se muestran como pequeñas losas en relieve, como en el modo táctico.',
       ],
       corrections: [
         'Clasificación del desafío: solo cuenta tu mejor puntuación del día. Si haces 150 y luego 100, solo apareces en 150.',

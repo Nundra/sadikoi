@@ -54,6 +54,21 @@ const cadre = computed(() => {
   return `${x0 - 12} ${y0 - 72} ${x1 - x0 + 24} ${y1 - y0 + 116}`
 })
 
+/** Hauteur des obstacles, dessinés en petites dalles 3D comme le mode tactique du jeu. */
+const HAUTEUR_DALLE = 9
+
+/** Dessus et côtés de chaque obstacle, dans l'ordre des cases : une rangée de devant passe par-dessus celle de derrière. */
+const dalles = computed(() => cases.value.filter(k => k.classe === 'case-obstacle').map(({ c }) => {
+  const { x, y } = origine(c)
+  const h = HAUTEUR_DALLE
+  return {
+    c,
+    dessus: `${x + L / 2},${y - h} ${x + L},${y + H / 2 - h} ${x + L / 2},${y + H - h} ${x},${y + H / 2 - h}`,
+    gauche: `${x},${y + H / 2 - h} ${x + L / 2},${y + H - h} ${x + L / 2},${y + H} ${x},${y + H / 2}`,
+    droite: `${x + L / 2},${y + H - h} ${x + L},${y + H / 2 - h} ${x + L},${y + H / 2} ${x + L / 2},${y + H}`,
+  }
+}))
+
 const placementLibre = computed(() => new Set(store.phase === 'placement' && !store.enEdition ? store.casesPlacement : []))
 
 function etat(c: number): string | null {
@@ -151,6 +166,13 @@ const aide = computed(() => {
           :class="[k.classe, { damier: k.damier }, etat(k.c) && `etat-${etat(k.c)}`]"
         />
       </g>
+      <g class="dalles" aria-hidden="true">
+        <g v-for="d in dalles" :key="d.c">
+          <polygon class="gauche" :points="d.gauche" />
+          <polygon class="droite" :points="d.droite" />
+          <polygon class="dessus" :points="d.dessus" />
+        </g>
+      </g>
       <g class="traces" aria-hidden="true">
         <g v-for="t in traces" :key="t.id">
           <ellipse :cx="t.de.x" :cy="t.de.y + 2" rx="16" ry="7" class="fantome" />
@@ -242,6 +264,12 @@ polygon {
 /* En construction, l'obstacle (plein, bloque la LdV) se distingue du vide : teinte pierre */
 svg.edition .case-obstacle { fill: #6b736c; stroke: #8a938b; }
 svg.edition { cursor: crosshair; }
+/* Obstacles en relief : la case reste dessous pour le clic, la dalle ne capte pas la souris */
+.dalles { pointer-events: none; }
+.dalles polygon { stroke: rgb(10 19 23 / 0.6); stroke-linejoin: round; }
+.dalles .dessus { fill: #7d857a; stroke: #9aa296; }
+.dalles .gauche { fill: #4d554b; }
+.dalles .droite { fill: #3a413a; }
 
 /* États par-dessus le fond : sélecteur plus précis que « .case-sol.damier » */
 .cases polygon.etat-placement { fill: #5aa6ec; stroke: var(--or-clair); stroke-width: 1.5; }
