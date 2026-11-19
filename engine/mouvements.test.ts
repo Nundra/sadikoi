@@ -176,6 +176,13 @@ describe('tacle', () => {
     expect(caseDe(r.partie, 'La Bloqueuse')).toBe(decale(A, 1, 3))
   })
 
+  it('ne s’applique plus au Sadida après Harmonie (Intaclable)', () => {
+    const p = suite(['Harmonie'], [decale(A, 1, 0)], [])
+    expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, 0, 3) }).ok).toBe(false)
+    const r = rejouer(p, [sort('Harmonie', A), { type: 'deplacement', acteur: SADIDA, vers: decale(A, 0, 3) }])
+    expect(r.erreur).toBeUndefined()
+  })
+
   it('ne s’applique jamais à la Groute ni au Tréant (Intaclables)', () => {
     const p = suite(['Vent Empoisonné'], [decale(A, 2, 0)], [])
     const sadida = { ...p.entites[0]!, case: decale(A, 1, 0) }

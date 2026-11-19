@@ -2322,8 +2322,8 @@
      }
     }
    ],
-   "role": "Aucun",
-   "infection": "Pas d'infection.",
+   "role": "Support",
+   "infection": "N'infecte pas. Rend le Sadida Intaclable pour le tour : il peut quitter le contact d'un ennemi.",
    "duree_infecte": null,
    "rangs": [
     {

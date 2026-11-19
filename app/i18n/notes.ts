@@ -19,6 +19,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [],
       corrections: [
         'La Groute et le Tréant sont Intaclables : ils peuvent quitter le contact d’un ennemi.',
+        'Harmonie rend le Sadida Intaclable pour le tour.',
       ],
     },
     {
@@ -100,6 +101,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [],
       corrections: [
         'Groute and Treant can no longer be tackled: they can leave contact with an enemy.',
+        'Harmony makes the Sadida Unlockable for the turn.',
       ],
     },
     {
@@ -181,6 +183,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [],
       corrections: [
         'Grut y Treant ya no pueden ser placados: pueden alejarse del contacto con un enemigo.',
+        'Armonía hace al Sadida No Placable durante el turno.',
       ],
     },
     {

@@ -151,6 +151,8 @@ export type Comportement =
   | { type: 'echange' }
   /** Donne des PM : à soi (Célérité) ou à l'entité visée (Ardeur Estivale). `intaclable` : ignore le tacle. */
   | { type: 'gain-pm', pm: number, soi: boolean, intaclable?: boolean }
+  /** Harmonie : le lanceur devient Intaclable pour le tour. */
+  | { type: 'intaclable' }
   /** Effet qui compte mais pas encore simulé. */
   | { type: 'non-simule', effet: 'teleporte-invocation' }
 
@@ -188,6 +190,7 @@ export const COMPORTEMENTS: Record<number, Comportement> = {
   13528: { type: 'feuillu', forme: 'carre', rayon: 0 }, // Larme de Sadida
   13563: { type: 'feuillu', forme: 'carre', rayon: 1 }, // Montée de Sève
   14396: { type: 'feuillu', forme: 'tous', rayon: 0 }, // Mangrove
+  13579: { type: 'intaclable' }, // Harmonie : le Sadida devient Intaclable
   // Pas encore simulé
   13514: { type: 'attire-centre', rayon: 3, distance: 2 }, // Tremblement
   13565: { type: 'non-simule', effet: 'teleporte-invocation' }, // Rempotage

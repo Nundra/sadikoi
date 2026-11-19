@@ -56,7 +56,7 @@ export interface Entite {
   infectionParInvocation?: boolean
   /** État Mandragore (2 tours) : réinfecte la cible, l'infection tient au tour suivant. */
   mandragore?: boolean
-  /** Intaclable (Célérité) : peut quitter le contact d'un ennemi. */
+  /** Intaclable (Célérité, Harmonie) : peut quitter le contact d'un ennemi. */
   intaclable?: boolean
   feuillu?: boolean
 }
@@ -217,7 +217,7 @@ export const POINTS_PAR_PA = 10
  * résultat d'un même tour (sort revu, calcul des points…) : les records d'avant ne servent
  * plus de référence. 2 : La Sacrifiée et la Prycipithon revues, limite d'invocations (2026-11-15).
  */
-export const VERSION_REGLES = 3
+export const VERSION_REGLES = 4
 /** Bonus de la 4e étoile : tous les ennemis encore infectés au tour 2. */
 export const POINTS_TOUR_2 = 50
 
@@ -331,7 +331,7 @@ function bilanVide(): Bilan {
  * repartir (pas de perte de PA ni de PM simulée), sauf si on est Intaclable. Renvoie les cases d'où l'on ne repart pas.
  */
 export function arretTacle(p: Partie, acteur: Entite): (c: Case) => boolean {
-  // La Groute et le Tréant sont Intaclables d'office ; La Bloqueuse le devient avec Célérité
+  // La Groute et le Tréant sont Intaclables d'office ; La Bloqueuse le devient avec Célérité, le Sadida avec Harmonie
   if (acteur.intaclable || INTACLABLES.has(acteur.monstre!)) return () => false
   const ennemis = new Set(p.entites.filter(e => e.genre === 'ennemi').map(e => e.case))
   return c => voisines(c).some(v => ennemis.has(v))
@@ -594,6 +594,10 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
       }
       break
     }
+    case 'intaclable':
+      acteur.intaclable = true
+      dire(msg('intaclable', { e: ref(acteur) }))
+      break
     case 'non-simule':
       dire(msg('non-simule', { effet: comp.effet }))
       break
