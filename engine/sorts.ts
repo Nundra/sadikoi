@@ -45,6 +45,8 @@ export const LA_FOLLE = 5896
 export const LA_SACRIFIEE = 5898
 export const GROUTE = 5901
 export const TREANT = 5900
+/** Invocations Intaclables d'office : la Groute et le Tréant (les deux variantes de la paire). */
+export const INTACLABLES = new Set([GROUTE, TREANT])
 /** Les Poupées : invocations du Sadida autour desquelles jouent Miasmes, Sacrifice Vaudou… */
 export const POUPEES = new Set([5895, 5896, 5897, 5898, 5899, 7934])
 

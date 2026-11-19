@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { Case } from './grille'
 import { direction } from './mouvements'
-import { SADIDA, jouer, nouvellePartie, rejouer, type Action, type Partie } from './partie'
-import { SORTS_SADIDA } from './sorts'
+import { SADIDA, arretTacle, jouer, nouvellePartie, rejouer, type Action, type Partie } from './partie'
+import { GROUTE, SORTS_SADIDA, TREANT } from './sorts'
 import { MILIEU as A, decale, plateauTest } from './test-outils'
 
 const id = (nom: string) => SORTS_SADIDA.find(s => s.nom === nom)!.id
@@ -174,5 +174,14 @@ describe('tacle', () => {
     const r = rejouer(p0, [{ type: 'sort', acteur: b, sort: 29623, cible: bloqueuse }, { type: 'deplacement', acteur: b, vers: decale(A, 1, 3) }])
     expect(r.erreur).toBeUndefined()
     expect(caseDe(r.partie, 'La Bloqueuse')).toBe(decale(A, 1, 3))
+  })
+
+  it('ne s’applique jamais à la Groute ni au Tréant (Intaclables)', () => {
+    const p = suite(['Vent Empoisonné'], [decale(A, 2, 0)], [])
+    const sadida = { ...p.entites[0]!, case: decale(A, 1, 0) }
+    expect(arretTacle(p, sadida)(decale(A, 1, 0))).toBe(true)
+    for (const monstre of [GROUTE, TREANT]) {
+      expect(arretTacle(p, { ...sadida, genre: 'invocation', monstre })(decale(A, 1, 0))).toBe(false)
+    }
   })
 })

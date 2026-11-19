@@ -4,7 +4,7 @@ import { attirer, avancer, direction, glisser, repousser } from './mouvements'
 import { creerPlateau, libre, type Plateau } from './plateau'
 import { refusCible } from './portee'
 import {
-  COMPORTEMENTS, NIVEAU_MAX, POUPEES, SORTS_SADIDA, dureeInfection, exploite, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort,
+  COMPORTEMENTS, INTACLABLES, NIVEAU_MAX, POUPEES, SORTS_SADIDA, dureeInfection, exploite, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort,
 } from './sorts'
 import { msg, type Message, type RefEntite } from './messages'
 import { zone } from './zones'
@@ -217,7 +217,7 @@ export const POINTS_PAR_PA = 10
  * résultat d'un même tour (sort revu, calcul des points…) : les records d'avant ne servent
  * plus de référence. 2 : La Sacrifiée et la Prycipithon revues, limite d'invocations (2026-11-15).
  */
-export const VERSION_REGLES = 2
+export const VERSION_REGLES = 3
 /** Bonus de la 4e étoile : tous les ennemis encore infectés au tour 2. */
 export const POINTS_TOUR_2 = 50
 
@@ -328,10 +328,11 @@ function bilanVide(): Bilan {
 
 /**
  * Tacle, simplifié : on se fait toujours tacler. Au contact d'un ennemi, on ne peut plus
- * repartir (pas de perte de PA ni de PM simulée). Renvoie les cases d'où l'on ne repart pas.
+ * repartir (pas de perte de PA ni de PM simulée), sauf si on est Intaclable. Renvoie les cases d'où l'on ne repart pas.
  */
 export function arretTacle(p: Partie, acteur: Entite): (c: Case) => boolean {
-  if (acteur.intaclable) return () => false
+  // La Groute et le Tréant sont Intaclables d'office ; La Bloqueuse le devient avec Célérité
+  if (acteur.intaclable || INTACLABLES.has(acteur.monstre!)) return () => false
   const ennemis = new Set(p.entites.filter(e => e.genre === 'ennemi').map(e => e.case))
   return c => voisines(c).some(v => ennemis.has(v))
 }

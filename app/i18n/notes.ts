@@ -15,6 +15,13 @@ export interface NoteDeVersion {
 export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
+      date: '2026-11-19',
+      nouveautes: [],
+      corrections: [
+        'La Groute et le Tréant sont Intaclables : ils peuvent quitter le contact d’un ennemi.',
+      ],
+    },
+    {
       date: '2026-11-17',
       nouveautes: [
         'Défi du jour : « Voir tout le classement » sous le top 3 ouvre la liste de tous les scores.',
@@ -89,6 +96,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   ],
   en: [
     {
+      date: '2026-11-19',
+      nouveautes: [],
+      corrections: [
+        'Groute and Treant can no longer be tackled: they can leave contact with an enemy.',
+      ],
+    },
+    {
       date: '2026-11-17',
       nouveautes: [
         'Daily challenge: “See the full ranking” under the top 3 opens the list of every score.',
@@ -162,6 +176,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     },
   ],
   es: [
+    {
+      date: '2026-11-19',
+      nouveautes: [],
+      corrections: [
+        'Grut y Treant ya no pueden ser placados: pueden alejarse del contacto con un enemigo.',
+      ],
+    },
     {
       date: '2026-11-17',
       nouveautes: [
