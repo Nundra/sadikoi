@@ -24,6 +24,9 @@ function centre(c: number) {
 
 const CLASSE: Record<string, string> = { '#': 'obstacle', 'x': 'muret', '_': 'sol' }
 
+/** Une fois le placement validé, les cases de départ redeviennent du sol, comme en jeu. */
+const departs = computed(() => store.phase === 'placement' || store.enEdition)
+
 const cases = computed(() => {
   const m = store.map
   if (!m) return []
@@ -34,7 +37,7 @@ const cases = computed(() => {
     const k = m.cases[c]!
     // En construction, le vide se dessine aussi : on peut le peindre
     if (k === '.' && !store.enEdition) continue
-    out.push({ c, points: losange(c), classe: `case-${k === 'r' || k === 'b' ? (k === joueur ? 'bleue' : 'rouge') : k === '.' ? 'vide' : CLASSE[k]}`, damier: (c + Math.floor(c / COLONNES)) % 2 === 1 })
+    out.push({ c, points: losange(c), classe: `case-${k === 'r' || k === 'b' ? (!departs.value ? 'sol' : k === joueur ? 'bleue' : 'rouge') : k === '.' ? 'vide' : CLASSE[k]}`, damier: (c + Math.floor(c / COLONNES)) % 2 === 1 })
   }
   return out
 })
@@ -211,8 +214,10 @@ const aide = computed(() => {
     <ChoixSalle />
 
     <ul class="legende">
-      <li><span class="pastille bleue" />{{ t('legende.toi') }}</li>
-      <li><span class="pastille rouge" />{{ t('legende.ennemis') }}</li>
+      <template v-if="departs">
+        <li><span class="pastille bleue" />{{ t('legende.toi') }}</li>
+        <li><span class="pastille rouge" />{{ t('legende.ennemis') }}</li>
+      </template>
       <li><span class="pastille portee" />{{ t('legende.portee') }}</li>
       <li><span class="pastille sans-vue" />{{ t('legende.sans-vue') }}</li>
       <li><span class="pastille zone" />{{ t('legende.zone') }}</li>

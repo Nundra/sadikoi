@@ -16,7 +16,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
       date: '2026-11-19',
-      nouveautes: [],
+      nouveautes: [
+        'Une fois le placement validé, les cases de départ rouges et bleues reprennent la couleur du sol.',
+      ],
       corrections: [
         'La Groute et le Tréant sont Intaclables : ils peuvent quitter le contact d’un ennemi.',
         'Harmonie rend le Sadida Intaclable pour le tour.',
@@ -98,7 +100,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   en: [
     {
       date: '2026-11-19',
-      nouveautes: [],
+      nouveautes: [
+        'Once placement is confirmed, the red and blue starting cells go back to the ground colour.',
+      ],
       corrections: [
         'Groute and Treant can no longer be tackled: they can leave contact with an enemy.',
         'Harmony makes the Sadida Unlockable for the turn.',
@@ -180,7 +184,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   es: [
     {
       date: '2026-11-19',
-      nouveautes: [],
+      nouveautes: [
+        'Una vez validada la colocación, las casillas de inicio rojas y azules recuperan el color del suelo.',
+      ],
       corrections: [
         'Grut y Treant ya no pueden ser placados: pueden alejarse del contacto con un enemigo.',
         'Armonía hace al Sadida No Placable durante el turno.',
