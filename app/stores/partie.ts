@@ -356,14 +356,16 @@ export const usePartieStore = defineStore('partie', () => {
    * Défi du jour (/daily) : la même salle pour tous ce jour-là (engine/daily.ts, réglages à la
    * main dans data/daily.json). Il compte comme fait dès ETOILES_DAILY étoiles : plus
    * d'invitation à l'arrivée ce jour-là. `sadikoi:daily` garde, pour le jour : fait ou non, et les
-   * scores déjà envoyés. Chaque tour fini est envoyé une fois par score : le serveur compte les
+   * scores déjà envoyés avec la version des règles en cours (le classement est par version : après
+   * une mise en ligne qui la monte, un même score se renvoie). Chaque tour fini est envoyé une fois par score : le serveur compte les
    * joueurs de chaque score, un joueur étant un identifiant tiré au hasard (`sadikoi:joueur`).
    * Au classement, « toi » marque la ligne qui a les points de notre record de la salle du jour.
    */
   const jourDaily = ref(jourDe())
-  const etatVide = () => ({ jour: jourDaily.value, fait: false, envoyes: [] as number[] })
-  const lu = lire('daily', etatVide())
-  const etatDaily = ref(lu.jour === jourDaily.value ? lu : etatVide())
+  const etatVide = () => ({ jour: jourDaily.value, fait: false, version: VERSION_REGLES, envoyes: [] as number[] })
+  // Version 0 par défaut : un état gardé avant ce champ a été envoyé avec d'anciennes règles
+  const lu = lire('daily', { ...etatVide(), version: 0 })
+  const etatDaily = ref(lu.jour !== jourDaily.value ? etatVide() : lu.version === VERSION_REGLES ? lu : { ...lu, version: VERSION_REGLES, envoyes: [] })
   watch(etatDaily, v => ecrire('daily', v), { deep: true })
   const dailyFait = computed(() => etatDaily.value.fait)
 

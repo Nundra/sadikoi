@@ -22,6 +22,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       corrections: [
         'La Groute et le Tréant sont Intaclables : ils peuvent quitter le contact d’un ennemi.',
         'Harmonie rend le Sadida Intaclable pour le tour.',
+        'Classement du défi : après une mise à jour des règles, un score déjà obtenu avant est bien renvoyé quand tu le refais.',
       ],
     },
     {
@@ -106,6 +107,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       corrections: [
         'Groute and Treant can no longer be tackled: they can leave contact with an enemy.',
         'Harmony makes the Sadida Unlockable for the turn.',
+        'Daily ranking: after a rules update, a score you had already reached is sent again when you redo it.',
       ],
     },
     {
@@ -190,6 +192,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       corrections: [
         'Grut y Treant ya no pueden ser placados: pueden alejarse del contacto con un enemigo.',
         'Armonía hace al Sadida No Placable durante el turno.',
+        'Clasificación del desafío: tras una actualización de las reglas, una puntuación ya obtenida se vuelve a enviar al repetirla.',
       ],
     },
     {
