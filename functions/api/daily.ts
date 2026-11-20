@@ -36,6 +36,13 @@ interface Contexte {
   env: Env
 }
 
+/**
+ * Adresses qui acceptent un tour : le domaine, dont la limite de débit de Cloudflare protège
+ * l'API, et le poste de dev. sadikoi.pages.dev et les aperçus *.sadikoi.pages.dev contourneraient
+ * cette limite.
+ */
+const HOTES_ENVOI = new Set(['sadikoi.app', 'localhost', '127.0.0.1'])
+
 /** Les résultats sont gardés 30 jours. */
 const JOURS_GARDES = 30
 
@@ -93,6 +100,7 @@ export async function onRequestGet({ request, env }: Contexte): Promise<Response
 }
 
 export async function onRequestPost({ request, env }: Contexte): Promise<Response> {
+  if (!HOTES_ENVOI.has(new URL(request.url).hostname)) return json({ erreur: 'domaine' }, 403)
   // Un tour fait quelques Ko : au-delà, refusé avant même de le lire en entier
   if (Number(request.headers.get('content-length') ?? 0) > TAILLE_MAX_TOUR) return json({ erreur: 'taille' }, 413)
   const texte = await request.text()

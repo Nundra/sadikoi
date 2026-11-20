@@ -1,5 +1,5 @@
 /** Adresse publique du site (images et liens absolus des aperçus de partage). */
-const SITE = 'https://sadikoi.pages.dev/'
+const SITE = 'https://sadikoi.app/'
 const DESCRIPTION = 'Entraîne-toi à infecter tous les ennemis dès le tour 1 avec le Sadida de Dofus 3 : défi du jour avec classement, mode infini, training sur toutes les maps et créateur de map. Gratuit, sans pub.'
 
 export default defineNuxtConfig({
