@@ -1,0 +1,11 @@
+# En-têtes de sécurité, servis par Cloudflare Pages sur toutes les pages et l'API.
+# CSP : tout vient du site lui-même (polices, images, scripts, API). Nuxt glisse deux petits
+# scripts dans la page (configuration, importmap) dont le contenu change à chaque build :
+# d'où 'unsafe-inline' pour les scripts, qui bloque quand même tout script venu d'ailleurs.
+# frame-ancestors : le site ne s'affiche pas dans une iframe d'un autre site (clickjacking).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()

@@ -11,8 +11,8 @@
  */
 import reglages from '../../data/daily.json'
 import {
-  ETOILES_DAILY, jourDe, mapDuJour, rejouerDefi, salleDuJour,
-  type ClassementDaily, type LigneClassement, type TourEnvoye,
+  ETOILES_DAILY, TAILLE_MAX_TOUR, jourDe, mapDuJour, nettoyerTour, rejouerDefi, salleDuJour,
+  type ClassementDaily, type LigneClassement,
 } from '../../engine/daily'
 import { VERSION_REGLES } from '../../engine/partie'
 import { lireCodeSalle, type Salle } from '../../engine/salle'
@@ -93,17 +93,20 @@ export async function onRequestGet({ request, env }: Contexte): Promise<Response
 }
 
 export async function onRequestPost({ request, env }: Contexte): Promise<Response> {
-  let tour: TourEnvoye
+  // Un tour fait quelques Ko : au-delà, refusé avant même de le lire en entier
+  if (Number(request.headers.get('content-length') ?? 0) > TAILLE_MAX_TOUR) return json({ erreur: 'taille' }, 413)
+  const texte = await request.text()
+  if (texte.length > TAILLE_MAX_TOUR) return json({ erreur: 'taille' }, 413)
+  let tour
   try {
-    tour = await request.json() as TourEnvoye
+    tour = nettoyerTour(JSON.parse(texte))
   } catch {
-    return json({ erreur: 'format' }, 400)
+    tour = null
   }
+  if (!tour) return json({ erreur: 'format' }, 400)
   const jour = jourDe()
   // Envoyé juste après minuit : le défi a changé, le tour ne vaut plus
-  if (tour?.jour !== jour) return json({ erreur: 'jour', jour }, 409)
-  if (!Array.isArray(tour.actions) || tour.actions.length > 200 || !Array.isArray(tour.sorts)) return json({ erreur: 'format' }, 400)
-  if (typeof tour.joueur !== 'string' || !/^[0-9a-f-]{36}$/.test(tour.joueur)) return json({ erreur: 'joueur' }, 400)
+  if (tour.jour !== jour) return json({ erreur: 'jour', jour }, 409)
 
   const salle = await salleDuJourServeur(env, request.url, jour)
   if (!salle) return json({ erreur: 'salle' }, 500)

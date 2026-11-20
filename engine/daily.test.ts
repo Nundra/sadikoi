@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { categorie } from './categories'
-import { ENNEMIS_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, rejouerDefi, salleDuJour } from './daily'
+import { ACTIONS_MAX, ENNEMIS_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, nettoyerTour, rejouerDefi, salleDuJour } from './daily'
 import { creerPlateau, placements, type MapCombat } from './plateau'
 import { casesDuJoueur, equipes } from './salle'
 
@@ -58,5 +58,39 @@ describe('tour du défi', () => {
     expect(rejouerDefi(salle, { jour, joueur: 'x', sadida: salle.ennemis[0]!, sorts: [], prycipithon: false, actions: [fin] })).toBeNull()
     expect(rejouerDefi(salle, { jour, joueur: 'x', sadida, sorts: [], prycipithon: false, actions: [{ type: 'deplacement', acteur: 0, vers: -5 }, fin] })).toBeNull()
     expect(rejouerDefi(salle, { jour, joueur: 'x', sadida, sorts: [], prycipithon: false, actions: [{ type: 'n-importe-quoi' } as never] })).toBeNull()
+  })
+})
+
+describe('tour reçu par l’API', () => {
+  const tour = {
+    jour: '2026-11-20', joueur: '0123abcd-0123-4abc-8abc-0123456789ab', sadida: 300, sorts: [13519, 13516], prycipithon: false,
+    actions: [{ type: 'sort', acteur: 1, sort: 13516, cible: 280 }, { type: 'deplacement', acteur: 1, vers: 301 }, { type: 'fin', acteur: 1 }],
+  }
+
+  it('garde un tour bien formé', () => {
+    expect(nettoyerTour(tour)).toEqual(tour)
+  })
+
+  it('ne recopie que les champs utiles', () => {
+    const gonfle = { ...tour, pirate: 'x'.repeat(1000), actions: [{ ...tour.actions[0], bourrage: 'x'.repeat(1000) }] }
+    const propre = nettoyerTour(gonfle)!
+    expect(JSON.stringify(propre)).not.toContain('xxx')
+    expect(propre.actions).toEqual([tour.actions[0]])
+  })
+
+  it('refuse un tour mal formé', () => {
+    for (const mauvais of [
+      null, 'texte', 42,
+      { ...tour, jour: 'hier' },
+      { ...tour, joueur: 'moi' },
+      { ...tour, sadida: 560 },
+      { ...tour, sadida: '300' },
+      { ...tour, sorts: Array(23).fill(13516) },
+      { ...tour, sorts: ['13516'] },
+      { ...tour, actions: 'rien' },
+      { ...tour, actions: Array(ACTIONS_MAX + 1).fill(tour.actions[2]) },
+      { ...tour, actions: [{ type: 'teleport', acteur: 1 }] },
+      { ...tour, actions: [{ type: 'sort', acteur: 1, sort: 13516, cible: -1 }] },
+    ]) expect(nettoyerTour(mauvais)).toBeNull()
   })
 })

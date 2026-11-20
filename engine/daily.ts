@@ -1,5 +1,5 @@
 import type { Categorie } from './categories'
-import type { Case } from './grille'
+import { NB_CASES, type Case } from './grille'
 import { nouvellePartie, rejouer, score, termine, type Action } from './partie'
 import type { MapCombat } from './plateau'
 import { casesDuJoueur, tirerSalle, type Salle } from './salle'
@@ -75,6 +75,46 @@ export interface TourEnvoye {
   sorts: number[]
   prycipithon: boolean
   actions: Action[]
+}
+
+/** Taille maximale d'un tour envoyé, en caractères de JSON (un vrai tour en fait 2 à 5 000). */
+export const TAILLE_MAX_TOUR = 20_000
+/** Nombre maximal d'actions dans un tour envoyé. */
+export const ACTIONS_MAX = 200
+/** Nombre maximal de sorts choisis (22 paires dans la barre). */
+const SORTS_MAX = 22
+
+const entier = (x: unknown, min: number, max: number): x is number => Number.isInteger(x) && (x as number) >= min && (x as number) <= max
+const estCase = (x: unknown): x is Case => entier(x, 0, NB_CASES - 1)
+const estId = (x: unknown): x is number => entier(x, 0, 1_000_000)
+
+/** Une action reçue du réseau, recopiée champ par champ (rien d'autre n'est gardé), ou null. */
+function nettoyerAction(x: unknown): Action | null {
+  if (typeof x !== 'object' || x === null) return null
+  const a = x as Record<string, unknown>
+  if (!estId(a.acteur)) return null
+  if (a.type === 'deplacement' && estCase(a.vers)) return { type: 'deplacement', acteur: a.acteur, vers: a.vers }
+  if (a.type === 'sort' && estId(a.sort) && estCase(a.cible)) return { type: 'sort', acteur: a.acteur, sort: a.sort, cible: a.cible }
+  if (a.type === 'fin') return { type: 'fin', acteur: a.acteur }
+  return null
+}
+
+/**
+ * Le tour reçu par l'API du classement, vérifié et recopié champ par champ : ce qui arrive du
+ * réseau peut être n'importe quoi, et seul ce qui sert à rejouer le tour est gardé en base
+ * (pas de champ en plus, pas de texte géant). null s'il est mal formé.
+ */
+export function nettoyerTour(brut: unknown): TourEnvoye | null {
+  if (typeof brut !== 'object' || brut === null) return null
+  const t = brut as Record<string, unknown>
+  if (typeof t.jour !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(t.jour)) return null
+  if (typeof t.joueur !== 'string' || !/^[0-9a-f-]{36}$/.test(t.joueur)) return null
+  if (!estCase(t.sadida)) return null
+  if (!Array.isArray(t.sorts) || t.sorts.length > SORTS_MAX || !t.sorts.every(estId)) return null
+  if (!Array.isArray(t.actions) || t.actions.length > ACTIONS_MAX) return null
+  const actions = t.actions.map(nettoyerAction)
+  if (actions.some(a => a === null)) return null
+  return { jour: t.jour, joueur: t.joueur, sadida: t.sadida, sorts: [...t.sorts], prycipithon: t.prycipithon === true, actions: actions as Action[] }
 }
 
 /** Une ligne du classement : un score, et combien de joueurs l'ont pour meilleur score du jour. */
