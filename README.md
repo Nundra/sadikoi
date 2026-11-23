@@ -160,4 +160,4 @@ Les **issues** sont les bienvenues : bug, règle du jeu mal simulée, idée. Les
 
 Sadikoi est un **projet de fan, gratuit et non affilié à Ankama**. Dofus, ses visuels, ses noms et ses textes appartiennent à [Ankama](https://www.ankama.com) ; ils seront retirés sur simple demande. Voir les [mentions légales](https://sadikoi.app/legals).
 
-Conçu et codé par Jérémie Cieslarczyk.
+Imaginé et dirigé par Jérémie Cieslarczyk. Le code a été écrit avec l'IA [Claude Code](https://claude.com/claude-code) d'Anthropic, sous la supervision de Jérémie, qui a défini les règles du jeu, fait les choix, relu le code et testé en jeu.
