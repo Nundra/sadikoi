@@ -58,12 +58,75 @@ Certaines interactions sont une interprétation des descriptions du jeu : si un 
 
 | | |
 | --- | --- |
-| **App** | [Nuxt 4](https://nuxt.com) + TypeScript, SPA statique, [Pinia](https://pinia.vuejs.org) |
-| **Moteur** | TypeScript pur dans [`engine/`](engine), sans Vue, testé avec [Vitest](https://vitest.dev) |
-| **Plateau** | SVG, 560 cases en losange |
-| **Classement** | [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/functions/) + [D1](https://developers.cloudflare.com/d1/) : le serveur rejoue chaque tour envoyé pour calculer le score lui-même |
-| **Données** | extraites du jeu avec [dofus-sqlite](https://github.com/ledouxm/dofus-sqlite) et des scripts Python ([`scripts/`](scripts)) |
-| **Langues** | français, anglais, espagnol (noms officiels du jeu) |
+| **App** | [Nuxt 4](https://nuxt.com) + TypeScript, SPA statique (`nuxt generate`), [Pinia](https://pinia.vuejs.org), aucune autre dépendance d'exécution |
+| **Moteur** | TypeScript pur dans [`engine/`](engine), sans Vue ni DOM, partagé entre le navigateur et le serveur |
+| **Tests** | [Vitest](https://vitest.dev) : 95 tests sur le moteur (`pnpm test`), types vérifiés à part (`pnpm typecheck:engine`) |
+| **Plateau** | SVG, 14 × 40 cases en quinconce (560), obstacles en dalles isométriques |
+| **API** | [Cloudflare Pages Functions](https://developers.cloudflare.com/pages/functions/) ([`functions/api/daily.ts`](functions/api/daily.ts)) |
+| **Base** | [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite), migrations dans [`migrations/`](migrations) |
+| **Données** | extraites du client Dofus 3 et de [dofus-sqlite](https://github.com/ledouxm/dofus-sqlite) par des scripts Python ([`scripts/`](scripts), lancés avec [uv](https://docs.astral.sh/uv/)) |
+| **Hébergement** | Cloudflare Pages, déployé à chaque push sur `main` |
+
+### Architecture
+
+```
+data/          sorts, maps, rôles d'infection, traductions officielles (JSON extraits du jeu)
+engine/        moteur de jeu : règles, grille, ligne de vue, chemins, sorts, score
+app/           interface Nuxt : store Pinia, composants, i18n
+modules/       module Nuxt qui découpe les maps au build
+functions/     API du classement (Pages Functions), qui réutilise engine/
+migrations/    schéma D1
+scripts/       extraction des données du jeu (Python)
+```
+
+### Le moteur
+
+Le moteur ne connaît ni Vue ni le DOM : une partie est un objet simple, et `jouer(partie, action)` rend une nouvelle partie (copie par `structuredClone`) avec un bilan, ou un refus motivé. Le store Pinia ne garde que **la salle et la liste des actions** : la partie est rejouée depuis le début à chaque changement. Annuler, revoir le plateau à une étape de la timeline ou changer une variante en cours de route, c'est donc rejouer la liste, et une action devenue impossible est retirée avec un message.
+
+| Module | Rôle |
+| --- | --- |
+| [`grille.ts`](engine/grille.ts) | coordonnées en losange (`i = (x + y) / 2`, `j = (x − y) / 2`), distance de Manhattan, voisines, alignements |
+| [`ldv.ts`](engine/ldv.ts) | ligne de vue : cases traversées calculées comme le client du jeu (`Dofus2Line`), une ligne qui passe par un coin exact ne compte pas les deux cases qui s'y touchent |
+| [`chemins.ts`](engine/chemins.ts) | cases accessibles en PM et plus court chemin, avec des cases d'arrêt (tacle) |
+| [`portee.ts`](engine/portee.ts) | cases qu'un sort peut viser (PO min / max, bonus, en ligne, en diagonale, case libre, ligne de vue), avec la raison du refus |
+| [`zones.ts`](engine/zones.ts) | zones d'effet : cercle, carré, croix |
+| [`mouvements.ts`](engine/mouvements.ts) | poussées, attirances et reculs, direction comme le client du jeu |
+| [`sorts.ts`](engine/sorts.ts) | sorts du jeu et table `COMPORTEMENTS` : ce que chaque sort fait pour l'infection |
+| [`partie.ts`](engine/partie.ts) | état, actions, ordre des tours (Sadida puis invocations, de la dernière à la première), score |
+| [`salle.ts`](engine/salle.ts) | tirage d'une salle et codes de partage (`?salle=…`) |
+| [`creation.ts`](engine/creation.ts) | créateur de map et son code de partage compressé (`?carte=…`) |
+| [`daily.ts`](engine/daily.ts) | salle du jour tirée de la date, vérification des tours reçus par l'API |
+
+Le moteur ne produit jamais de texte : refus et bilans sont des codes avec paramètres ([`messages.ts`](engine/messages.ts)), mis en phrases par l'interface dans la langue choisie.
+
+### Défi du jour et anti-triche
+
+```
+navigateur ── POST /api/daily { placement, sorts, actions } ──▶ Pages Function
+                                                                 │ taille ≤ 20 Ko, champs recopiés un à un
+                                                                 │ salle du jour retrouvée (fichiers écrits au build)
+                                                                 │ tour rejoué par le moteur → score
+                                                                 ▼
+                                                                D1 (jour, version des règles, score, empreinte du joueur)
+```
+
+- Le navigateur n'envoie **jamais son score**, seulement le tour joué. Le serveur le rejoue avec le même moteur et calcule le score lui-même : un tour impossible ou un score inventé ne passent pas.
+- La salle du jour vient d'un hasard tiré de la date (heure de Paris). Le serveur fait foi pour le jour et la salle, même si l'horloge du navigateur est fausse.
+- Le joueur est une empreinte SHA-256 d'un identifiant aléatoire gardé dans le navigateur : ni compte, ni IP, ni pseudo. Les lignes de plus de 30 jours sont effacées.
+- Chaque score est rattaché à une **version des règles** : quand une règle du moteur change, le classement repart de zéro pour cette version.
+- Requêtes SQL paramétrées, corps limité à 20 Ko, limite de débit Cloudflare sur `POST /api/daily`, en-têtes de sécurité (CSP stricte, pas d'iframe) dans [`public/_headers`](public/_headers).
+
+### Les données du jeu
+
+| Fichier | Contenu | Produit par |
+| --- | --- | --- |
+| `data/sorts.json` | 44 sorts du Sadida et ses invocations : PA, PO, rangs par niveau, limites, effets bruts | `scripts/extract-sorts.py` |
+| `data/maps.json` | 3 830 maps de combat, 560 cases chacune (marchable, obstacle, vide, placement) | `scripts/extract-maps.py`, depuis les bundles Unity du client |
+| `data/traductions/` | noms et descriptions officiels en anglais et en espagnol | `scripts/extract-traductions.py` |
+| `public/sorts/`, `public/portraits/`, `public/icones/` | icônes et portraits du jeu | `scripts/extract-icones.py` |
+| `data/infection-roles.json` | rôle de chaque sort pour l'infection | écrit à la main |
+
+`data/maps.json` pèse 2,6 Mo : le module [`modules/maps.ts`](modules/maps.ts) le découpe au build en un index léger (environ 55 Ko compressé) et 32 paquets de cases chargés à la demande. Il écrit aussi les fichiers dont l'API a besoin pour retrouver la salle du jour, sans jamais charger toutes les maps.
 
 ### Lancer en local
 
@@ -71,9 +134,10 @@ Il faut [Node.js](https://nodejs.org) et [pnpm](https://pnpm.io).
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:3000
-pnpm test         # tests du moteur
-pnpm generate     # build statique dans .output/public
+pnpm dev                 # http://localhost:3000
+pnpm test                # tests du moteur
+pnpm typecheck:engine    # types du moteur
+pnpm generate            # build statique dans .output/public
 ```
 
 Le classement du défi tourne à part, avec Wrangler et une base D1 locale :
