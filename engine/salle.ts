@@ -1,5 +1,6 @@
 import type { Case } from './grille'
 import { creerPlateau, placements, type MapCombat } from './plateau'
+import { taclesDesEnnemis } from './tacle'
 
 /**
  * Couleurs de placement en PvM, constatées en jeu sur toutes les maps : le joueur part des
@@ -34,6 +35,12 @@ export function tirerSalle(map: MapCombat, o: { nombre?: number, alea?: () => nu
     ;[cases[k], cases[l]] = [cases[l]!, cases[k]!]
   }
   return { map, ennemis: cases.slice(0, Math.min(voulu, cases.length)).sort((a, b) => a - b) }
+}
+
+/** Le Tacle de chaque ennemi de la salle : toujours le même pour la même salle (voir tacle.ts). */
+export function taclesDeSalle(salle: Salle): number[] {
+  // Une map perso (id 0) se reconnaît à ses cases
+  return taclesDesEnnemis(salle.map.id, salle.map.id ? String(salle.map.id) : salle.map.cases, salle.ennemis)
 }
 
 /** Les cases où le joueur peut placer son Sadida. */

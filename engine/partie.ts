@@ -1,4 +1,4 @@
-import { chemin } from './chemins'
+import { cheminVers, deplacements } from './chemins'
 import { distance, voisines, type Case } from './grille'
 import { attirer, avancer, direction, glisser, repousser } from './mouvements'
 import { creerPlateau, libre, type Plateau } from './plateau'
@@ -8,6 +8,7 @@ import {
 } from './sorts'
 import { msg, type Message, type RefEntite } from './messages'
 import { zone } from './zones'
+import { fuiteInvocation, partGardee, perte } from './tacle'
 
 /**
  * Une partie = le T1 du Sadida, puis celui de chacune de ses invocations, de la dernière
@@ -22,10 +23,12 @@ export interface Stats {
   po: number
   /** Invocations en jeu en même temps au plus (les Arbres ne comptent pas, comme en jeu). */
   invo: number
+  /** Fuite : limite les PM et les PA perdus en quittant le contact d'un ennemi (voir tacle.ts). */
+  fuite: number
 }
 
 /** Caractéristiques du Sadida : fixes, les mêmes pour tous les joueurs. */
-export const STATS_DEFAUT: Stats = { pa: 12, pm: 6, po: 6, invo: 4 }
+export const STATS_DEFAUT: Stats = { pa: 12, pm: 6, po: 6, invo: 4, fuite: 80 }
 /** Prycipithon Mate : +2 PA au premier tour. */
 export const PA_PRYCIPITHON = 2
 /** En échange, les points sont réduits de 10 % (les étoiles ne changent pas). */
@@ -56,8 +59,12 @@ export interface Entite {
   infectionParInvocation?: boolean
   /** État Mandragore (2 tours) : réinfecte la cible, l'infection tient au tour suivant. */
   mandragore?: boolean
-  /** Intaclable (Célérité, Harmonie) : peut quitter le contact d'un ennemi. */
+  /** Intaclable (Célérité, Harmonie) : ne perd rien en quittant le contact d'un ennemi. */
   intaclable?: boolean
+  /** Fuite du Sadida et des invocations. */
+  fuite?: number
+  /** Tacle des ennemis. */
+  tacle?: number
   feuillu?: boolean
 }
 
@@ -118,6 +125,8 @@ export function nouvellePartie(o: {
   prycipithon?: boolean
   /** Niveau du Sadida (200 par défaut). */
   niveau?: number
+  /** Tacle de chaque ennemi, dans l'ordre de `ennemis` (0 par défaut). */
+  tacles?: number[]
 }): Partie {
   const niveau = o.niveau ?? NIVEAU_MAX
   const base: Stats = { ...STATS_DEFAUT, ...o.stats }
@@ -131,8 +140,8 @@ export function nouvellePartie(o: {
     paires.add(s.paire!)
   }
   const entites: Entite[] = [
-    { id: SADIDA, genre: 'sadida', nom: 'Sadida', case: o.sadida, pa: stats.pa, pm: stats.pm },
-    ...o.ennemis.map((c, k): Entite => ({ id: k + 1, genre: 'ennemi', nom: `Ennemi ${k + 1}`, case: c, pa: 0, pm: 0 })),
+    { id: SADIDA, genre: 'sadida', nom: 'Sadida', case: o.sadida, pa: stats.pa, pm: stats.pm, fuite: stats.fuite },
+    ...o.ennemis.map((c, k): Entite => ({ id: k + 1, genre: 'ennemi', nom: `Ennemi ${k + 1}`, case: c, pa: 0, pm: 0, tacle: o.tacles?.[k] ?? 0 })),
   ]
   creerPlateau(o.cases, entites.map(e => e.case)) // vérifie la map
   return {
@@ -217,7 +226,7 @@ export const POINTS_PAR_PA = 10
  * résultat d'un même tour (sort revu, calcul des points…) : les records d'avant ne servent
  * plus de référence. 2 : La Sacrifiée et la Prycipithon revues, limite d'invocations (2026-11-15).
  */
-export const VERSION_REGLES = 5
+export const VERSION_REGLES = 6
 /** Bonus de la 4e étoile : tous les ennemis encore infectés au tour 2. */
 export const POINTS_TOUR_2 = 50
 
@@ -327,26 +336,36 @@ function bilanVide(): Bilan {
 }
 
 /**
- * Tacle, simplifié : on se fait toujours tacler. Au contact d'un ennemi, on ne peut plus
- * repartir (pas de perte de PA ni de PM simulée), sauf si on est Intaclable. Renvoie les cases d'où l'on ne repart pas.
+ * Tacle (voir tacle.ts) : part des PM et des PA que l'acteur garde en quittant chaque case,
+ * selon sa Fuite et le Tacle des ennemis au contact. La Groute et le Tréant sont Intaclables
+ * d'office ; La Bloqueuse le devient avec Célérité, le Sadida avec Harmonie.
  */
-export function arretTacle(p: Partie, acteur: Entite): (c: Case) => boolean {
-  // La Groute et le Tréant sont Intaclables d'office ; La Bloqueuse le devient avec Célérité, le Sadida avec Harmonie
-  if (acteur.intaclable || INTACLABLES.has(acteur.monstre!)) return () => false
-  const ennemis = new Set(p.entites.filter(e => e.genre === 'ennemi').map(e => e.case))
-  return c => voisines(c).some(v => ennemis.has(v))
+export function gardeTacle(p: Partie, acteur: Entite): (c: Case) => number {
+  if (acteur.intaclable || INTACLABLES.has(acteur.monstre!)) return () => 1
+  const tacleSur = new Map(p.entites.filter(e => e.genre === 'ennemi').map(e => [e.case, e.tacle ?? 0]))
+  return c => partGardee(acteur.fuite ?? 0, voisines(c).filter(v => tacleSur.has(v)).map(v => tacleSur.get(v)!))
+}
+
+/** Où l'acteur peut aller : PM et PA restants à l'arrivée, tacle compris. */
+export function deplacementsDe(p: Partie, acteur: Entite) {
+  return deplacements(plateau(p), acteur.case, acteur.pm, acteur.pa, gardeTacle(p, acteur))
 }
 
 function deplacer(p: Partie, acteur: Entite, vers: Case): Resultat {
   if (acteur.genre !== 'sadida' && acteur.genre !== 'invocation') return refus(msg('ne-se-deplace-pas', { e: ref(acteur) }))
   if (vers === acteur.case) return refus(msg('deja-sur-case'))
-  const arret = arretTacle(p, acteur)
-  if (arret(acteur.case)) return refus(msg('tacle', { e: ref(acteur) }))
-  const ch = chemin(plateau(p), acteur.case, vers, acteur.pm, arret)
-  if (!ch) return refus(msg('hors-atteinte', { pm: acteur.pm }))
+  const arrivees = deplacementsDe(p, acteur)
+  const arrivee = arrivees.get(vers)
+  if (!arrivee) return refus(msg('hors-atteinte', { pm: acteur.pm }))
+  const longueur = cheminVers(arrivees, vers)!.length
+  const pmPerdus = acteur.pm - arrivee.pm - longueur
+  const paPerdus = acteur.pa - arrivee.pa
   acteur.case = vers
-  acteur.pm -= ch.length
-  return { ok: true, partie: p, bilan: { ...bilanVide(), texte: [msg('titre-deplacement', { case: vers, pm: ch.length })] } }
+  acteur.pm = arrivee.pm
+  acteur.pa = arrivee.pa
+  const texte = [msg('titre-deplacement', { case: vers, pm: longueur })]
+  if (pmPerdus || paPerdus) texte.push(msg('tacle-perte', { e: ref(acteur), pm: pmPerdus, pa: paPerdus }))
+  return { ok: true, partie: p, bilan: { ...bilanVide(), texte } }
 }
 
 /** Le sort tel que le lance la partie : au rang du niveau du Sadida (null s'il n'est pas débloqué). */
@@ -418,7 +437,7 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
   const infectes = () => p.entites.filter(e => e.genre === 'ennemi' && e.infecte)
   const invoquer = (monstre: number, c: Case) => {
     const m = invocation(monstre)
-    const e: Entite = { id: p.prochainId++, genre: 'invocation', nom: m.nom, case: c, monstre, pa: m.pa, pm: m.pm }
+    const e: Entite = { id: p.prochainId++, genre: 'invocation', nom: m.nom, case: c, monstre, pa: m.pa, pm: m.pm, fuite: fuiteInvocation(monstre) }
     p.entites.push(e)
     // Comme en jeu, la dernière invoquée joue la première : elle passe juste après celui qui joue
     p.ordre.splice(p.tour + 1, 0, e.id)

@@ -40,7 +40,7 @@ CLIENT = Path.home() / ".config/Ankama/Dofus-dofus3/Dofus_Data"
 
 # Nom dans le jeu → nom dans public/icones, par bundle
 PICTOS = {
-    "spriteassets_assets_2x.bundle": {"pa": "pa", "pm": "pm", "po": "po", "invocation": "invo"},
+    "spriteassets_assets_2x.bundle": {"pa": "pa", "pm": "pm", "po": "po", "invocation": "invo", "fuite": "fuite"},
     "icons_assets_2x.bundle": {"starFilled": "etoile-pleine", "starEmpty": "etoile-vide", "spanner": "reglages", "exchange": "variante", "questionMark": "aide", "lock": "cadenas", "trophy": "trophee", "calendar": "calendrier", "hourglass": "sablier"},
 }
 

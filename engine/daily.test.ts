@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { categorie } from './categories'
-import { ACTIONS_MAX, ENNEMIS_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, nettoyerTour, rejouerDefi, salleDuJour } from './daily'
+import { ACTIONS_MAX, ENNEMIS_DAILY, aleaDe, candidatsDaily, fuiteDuJour, jourDe, mapDuJour, nettoyerTour, rejouerDefi, salleDuJour } from './daily'
 import { creerPlateau, placements, type MapCombat } from './plateau'
 import { casesDuJoueur, equipes } from './salle'
 
@@ -92,5 +92,15 @@ describe('tour reçu par l’API', () => {
       { ...tour, actions: [{ type: 'teleport', acteur: 1 }] },
       { ...tour, actions: [{ type: 'sort', acteur: 1, sort: 13516, cible: -1 }] },
     ]) expect(nettoyerTour(mauvais)).toBeNull()
+  })
+})
+
+describe('Fuite du jour', () => {
+  it('va de 0 à 200 par paliers de 20, la même pour tous ce jour-là', () => {
+    const jours = Array.from({ length: 60 }, (_, k) => jourDe(new Date(Date.UTC(2026, 0, 1 + k, 12))))
+    const fuites = jours.map(fuiteDuJour)
+    expect(fuites.every(f => f % 20 === 0 && f >= 0 && f <= 200)).toBe(true)
+    expect(new Set(fuites).size).toBeGreaterThan(5)
+    expect(fuiteDuJour('2026-11-24')).toBe(fuiteDuJour('2026-11-24'))
   })
 })

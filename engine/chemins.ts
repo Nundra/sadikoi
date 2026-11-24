@@ -1,5 +1,6 @@
 import { voisines, type Case } from './grille'
 import { libre, type Plateau } from './plateau'
+import { perte } from './tacle'
 
 /**
  * Cases atteignables depuis `depart` avec `pm` PM, et leur coût en PM (0 pour le départ).
@@ -49,4 +50,47 @@ export function chemin(p: Plateau, depart: Case, arrivee: Case, pm = Infinity, a
     front = suivant
   }
   return null
+}
+
+/** Où l'on arrive par le meilleur chemin : PM et PA restants, et la case d'avant. */
+export interface Arrivee {
+  pm: number
+  pa: number
+  precedente?: Case
+}
+
+/**
+ * Cases atteignables depuis `depart` avec `pm` PM et `pa` PA, quand quitter une case fait perdre
+ * des PM et des PA (le tacle) : `garde(c)` est la part gardée en quittant `c` (1 : rien perdu).
+ * Pour chaque case, le chemin qui y laisse le plus de PM, puis le plus de PA.
+ */
+export function deplacements(p: Plateau, depart: Case, pm: number, pa: number, garde: (c: Case) => number = () => 1): Map<Case, Arrivee> {
+  const arrivees = new Map<Case, Arrivee>([[depart, { pm, pa }]])
+  let front = [depart]
+  while (front.length) {
+    const suivant = new Set<Case>()
+    for (const c of front) {
+      const a = arrivees.get(c)!
+      const g = garde(c)
+      const restePm = a.pm - perte(a.pm, g)
+      const restePa = a.pa - perte(a.pa, g)
+      if (restePm < 1) continue
+      for (const v of voisines(c)) {
+        if (v === depart || !libre(p, v)) continue
+        const avant = arrivees.get(v)
+        if (avant && (avant.pm > restePm - 1 || (avant.pm === restePm - 1 && avant.pa >= restePa))) continue
+        arrivees.set(v, { pm: restePm - 1, pa: restePa, precedente: c })
+        suivant.add(v)
+      }
+    }
+    front = [...suivant]
+  }
+  return arrivees
+}
+
+/** Le chemin vers `arrivee` (sans la case de départ) d'après `deplacements`, ou null. */
+export function cheminVers(arrivees: Map<Case, Arrivee>, arrivee: Case): Case[] | null {
+  const out: Case[] = []
+  for (let c: Case | undefined = arrivee; c !== undefined && arrivees.get(c)?.precedente !== undefined; c = arrivees.get(c)!.precedente) out.unshift(c)
+  return out.length ? out : null
 }

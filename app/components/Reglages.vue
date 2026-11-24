@@ -20,11 +20,11 @@ const finTouche = computed(() => barre.libelle(barre.toucheFin))
 const dialogue = ref<HTMLDialogElement | null>(null)
 const notes = ref<{ ouvrir: () => void } | null>(null)
 
-/** Niveau puis PA, PM, PO : valeur, bornes et réglage (− / + ou saisie). */
+/** Niveau puis PA, PM, PO, invocations et Fuite : valeur, bornes et réglage (− / + ou saisie ; la Fuite va de 10 en 10). */
 const reglablesPersonnage = computed(() => [
-  { cle: 'niveau', nom: t('reglages.niveau'), valeur: store.niveau, bornes: [NIVEAU_MIN, NIVEAU_MAX] as const, changer: store.changerNiveau },
-  ...(['pa', 'pm', 'po', 'invo'] as const).map(cle => ({
-    cle, nom: t(`carac.${cle}`), valeur: store.stats[cle], bornes: LIMITES_STATS[cle], changer: (v: number) => store.changerStat(cle, v),
+  { cle: 'niveau', nom: t('reglages.niveau'), valeur: store.niveau, bornes: [NIVEAU_MIN, NIVEAU_MAX] as const, pas: 1, changer: store.changerNiveau },
+  ...(['pa', 'pm', 'po', 'invo', 'fuite'] as const).map(cle => ({
+    cle, nom: t(`carac.${cle}`), valeur: store.stats[cle], bornes: LIMITES_STATS[cle], pas: cle === 'fuite' ? 10 : 1, changer: (v: number) => store.changerStat(cle, v),
   })),
 ])
 
@@ -67,7 +67,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
       <div v-for="r in reglablesPersonnage" :key="r.cle" class="reglable">
         <label :for="`reglage-${r.cle}`">{{ r.nom }}</label>
         <span class="bornes">{{ t('reglages.bornes', { min: r.bornes[0], max: r.bornes[1] }) }}</span>
-        <button type="button" :aria-label="`${r.nom} −1`" :disabled="bloque || r.valeur <= r.bornes[0]" @click="r.changer(r.valeur - 1)">−</button>
+        <button type="button" :aria-label="`${r.nom} −${r.pas}`" :disabled="bloque || r.valeur <= r.bornes[0]" @click="r.changer(r.valeur - r.pas)">−</button>
         <input
           :id="`reglage-${r.cle}`"
           type="number"
@@ -78,7 +78,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
           :disabled="bloque"
           @change="(ev) => { r.changer(Number((ev.target as HTMLInputElement).value)); (ev.target as HTMLInputElement).value = String(r.valeur) }"
         >
-        <button type="button" :aria-label="`${r.nom} +1`" :disabled="bloque || r.valeur >= r.bornes[1]" @click="r.changer(r.valeur + 1)">+</button>
+        <button type="button" :aria-label="`${r.nom} +${r.pas}`" :disabled="bloque || r.valeur >= r.bornes[1]" @click="r.changer(r.valeur + r.pas)">+</button>
       </div>
       <p v-if="store.statsImposees" class="aide">{{ t('reglages.imposees-daily') }}</p>
       <p v-else-if="store.verrouille" class="aide">{{ t('reglages.verrouille') }}</p>

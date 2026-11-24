@@ -139,6 +139,9 @@ onBeforeUnmount(() => window.removeEventListener('mouseup', finTrait))
 
 const aide = computed(() => {
   if (store.enEdition) return t('creation.aide-plateau')
+  // Au survol d'un ennemi : son Tacle
+  const ennemi = store.survol === null ? undefined : store.entites.find(e => e.genre === 'ennemi' && e.case === store.survol)
+  if (ennemi) return t('plateau.tacle-ennemi', { e: libelle(ennemi), tacle: ennemi.tacle ?? 0 })
   if (store.vue !== null) return t('plateau.vue-passee', { n: store.vue + 1 })
   if (store.phase === 'placement') return t('plateau.aide-placement')
   return null

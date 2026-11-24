@@ -1,8 +1,11 @@
 import type { Categorie } from './categories'
 import { NB_CASES, type Case } from './grille'
-import { nouvellePartie, rejouer, score, termine, type Action } from './partie'
+import { STATS_DEFAUT, nouvellePartie, rejouer, score, termine, type Action, type Stats } from './partie'
 import type { MapCombat } from './plateau'
-import { casesDuJoueur, tirerSalle, type Salle } from './salle'
+import { casesDuJoueur, taclesDeSalle, tirerSalle, type Salle } from './salle'
+import { aleaDe } from './hasard'
+
+export { aleaDe }
 
 /**
  * Défi du jour : la même salle pour tous les joueurs, tirée à partir de la date (heure de
@@ -32,19 +35,6 @@ export function jourDe(date: Date = new Date()): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(date)
 }
 
-/** Un hasard reproductible, tiré d'un texte (FNV-1a puis mulberry32). */
-export function aleaDe(graine: string): () => number {
-  let h = 2166136261
-  for (let k = 0; k < graine.length; k++) h = Math.imul(h ^ graine.charCodeAt(k), 16777619)
-  let a = h >>> 0
-  return () => {
-    a = (a + 0x6D2B79F5) >>> 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
 /** Les maps qui peuvent sortir : zones et Songes avec assez de cases ennemies, hors exclues. */
 export function candidatsDaily<T extends CandidatDaily>(maps: T[], exclues: ReadonlySet<number> = new Set()): T[] {
   return maps
@@ -64,6 +54,16 @@ export function salleDuJour(map: MapCombat, jour: string): Salle & { alea: () =>
   const [min, max] = ENNEMIS_DAILY
   const nombre = min + Math.floor(alea() * (max - min + 1))
   return { ...tirerSalle(map, { nombre, alea }), alea }
+}
+
+/** Fuite du Sadida imposée par le défi du jour : de 0 à 200, par paliers de 20. */
+export function fuiteDuJour(jour: string): number {
+  return 20 * Math.floor(aleaDe(`fuite:${jour}`)() * 11)
+}
+
+/** Caractéristiques imposées par le défi du jour : celles par défaut, avec la Fuite du jour. */
+export function statsDuJour(jour: string): Stats {
+  return { ...STATS_DEFAUT, fuite: fuiteDuJour(jour) }
 }
 
 /** Ce que le navigateur envoie : le tour joué sur la salle du jour, pas son score. */
@@ -139,7 +139,10 @@ export function rejouerDefi(salle: Salle, tour: TourEnvoye): { points: number, e
   if (!casesDuJoueur(salle.map).includes(tour.sadida)) return null
   // Ce qui arrive du réseau peut être n'importe quoi : un tour mal formé est simplement refusé
   try {
-    const depart = nouvellePartie({ cases: salle.map.cases, sadida: tour.sadida, ennemis: salle.ennemis, sorts: tour.sorts, prycipithon: tour.prycipithon === true })
+    const depart = nouvellePartie({
+      cases: salle.map.cases, sadida: tour.sadida, ennemis: salle.ennemis, sorts: tour.sorts, prycipithon: tour.prycipithon === true,
+      stats: statsDuJour(tour.jour), tacles: taclesDeSalle(salle),
+    })
     const r = rejouer(depart, tour.actions)
     if (r.erreur || !termine(r.partie)) return null
     const s = score(r.partie)

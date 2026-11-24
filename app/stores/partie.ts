@@ -2,24 +2,24 @@ import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { zoneDuSort } from '~~/engine/apercu'
 import type { Categorie } from '~~/engine/categories'
-import { casesAccessibles, chemin } from '~~/engine/chemins'
+import { casesAccessibles, cheminVers, type Arrivee } from '~~/engine/chemins'
 import type { Case } from '~~/engine/grille'
 import {
-  PA_PRYCIPITHON, STATS_DEFAUT, VERSION_REGLES, acteurCourant, sortDe, arretTacle, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
+  PA_PRYCIPITHON, STATS_DEFAUT, VERSION_REGLES, acteurCourant, sortDe, deplacementsDe, jouer, nouvellePartie, plateau, refusCibleSpecifique, score as calculerScore, termine as estTermine,
   type Action, type Bilan, type Entite, type Partie, type Stats,
 } from '~~/engine/partie'
 import type { MapCombat } from '~~/engine/plateau'
 import type { MapIndex } from 'virtual:maps'
 import { casesCiblables, refusCible } from '~~/engine/portee'
 import { NB_CASES } from '~~/engine/grille'
-import { casesDuJoueur, codeSalle, lireCodeSalle, tirerSalle } from '~~/engine/salle'
+import { casesDuJoueur, codeSalle, lireCodeSalle, taclesDeSalle, tirerSalle } from '~~/engine/salle'
 import {
   carteDepuisSalle, carteVide, codeCarte, ennemisDe, lireCodeCarte, mapPerso, peindre, problemesCarte, type Outil,
 } from '~~/engine/creation'
 import { NIVEAU_MAX, SORTS_SADIDA, invocation, niveauRequis, sort as trouverSort, sortAuNiveau, type Sort } from '~~/engine/sorts'
 import portraits from '~~/data/portraits.json'
 import reglagesDaily from '~~/data/daily.json'
-import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour, type ClassementDaily } from '~~/engine/daily'
+import { ETOILES_DAILY, aleaDe, candidatsDaily, jourDe, mapDuJour, salleDuJour, statsDuJour, type ClassementDaily } from '~~/engine/daily'
 import type { Message, RefEntite } from '~~/engine/messages'
 import { langue, nomInvocation, nomJeu, prefixe, t, texteMessage, type Cle, type Params } from '~/i18n'
 import { useBarreStore } from './barre'
@@ -77,7 +77,7 @@ function ecrire(cle: string, valeur: unknown) {
 const CATEGORIES_DEFAUT: Record<Categorie, boolean> = { zone: true, speciale: false, donjon: true, koli: false, songes: true, autre: false }
 
 /** Bornes des caractéristiques réglables (PA, PM et PO de base, sans la Prycipithon). */
-export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6], invo: [1, 8] }
+export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6], invo: [1, 8], fuite: [0, 200] }
 export const NIVEAU_MIN = 1
 
 const borner = (v: number, [min, max]: [number, number]) => Math.min(max, Math.max(min, Math.round(Number.isFinite(v) ? v : max)))
@@ -155,19 +155,19 @@ export const usePartieStore = defineStore('partie', () => {
   const niveau = ref(borner(personnage.niveau, [NIVEAU_MIN, NIVEAU_MAX]))
   const stats = shallowRef<Stats>({
     pa: borner(personnage.pa, LIMITES_STATS.pa), pm: borner(personnage.pm, LIMITES_STATS.pm), po: borner(personnage.po, LIMITES_STATS.po),
-    invo: borner(personnage.invo, LIMITES_STATS.invo),
+    invo: borner(personnage.invo, LIMITES_STATS.invo), fuite: borner(personnage.fuite, LIMITES_STATS.fuite),
   })
   watch([niveau, stats], ([n, st]) => ecrire('personnage', { niveau: n, ...st }))
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
   const prycipithon = ref<boolean>(lire('equipement', { prycipithon: false }).prycipithon)
   watch(prycipithon, v => ecrire('equipement', { prycipithon: v }))
   /**
-   * Défi du jour : niveau et caractéristiques imposés (ceux par défaut), pour que tous les
-   * joueurs se comparent à armes égales. Les réglages du joueur restent gardés à côté.
+   * Défi du jour : niveau et caractéristiques imposés (ceux par défaut, avec la Fuite du jour),
+   * pour que tous les joueurs se comparent à armes égales. Les réglages du joueur restent gardés à côté.
    */
   const statsImposees = computed(() => mode.value === 'daily')
   const niveauJeu = computed(() => (statsImposees.value ? NIVEAU_MAX : niveau.value))
-  const statsJeu = computed<Stats>(() => (statsImposees.value ? STATS_DEFAUT : stats.value))
+  const statsJeu = computed<Stats>(() => (statsImposees.value ? statsDuJour(jourDaily.value) : stats.value))
   /** Caractéristiques de départ du Sadida, Prycipithon comprise. */
   const statsDepart = computed<Stats>(() => (prycipithon.value ? { ...statsJeu.value, pa: statsJeu.value.pa + PA_PRYCIPITHON } : statsJeu.value))
   const variantes = ref<Record<number, number>>(lire('variantes', Object.fromEntries(
@@ -194,9 +194,12 @@ export const usePartieStore = defineStore('partie', () => {
   /** Un sort tel qu'il se lance au niveau choisi (PO du rang), ou au dernier rang s'il n'est pas débloqué. */
   const sortAffiche = (id: number) => sortAuNiveau(trouverSort(id), niveauJeu.value) ?? trouverSort(id)
 
+  /** Tacle de chaque ennemi de la salle (tiré des données du jeu, toujours le même pour la même salle). */
+  const taclesSalle = computed(() => (map.value ? taclesDeSalle({ map: map.value, ennemis: [...ennemis.value] }) : []))
+
   const depart = computed(() => map.value && sadida.value !== null
     // Copies simples : le moteur clone la partie avec structuredClone, qui refuse les proxys de Vue
-    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...statsJeu.value }, prycipithon: prycipithon.value, niveau: niveauJeu.value })
+    ? nouvellePartie({ cases: map.value.cases, sadida: sadida.value, ennemis: [...ennemis.value], sorts: [...sortsChoisis.value], stats: { ...statsJeu.value }, prycipithon: prycipithon.value, niveau: niveauJeu.value, tacles: [...taclesSalle.value] })
     : null)
 
   /** La partie rejouée action par action. S'arrête à la première action devenue impossible. */
@@ -235,7 +238,7 @@ export const usePartieStore = defineStore('partie', () => {
 
   /** Les pions à dessiner (avant le placement : seulement les ennemis). */
   const entites = computed<Entite[]>(() => partieAffichee.value?.entites
-    ?? ennemis.value.map((c, k) => ({ id: k + 1, genre: 'ennemi', nom: `Ennemi ${k + 1}`, case: c, pa: 0, pm: 0 })))
+    ?? ennemis.value.map((c, k) => ({ id: k + 1, genre: 'ennemi', nom: `Ennemi ${k + 1}`, case: c, pa: 0, pm: 0, tacle: taclesSalle.value[k] })))
 
   /** Les entités déplacées par l'étape affichée : d'où elles partent, où elles arrivent. */
   const deplacements = computed(() => {
@@ -296,8 +299,8 @@ export const usePartieStore = defineStore('partie', () => {
   const accessibles = computed(() => {
     const p = partie.value
     const a = acteur.value
-    if (!p || !a || !interactif.value || sortChoisi.value !== null) return new Map<Case, number>()
-    return casesAccessibles(plateau(p), a.case, a.pm, arretTacle(p, a))
+    if (!p || !a || !interactif.value || sortChoisi.value !== null) return new Map<Case, Arrivee>()
+    return deplacementsDe(p, a)
   })
 
   /** Cases que les PM atteindraient sans le tacle : montrées en rouge, comme en jeu. */
@@ -321,7 +324,7 @@ export const usePartieStore = defineStore('partie', () => {
       const r = jouer(p, { type: 'sort', acteur: a.id, sort: sortChoisi.value, cible: c })
       return { ...vide, zone: new Set(zoneDuSort(p, a.id, sortChoisi.value, c)), infectes: new Set(r.ok ? r.bilan.infectes : []) }
     }
-    if (accessibles.value.has(c) && c !== a.case) return { ...vide, chemin: new Set(chemin(plateau(p), a.case, c, a.pm, arretTacle(p, a))) }
+    if (accessibles.value.has(c) && c !== a.case) return { ...vide, chemin: new Set(cheminVers(accessibles.value, c)) }
     return vide
   })
 
@@ -336,7 +339,7 @@ export const usePartieStore = defineStore('partie', () => {
   const records = ref<Record<string, MeilleurScore>>(Object.fromEntries(
     Object.entries(lire<Record<string, MeilleurScore>>('records', {})).filter(([cle]) => cle.startsWith(prefixeRecords))))
   const cleSalle = computed(() => map.value
-    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${statsJeu.value.pa}-${statsJeu.value.pm}-${statsJeu.value.po}-i${statsJeu.value.invo}${niveauJeu.value < NIVEAU_MAX ? `|n${niveauJeu.value}` : ''}`
+    ? `${prefixeRecords}${map.value.id || `c${codeCarte(map.value.cases)}`}|${ennemis.value.join(',')}|${statsJeu.value.pa}-${statsJeu.value.pm}-${statsJeu.value.po}-i${statsJeu.value.invo}-f${statsJeu.value.fuite}${niveauJeu.value < NIVEAU_MAX ? `|n${niveauJeu.value}` : ''}`
     : null)
   const record = computed(() => (cleSalle.value ? records.value[cleSalle.value] ?? null : null))
   /** Ce que valait le record avant la fin de la salle, pour dire « nouveau record ». */

@@ -4,7 +4,7 @@ import { t } from '~/i18n'
 
 const store = usePartieStore()
 
-/** Caractéristiques réglées dans les réglages ; la Prycipithon ajoute 2 PA au tour 1. Invocations : places restantes. */
+/** Caractéristiques réglées dans les réglages ; la Prycipithon ajoute 2 PA au tour 1. Invocations : places restantes. Fuite : sans maximum. */
 const lignes = computed(() => {
   const s = store.partie?.entites.find(e => e.id === SADIDA)
   const max = store.statsDepart
@@ -13,7 +13,8 @@ const lignes = computed(() => {
     ['pm', '#86cf62', s?.pm],
     ['po', '#e7b25a', max.po],
     ['invo', '#e8925a', store.partie ? max.invo - invocationsEnJeu(store.partie) : max.invo],
-  ] as const).map(([cle, couleur, reste]) => ({ cle: cle as keyof Stats, nom: t(`carac.${cle}`), couleur, reste: reste ?? max[cle], max: max[cle] }))
+    ['fuite', '#d9c36a', max.fuite],
+  ] as const).map(([cle, couleur, reste]) => ({ cle: cle as keyof Stats, nom: t(`carac.${cle}`), couleur, reste: reste ?? max[cle], max: cle === 'fuite' ? null : max[cle] }))
 })
 </script>
 
@@ -34,7 +35,7 @@ const lignes = computed(() => {
     <div v-for="l in lignes" :key="l.cle" class="ligne">
       <img :src="`/icones/${l.cle}.png`" alt="" class="picto">
       <span class="nom">{{ l.nom }}</span>
-      <span class="valeur"><strong :style="{ color: l.couleur }">{{ l.reste }}</strong> / {{ l.max }}</span>
+      <span class="valeur"><strong :style="{ color: l.couleur }">{{ l.reste }}</strong><template v-if="l.max !== null"> / {{ l.max }}</template></span>
     </div>
   </section>
 </template>

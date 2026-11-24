@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import type { Case } from './grille'
 import { direction } from './mouvements'
-import { SADIDA, arretTacle, jouer, nouvellePartie, rejouer, type Action, type Partie } from './partie'
+import { SADIDA, gardeTacle, jouer, nouvellePartie, rejouer, type Action, type Partie } from './partie'
+import { partGardee, perte } from './tacle'
 import { GROUTE, SORTS_SADIDA, TREANT } from './sorts'
 import { MILIEU as A, decale, plateauTest } from './test-outils'
 
 const id = (nom: string) => SORTS_SADIDA.find(s => s.nom === nom)!.id
 const sort = (nom: string, cible: Case, acteur = SADIDA): Action => ({ type: 'sort', acteur, sort: id(nom), cible })
 
-function suite(sorts: string[], ennemis: Case[], actions: Action[], obstacles: Case[] = []): Partie {
-  const depart = nouvellePartie({ cases: plateauTest(obstacles.map(c => [c, '#'] as const)).cases, sadida: A, ennemis, sorts: sorts.map(id) })
+function suite(sorts: string[], ennemis: Case[], actions: Action[], obstacles: Case[] = [], o: { tacles?: number[], fuite?: number } = {}): Partie {
+  const depart = nouvellePartie({
+    cases: plateauTest(obstacles.map(c => [c, '#'] as const)).cases, sadida: A, ennemis, sorts: sorts.map(id), tacles: o.tacles, stats: { fuite: o.fuite ?? 80 },
+  })
   const r = rejouer(depart, actions)
   if (r.erreur) throw new Error(`action ${r.erreur.index} refusée : ${JSON.stringify(r.erreur.raison)}`)
   return r.partie
@@ -152,23 +155,35 @@ describe('La Bloqueuse et La Surpuissante', () => {
 })
 
 describe('tacle', () => {
-  it('empêche de quitter le contact d’un ennemi', () => {
-    const p = suite(['Vent Empoisonné'], [decale(A, 1, 0)], [])
-    expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, -2, 0) }))
-      .toEqual({ ok: false, raison: { code: 'tacle', p: { e: { id: 0, genre: 'sadida' } } } })
+  it('garde (Fuite + 2) / (2 × (Tacle + 2)), multiplié par tacleur, au plus 100 %', () => {
+    expect(partGardee(20, [20])).toBe(0.5)
+    expect(partGardee(20, [20, 20])).toBe(0.25)
+    expect(partGardee(80, [20])).toBe(1)
+    expect(perte(6, 0.5)).toBe(3)
+    expect(perte(12, 1)).toBe(0)
   })
 
-  it('arrête le déplacement sur la première case au contact', () => {
-    // Ennemi en (4, 0) : on peut aller en (3, 0), au contact
-    const p = suite(['Vent Empoisonné'], [decale(A, 4, 0)], [])
-    expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, 3, 0) }).ok).toBe(true)
-    // Derrière lui, (5, 0) : en ligne droite il faudrait repartir du contact ; le contourner à distance coûte plus de 6 PM
-    expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, 5, 0) }).ok).toBe(false)
+  it('fait perdre des PM et des PA en quittant le contact', () => {
+    const p = suite(['Vent Empoisonné'], [decale(A, 1, 0)], [], [], { tacles: [20], fuite: 20 })
+    const r = jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, -2, 0) })
+    expect(r.ok && r.bilan.texte).toContainEqual({ code: 'tacle-perte', p: { e: { id: 0, genre: 'sadida' }, pm: 3, pa: 6 } })
+    expect(r.ok && r.partie.entites[0]).toMatchObject({ pm: 1, pa: 6 })
+  })
+
+  it('ne fait rien perdre avec assez de Fuite', () => {
+    const p = suite(['Vent Empoisonné'], [decale(A, 1, 0)], [], [], { tacles: [20], fuite: 80 })
+    const r = jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, -2, 0) })
+    expect(r.ok && r.partie.entites[0]).toMatchObject({ pm: 4, pa: 12 })
+  })
+
+  it('bloque sur place face à un très gros Tacle', () => {
+    const p = suite(['Vent Empoisonné'], [decale(A, 1, 0)], [], [], { tacles: [1000], fuite: 0 })
+    expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, -1, 0) }).ok).toBe(false)
   })
 
   it('ne s’applique plus à La Bloqueuse après Célérité (Intaclable)', () => {
     const bloqueuse = decale(A, 1, 0)
-    const p0 = suite(['La Bloqueuse Transmutée'], [decale(A, 2, 0)], [sort('La Bloqueuse Transmutée', bloqueuse), { type: 'fin', acteur: SADIDA }])
+    const p0 = suite(['La Bloqueuse Transmutée'], [decale(A, 2, 0)], [sort('La Bloqueuse Transmutée', bloqueuse), { type: 'fin', acteur: SADIDA }], [], { tacles: [1000] })
     const b = p0.ordre[1]!
     expect(jouer(p0, { type: 'deplacement', acteur: b, vers: decale(A, 1, 3) }).ok).toBe(false)
     const r = rejouer(p0, [{ type: 'sort', acteur: b, sort: 29623, cible: bloqueuse }, { type: 'deplacement', acteur: b, vers: decale(A, 1, 3) }])
@@ -177,18 +192,18 @@ describe('tacle', () => {
   })
 
   it('ne s’applique plus au Sadida après Harmonie (Intaclable)', () => {
-    const p = suite(['Harmonie'], [decale(A, 1, 0)], [])
+    const p = suite(['Harmonie'], [decale(A, 1, 0)], [], [], { tacles: [1000], fuite: 0 })
     expect(jouer(p, { type: 'deplacement', acteur: SADIDA, vers: decale(A, 0, 3) }).ok).toBe(false)
     const r = rejouer(p, [sort('Harmonie', A), { type: 'deplacement', acteur: SADIDA, vers: decale(A, 0, 3) }])
     expect(r.erreur).toBeUndefined()
   })
 
   it('ne s’applique jamais à la Groute ni au Tréant (Intaclables)', () => {
-    const p = suite(['Vent Empoisonné'], [decale(A, 2, 0)], [])
+    const p = suite(['Vent Empoisonné'], [decale(A, 2, 0)], [], [], { tacles: [1000] })
     const sadida = { ...p.entites[0]!, case: decale(A, 1, 0) }
-    expect(arretTacle(p, sadida)(decale(A, 1, 0))).toBe(true)
+    expect(gardeTacle(p, sadida)(decale(A, 1, 0))).toBeLessThan(1)
     for (const monstre of [GROUTE, TREANT]) {
-      expect(arretTacle(p, { ...sadida, genre: 'invocation', monstre })(decale(A, 1, 0))).toBe(false)
+      expect(gardeTacle(p, { ...sadida, genre: 'invocation', monstre })(decale(A, 1, 0))).toBe(1)
     }
   })
 })

@@ -15,7 +15,7 @@ export type ValeurMessage = number | string | RefEntite | RefEntite[]
 
 export type CodeMessage =
   // Refus d'une action
-  | 'tour-termine' | 'tour-de' | 'acteur-mort' | 'limite-invocations' | 'ne-se-deplace-pas' | 'deja-sur-case' | 'tacle' | 'hors-atteinte'
+  | 'tour-termine' | 'tour-de' | 'acteur-mort' | 'limite-invocations' | 'ne-se-deplace-pas' | 'deja-sur-case' | 'hors-atteinte'
   | 'sort-inconnu' | 'sort-absent' | 'niveau-requis' | 'relance-initiale' | 'pa-insuffisants' | 'lancers-par-tour' | 'lancers-par-cible'
   | 'hors-portee' | 'pas-en-ligne' | 'pas-en-diagonale' | 'pas-en-ligne-ni-diagonale' | 'pas-de-ldv'
   | 'case-non-ciblable' | 'case-occupee'
@@ -27,7 +27,7 @@ export type CodeMessage =
   | 'au-tour-de' | 'fin-salle' | 'invoquee' | 'ne-bouge-pas' | 'attirance' | 'poussee' | 'recul'
   | 'exploite' | 'pas-exploitation' | 'arbre-plante' | 'arbre-feuillu-plante' | 'devient-feuillu'
   | 'infection-maintenue' | 'pas-de-maintien' | 'infection-reduite' | 'pas-de-propagation'
-  | 'poupee-sacrifiee' | 'explose' | 'echange' | 'gain-pm' | 'intaclable' | 'non-simule'
+  | 'poupee-sacrifiee' | 'explose' | 'echange' | 'gain-pm' | 'intaclable' | 'tacle-perte' | 'non-simule'
   | 'infecte' | 'desinfecte' | 'mandragore' | 'aucun-effet'
 
 export interface Message {
