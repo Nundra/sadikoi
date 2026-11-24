@@ -4,7 +4,8 @@ import { adresse, pageDuChemin, t } from '~/i18n'
 /**
  * Invitation au défi du jour, à l'arrivée sur le jeu (pas sur /daily) tant que le défi n'est pas
  * fait aujourd'hui : dès l'arrivée si la bienvenue a déjà été vue, sinon quand on la referme (le
- * bandeau appelle `ouvrirSiAFaire`). Une fois par chargement de page.
+ * bandeau appelle `ouvrirSiAFaire`) ; de même après l'annonce d'une mise à jour du moteur. Une
+ * fois par chargement de page.
  */
 const store = usePartieStore()
 const dialogue = ref<HTMLDialogElement | null>(null)
@@ -23,7 +24,7 @@ onMounted(() => {
   } catch {
     // stockage indisponible : la bienvenue s'ouvre, l'invitation attendra qu'on la referme
   }
-  if (bienvenueVue) ouvrirSiAFaire()
+  if (bienvenueVue && !annonceAFaire()) ouvrirSiAFaire()
 })
 
 defineExpose({ ouvrirSiAFaire })

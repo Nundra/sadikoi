@@ -17,6 +17,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     {
       date: '2026-11-24',
       nouveautes: [
+        'Une fenêtre « Mise à jour du moteur » présente le tacle, une seule fois.',
         'Au survol d’un déplacement qui sort du contact d’un ennemi, le chemin passe en orange et le plateau affiche les PM et PA que le tacle va coûter.',
         'Tacle comme en jeu : en quittant le contact d’un ennemi, tu perds une part de tes PM et de tes PA selon ta Fuite et son Tacle. La timeline affiche ce que tu perds.',
         'Fuite du Sadida : 80 par défaut, réglable de 0 à 160 (par tranches de 10) dans les réglages, affichée sous les caractéristiques.',
@@ -117,6 +118,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     {
       date: '2026-11-24',
       nouveautes: [
+        'An “Engine update” window introduces lock, only once.',
         'When hovering a move that leaves contact with an enemy, the path turns orange and the board shows the MP and AP the lock will cost.',
         'Lock works like in the game: leaving contact with an enemy costs part of your MP and AP, based on your Dodge and its Lock. The timeline shows what you lose.',
         'Sadida Dodge: 80 by default, adjustable from 0 to 160 (in steps of 10) in the settings, shown under the characteristics.',
@@ -217,6 +219,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     {
       date: '2026-11-24',
       nouveautes: [
+        'Una ventana «Actualización del motor» presenta el placaje, una sola vez.',
         'Al pasar el ratón por un desplazamiento que sale del contacto de un enemigo, el camino se vuelve naranja y el tablero muestra los PM y PA que costará el placaje.',
         'El placaje funciona como en el juego: al salir del contacto con un enemigo pierdes parte de tus PM y PA, según tu Huida y su Placaje. La cronología muestra lo que pierdes.',
         'Huida del Sadida: 80 por defecto, ajustable de 0 a 160 (de 10 en 10) en los ajustes, mostrada bajo las características.',

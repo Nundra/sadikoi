@@ -64,7 +64,9 @@ const invitation = ref<{ ouvrirSiAFaire: () => void } | null>(null)
         <span class="interrogation" aria-hidden="true" />
       </button>
       <Reglages ref="reglages" />
-      <Bienvenue ref="bienvenue" @libre="invitation?.ouvrirSiAFaire()" />
+      <!-- Première visite : la bienvenue présente déjà les règles, l'annonce du moteur est inutile -->
+      <Bienvenue ref="bienvenue" @libre="annonceVue(); invitation?.ouvrirSiAFaire()" />
+      <AnnonceMoteur @libre="invitation?.ouvrirSiAFaire()" />
       <InvitationDaily ref="invitation" />
     </div>
   </header>
