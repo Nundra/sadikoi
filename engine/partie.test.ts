@@ -181,6 +181,14 @@ describe('partie', () => {
     expect(p.entites.some(e => e.nom === 'La Bloqueuse')).toBe(false)
   })
 
+  it('laisse réinvoquer la Poupée sacrifiée au même tour (relance réinitialisée)', () => {
+    const poupee = decale(A, 0, 2)
+    const p = partie(['La Bloqueuse Transmutée', 'Sacrifice Vaudou'], [decale(A, 0, 6)])
+    expect(jouer(suite(p, [sort('La Bloqueuse Transmutée', poupee)]), sort('La Bloqueuse Transmutée', decale(A, 2, 0))).ok).toBe(false)
+    const apres = suite(p, [sort('La Bloqueuse Transmutée', poupee), sort('Sacrifice Vaudou', poupee), sort('La Bloqueuse Transmutée', poupee)])
+    expect(apres.entites.filter(e => e.nom === 'La Bloqueuse')).toHaveLength(1)
+  })
+
   it("retire l'Infection de tous avec Inoculation", () => {
     const e = [decale(A, 3, 0), decale(A, 0, 3)]
     const p = suite(partie(['Vent Empoisonné', 'Miasmes', 'Inoculation'], [...e, decale(A, 0, -1)]),

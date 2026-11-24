@@ -27,6 +27,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Les cases que tes PM atteindraient sans le tacle restent affichées, en rouge.',
       ],
       corrections: [
+        'Sacrifice Vaudou réinitialise la relance de la Poupée sacrifiée : tu peux la réinvoquer au même tour.',
         'Contagion ne change plus l’Infection de sa cible : seuls les ennemis autour sont infectés pour 2 tours. Les records et le classement du jour repartent de zéro.',
       ],
     },
@@ -128,6 +129,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Cells your MP would reach without being locked are still shown, in red.',
       ],
       corrections: [
+        'Voodoo Sacrifice resets the cooldown of the sacrificed Doll: you can summon it again the same turn.',
         'Contagion no longer changes its target’s Infection: only the enemies around it are infected for 2 turns. Records and today’s ranking start over.',
       ],
     },
@@ -229,6 +231,7 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
         'Las casillas que tus PM alcanzarían sin el placaje siguen mostrándose, en rojo.',
       ],
       corrections: [
+        'Sacrificio Vudú reinicia el tiempo de relanzamiento de la Muñeca sacrificada: puedes volver a invocarla en el mismo turno.',
         'Contagio ya no cambia la Infección de su objetivo: solo los enemigos de alrededor quedan infectados durante 2 turnos. Los récords y la clasificación del día empiezan de cero.',
       ],
     },

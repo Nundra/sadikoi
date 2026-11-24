@@ -346,6 +346,7 @@ export const es: DicoLangue = {
   'm.tour-de': 'le toca a {e}',
   'm.ne-se-deplace-pas': '{e} no se desplaza',
   'm.deja-sur-case': 'ya está en esta casilla',
+  'm.relance-reinitialisee': 'el hechizo que invoca a {e} puede volver a lanzarse este turno',
   'm.tacle-perte': '{e} está placado: −{pm} PM, −{pa} PA',
   'm.hors-atteinte': 'casilla fuera de alcance con {pm} PM',
   'm.sort-inconnu': 'hechizo desconocido',

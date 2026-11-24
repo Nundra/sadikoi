@@ -27,7 +27,7 @@ export type CodeMessage =
   | 'au-tour-de' | 'fin-salle' | 'invoquee' | 'ne-bouge-pas' | 'attirance' | 'poussee' | 'recul'
   | 'exploite' | 'pas-exploitation' | 'arbre-plante' | 'arbre-feuillu-plante' | 'devient-feuillu'
   | 'infection-maintenue' | 'pas-de-maintien' | 'infection-reduite' | 'pas-de-propagation'
-  | 'poupee-sacrifiee' | 'explose' | 'echange' | 'gain-pm' | 'intaclable' | 'tacle-perte' | 'non-simule'
+  | 'poupee-sacrifiee' | 'explose' | 'echange' | 'gain-pm' | 'intaclable' | 'tacle-perte' | 'relance-reinitialisee' | 'non-simule'
   | 'infecte' | 'desinfecte' | 'mandragore' | 'aucun-effet'
 
 export interface Message {

@@ -346,6 +346,7 @@ export const en: DicoLangue = {
   'm.tour-de': 'it’s {e}’s turn',
   'm.ne-se-deplace-pas': '{e} doesn’t move',
   'm.deja-sur-case': 'already on this cell',
+  'm.relance-reinitialisee': 'the spell that summons {e} can be cast again this turn',
   'm.tacle-perte': '{e} is locked: −{pm} MP, −{pa} AP',
   'm.hors-atteinte': 'cell out of reach with {pm} MP',
   'm.sort-inconnu': 'unknown spell',

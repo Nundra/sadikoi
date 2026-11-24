@@ -362,6 +362,7 @@ export const fr = {
   'm.tour-de': 'c’est au tour de {e}',
   'm.ne-se-deplace-pas': '{e} ne se déplace pas',
   'm.deja-sur-case': 'déjà sur cette case',
+  'm.relance-reinitialisee': 'le sort qui invoque {e} peut être relancé ce tour-ci',
   'm.tacle-perte': '{e} est taclé : −{pm} PM, −{pa} PA',
   'm.hors-atteinte': 'case hors d’atteinte avec {pm} PM',
   'm.sort-inconnu': 'sort inconnu',

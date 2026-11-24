@@ -534,6 +534,14 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
         retirer(visee)
         dire(msg('poupee-sacrifiee', { e: ref(visee) }))
         infecter(zone(cible, 'cercle', comp.rayon))
+        // « Réinitialise son temps de relance » : le sort qui invoque cette Poupée se relance ce tour-ci
+        for (const [id, c] of Object.entries(COMPORTEMENTS)) {
+          if ((c.type !== 'invoque' && c.type !== 'remplace-arbre') || c.monstre !== visee.monstre) continue
+          for (const cle of Object.keys(p.lancers)) {
+            if (cle === `${acteur.id}:${id}` || cle.startsWith(`${acteur.id}:${id}:`)) delete p.lancers[cle]
+          }
+        }
+        dire(msg('relance-reinitialisee', { e: ref(visee) }))
       }
       break
     case 'feuillu': {
