@@ -19,7 +19,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Les cases que tes PM atteindraient sans le tacle restent affichées, en rouge.',
       ],
-      corrections: [],
+      corrections: [
+        'Contagion ne change plus l’Infection de sa cible : seuls les ennemis autour sont infectés pour 2 tours. Les records et le classement du jour repartent de zéro.',
+      ],
     },
     {
       date: '2026-11-19',
@@ -111,7 +113,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Cells your MP would reach without being locked are still shown, in red.',
       ],
-      corrections: [],
+      corrections: [
+        'Contagion no longer changes its target’s Infection: only the enemies around it are infected for 2 turns. Records and today’s ranking start over.',
+      ],
     },
     {
       date: '2026-11-19',
@@ -203,7 +207,9 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
       nouveautes: [
         'Las casillas que tus PM alcanzarían sin el placaje siguen mostrándose, en rojo.',
       ],
-      corrections: [],
+      corrections: [
+        'Contagio ya no cambia la Infección de su objetivo: solo los enemigos de alrededor quedan infectados durante 2 turnos. Los récords y la clasificación del día empiezan de cero.',
+      ],
     },
     {
       date: '2026-11-19',

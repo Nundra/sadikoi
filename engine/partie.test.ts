@@ -80,6 +80,12 @@ describe('partie', () => {
     expect(infectes(suite(p, [sort('Vent Empoisonné', e1), sort('Contagion', e1)]))).toEqual([1, 2, 3])
   })
 
+  it("laisse l'Infection de la cible de Contagion telle quelle, 2 tours autour", () => {
+    const e1 = decale(A, 4, 0)
+    const p = suite(partie(['Contagion', 'Vent Empoisonné'], [e1, decale(A, 5, 1)]), [sort('Vent Empoisonné', e1), sort('Contagion', e1)])
+    expect(p.entites.filter(e => e.genre === 'ennemi').map(e => e.dureeInfection)).toEqual([1, 2])
+  })
+
   it("compte les exploitations, 3 au plus par tour", () => {
     const e = [decale(A, 3, 0), decale(A, 0, 3)]
     let p = partie(['Vent Empoisonné', 'Fléau', 'Ronce'], e, { ...STATS_DEFAUT, pa: 20 })

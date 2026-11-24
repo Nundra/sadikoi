@@ -217,7 +217,7 @@ export const POINTS_PAR_PA = 10
  * résultat d'un même tour (sort revu, calcul des points…) : les records d'avant ne servent
  * plus de référence. 2 : La Sacrifiée et la Prycipithon revues, limite d'invocations (2026-11-15).
  */
-export const VERSION_REGLES = 4
+export const VERSION_REGLES = 5
 /** Bonus de la 4e étoile : tous les ennemis encore infectés au tour 2. */
 export const POINTS_TOUR_2 = 50
 
@@ -501,7 +501,8 @@ function lancer(p: Partie, acteur: Entite, id: number, cible: Case): Resultat {
       break
     }
     case 'propage':
-      if (visee?.genre === 'ennemi' && visee.infecte) infecter(zone(cible, 'cercle', comp.rayon))
+      // Autour de la cible seulement : l'Infection de la cible elle-même garde sa durée
+      if (visee?.genre === 'ennemi' && visee.infecte) infecter(zone(cible, 'cercle', comp.rayon).filter(c => c !== cible))
       else dire(msg('pas-de-propagation'))
       break
     case 'miasmes': {
