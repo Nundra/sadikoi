@@ -56,9 +56,9 @@ export function salleDuJour(map: MapCombat, jour: string): Salle & { alea: () =>
   return { ...tirerSalle(map, { nombre, alea }), alea }
 }
 
-/** Fuite du Sadida imposée par le défi du jour : de 0 à 200, par paliers de 20. */
+/** Fuite du Sadida imposée par le défi du jour : de 0 à 160, par tranches de 10. */
 export function fuiteDuJour(jour: string): number {
-  return 20 * Math.floor(aleaDe(`fuite:${jour}`)() * 11)
+  return 10 * Math.floor(aleaDe(`fuite:${jour}`)() * 17)
 }
 
 /** Caractéristiques imposées par le défi du jour : celles par défaut, avec la Fuite du jour. */

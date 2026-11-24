@@ -96,10 +96,10 @@ describe('tour reçu par l’API', () => {
 })
 
 describe('Fuite du jour', () => {
-  it('va de 0 à 200 par paliers de 20, la même pour tous ce jour-là', () => {
+  it('va de 0 à 160 par tranches de 10, la même pour tous ce jour-là', () => {
     const jours = Array.from({ length: 60 }, (_, k) => jourDe(new Date(Date.UTC(2026, 0, 1 + k, 12))))
     const fuites = jours.map(fuiteDuJour)
-    expect(fuites.every(f => f % 20 === 0 && f >= 0 && f <= 200)).toBe(true)
+    expect(fuites.every(f => f % 10 === 0 && f >= 0 && f <= 160)).toBe(true)
     expect(new Set(fuites).size).toBeGreaterThan(5)
     expect(fuiteDuJour('2026-11-24')).toBe(fuiteDuJour('2026-11-24'))
   })

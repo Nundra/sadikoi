@@ -17,11 +17,12 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     {
       date: '2026-11-24',
       nouveautes: [
+        'Au survol d’un déplacement qui sort du contact d’un ennemi, le chemin passe en orange et le plateau affiche les PM et PA que le tacle va coûter.',
         'Tacle comme en jeu : en quittant le contact d’un ennemi, tu perds une part de tes PM et de tes PA selon ta Fuite et son Tacle. La timeline affiche ce que tu perds.',
-        'Fuite du Sadida : 80 par défaut, réglable de 0 à 200 dans les réglages, affichée sous les caractéristiques.',
+        'Fuite du Sadida : 80 par défaut, réglable de 0 à 160 (par tranches de 10) dans les réglages, affichée sous les caractéristiques.',
         'Chaque ennemi a un Tacle tiré des monstres du jeu (ceux de la zone de la map quand elle en a) : survole-le pour le voir.',
         'Invocations : chacune a la Fuite du jeu ; la Groute et le Tréant restent Intaclables.',
-        'Défi du jour : la Fuite du Sadida change chaque jour, de 0 à 200 par paliers de 20.',
+        'Défi du jour : la Fuite du Sadida change chaque jour, de 0 à 160 par tranches de 10.',
         'Les cases que tes PM atteindraient sans le tacle restent affichées, en rouge.',
       ],
       corrections: [
@@ -116,11 +117,12 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     {
       date: '2026-11-24',
       nouveautes: [
+        'When hovering a move that leaves contact with an enemy, the path turns orange and the board shows the MP and AP the lock will cost.',
         'Lock works like in the game: leaving contact with an enemy costs part of your MP and AP, based on your Dodge and its Lock. The timeline shows what you lose.',
-        'Sadida Dodge: 80 by default, adjustable from 0 to 200 in the settings, shown under the characteristics.',
+        'Sadida Dodge: 80 by default, adjustable from 0 to 160 (in steps of 10) in the settings, shown under the characteristics.',
         'Each enemy has a Lock taken from the game’s monsters (those of the map’s area when it has some): hover it to see it.',
         'Summons: each has its in-game Dodge; Groute and Treant stay Unlockable.',
-        'Daily challenge: the Sadida’s Dodge changes every day, from 0 to 200 in steps of 20.',
+        'Daily challenge: the Sadida’s Dodge changes every day, from 0 to 160 in steps of 10.',
         'Cells your MP would reach without being locked are still shown, in red.',
       ],
       corrections: [
@@ -215,11 +217,12 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     {
       date: '2026-11-24',
       nouveautes: [
+        'Al pasar el ratón por un desplazamiento que sale del contacto de un enemigo, el camino se vuelve naranja y el tablero muestra los PM y PA que costará el placaje.',
         'El placaje funciona como en el juego: al salir del contacto con un enemigo pierdes parte de tus PM y PA, según tu Huida y su Placaje. La cronología muestra lo que pierdes.',
-        'Huida del Sadida: 80 por defecto, ajustable de 0 a 200 en los ajustes, mostrada bajo las características.',
+        'Huida del Sadida: 80 por defecto, ajustable de 0 a 160 (de 10 en 10) en los ajustes, mostrada bajo las características.',
         'Cada enemigo tiene un Placaje sacado de los monstruos del juego (los de la zona del mapa cuando tiene): pasa el ratón por encima para verlo.',
         'Invocaciones: cada una tiene la Huida del juego; Grut y Treant siguen siendo No Placables.',
-        'Desafío del día: la Huida del Sadida cambia cada día, de 0 a 200 de 20 en 20.',
+        'Desafío del día: la Huida del Sadida cambia cada día, de 0 a 160 de 10 en 10.',
         'Las casillas que tus PM alcanzarían sin el placaje siguen mostrándose, en rojo.',
       ],
       corrections: [

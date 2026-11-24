@@ -77,7 +77,7 @@ const placementLibre = computed(() => new Set(store.phase === 'placement' && !st
 function etat(c: number): string | null {
   const a = store.apercu
   if (a.zone.has(c)) return 'zone'
-  if (a.chemin.has(c)) return 'chemin'
+  if (a.chemin.has(c)) return a.perte ? 'chemin-tacle' : 'chemin'
   if (store.portee.has(c)) return 'portee'
   if (store.sansVue.has(c)) return 'sans-vue'
   if (store.accessibles.has(c) && store.acteur?.case !== c) return 'accessible'
@@ -136,6 +136,12 @@ function surClic(ev: MouseEvent) {
 const finTrait = () => store.finTrait()
 onMounted(() => window.addEventListener('mouseup', finTrait))
 onBeforeUnmount(() => window.removeEventListener('mouseup', finTrait))
+
+/** Le déplacement survolé fait sortir du contact d'un ennemi : ce que le tacle va coûter. */
+const alerteTacle = computed(() => {
+  const p = store.apercu.perte
+  return p ? t('plateau.tacle-deplacement', { pm: p.pm, pa: p.pa }) : null
+})
 
 const aide = computed(() => {
   if (store.enEdition) return t('creation.aide-plateau')
@@ -226,12 +232,14 @@ const aide = computed(() => {
       <li><span class="pastille sans-vue" />{{ t('legende.sans-vue') }}</li>
       <li><span class="pastille zone" />{{ t('legende.zone') }}</li>
       <li><span class="pastille accessible" />{{ t('legende.deplacement') }}</li>
+      <li><span class="pastille chemin-tacle" />{{ t('legende.chemin-tacle') }}</li>
       <li><span class="pastille tacle" />{{ t('legende.tacle') }}</li>
       <li><span class="pastille mandragore">{{ t('plateau.mandragore') }}</span>{{ t('legende.mandragore') }}</li>
       <li><span class="pastille tient" />{{ t('legende.tour-2') }}</li>
     </ul>
 
     <p v-if="store.message" class="message" role="status">{{ store.message() }}</p>
+    <p v-else-if="alerteTacle" class="message alerte" role="status">{{ alerteTacle }}</p>
     <p v-else-if="aide" class="message aide" role="status">{{ aide }}</p>
   </section>
 </template>
@@ -291,6 +299,8 @@ svg.edition { cursor: crosshair; }
 /* Atteignable en PM mais pas à cause du tacle */
 .cases polygon.etat-tacle { fill: #9c4a3a; }
 .cases polygon.etat-chemin { fill: #a8d27a; }
+/* Chemin qui fait perdre des PM ou des PA au tacle */
+.cases polygon.etat-chemin-tacle { fill: #d98a4a; }
 .cases polygon.etat-zone { fill: #8b55c7; }
 
 polygon:hover { filter: brightness(1.18); }
@@ -348,6 +358,7 @@ polygon:hover { filter: brightness(1.18); }
 .pastille.zone { background: #8b55c7; }
 .pastille.accessible { background: #6f9a4a; }
 .pastille.tacle { background: #9c4a3a; }
+.pastille.chemin-tacle { background: #d98a4a; }
 .pastille.tient { background: #7a3fb8; border: 2px solid var(--or-clair); }
 .pastille.mandragore { width: 14px; height: 14px; border-radius: 50%; background: #3d2a5c; border: 1px solid var(--mandragore); color: var(--mandragore); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
 
@@ -370,4 +381,5 @@ polygon:hover { filter: brightness(1.18); }
   text-align: center;
 }
 .message.aide { background: rgb(10 19 23 / 0.85); border-color: var(--bord); color: var(--texte-doux); font-weight: 600; }
+.message.alerte { background: rgb(10 19 23 / 0.9); border-color: #d98a4a; color: #f3b37a; font-weight: 700; }
 </style>

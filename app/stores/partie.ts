@@ -77,10 +77,12 @@ function ecrire(cle: string, valeur: unknown) {
 const CATEGORIES_DEFAUT: Record<Categorie, boolean> = { zone: true, speciale: false, donjon: true, koli: false, songes: true, autre: false }
 
 /** Bornes des caractéristiques réglables (PA, PM et PO de base, sans la Prycipithon). */
-export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6], invo: [1, 8], fuite: [0, 200] }
+export const LIMITES_STATS: Record<keyof Stats, [number, number]> = { pa: [6, 12], pm: [3, 6], po: [0, 6], invo: [1, 8], fuite: [0, 160] }
 export const NIVEAU_MIN = 1
 
-const borner = (v: number, [min, max]: [number, number]) => Math.min(max, Math.max(min, Math.round(Number.isFinite(v) ? v : max)))
+const borner = (v: number, [min, max]: [number, number], pas = 1) => Math.min(max, Math.max(min, pas * Math.round((Number.isFinite(v) ? v : max) / pas)))
+/** La Fuite se règle par tranches de 10. */
+export const PAS_FUITE = 10
 
 /** Mode infini : étoiles nécessaires pour passer à la salle suivante. */
 export const ETOILES_POUR_AVANCER = 3
@@ -155,7 +157,7 @@ export const usePartieStore = defineStore('partie', () => {
   const niveau = ref(borner(personnage.niveau, [NIVEAU_MIN, NIVEAU_MAX]))
   const stats = shallowRef<Stats>({
     pa: borner(personnage.pa, LIMITES_STATS.pa), pm: borner(personnage.pm, LIMITES_STATS.pm), po: borner(personnage.po, LIMITES_STATS.po),
-    invo: borner(personnage.invo, LIMITES_STATS.invo), fuite: borner(personnage.fuite, LIMITES_STATS.fuite),
+    invo: borner(personnage.invo, LIMITES_STATS.invo), fuite: borner(personnage.fuite, LIMITES_STATS.fuite, PAS_FUITE),
   })
   watch([niveau, stats], ([n, st]) => ecrire('personnage', { niveau: n, ...st }))
   /** Prycipithon Mate équipée : +2 PA au tour 1, points × 0,9. */
@@ -312,19 +314,25 @@ export const usePartieStore = defineStore('partie', () => {
     return new Set([...sansTacle.keys()].filter(c => !accessibles.value.has(c)))
   })
 
-  /** Aperçu au survol : zone du sort et ennemis qu'il infecterait, ou chemin du déplacement. */
+  /** Aperçu au survol : zone du sort et ennemis qu'il infecterait, ou chemin du déplacement et ce que le tacle y coûte. */
   const apercu = computed(() => {
     const p = partie.value
     const a = acteur.value
     const c = survol.value
-    const vide = { zone: new Set<Case>(), infectes: new Set<number>(), chemin: new Set<Case>() }
+    const vide = { zone: new Set<Case>(), infectes: new Set<number>(), chemin: new Set<Case>(), perte: null as { pm: number, pa: number } | null }
     if (!p || !a || c === null || !interactif.value) return vide
     if (sortChoisi.value !== null) {
       if (!ciblables.value.has(c)) return vide
       const r = jouer(p, { type: 'sort', acteur: a.id, sort: sortChoisi.value, cible: c })
       return { ...vide, zone: new Set(zoneDuSort(p, a.id, sortChoisi.value, c)), infectes: new Set(r.ok ? r.bilan.infectes : []) }
     }
-    if (accessibles.value.has(c) && c !== a.case) return { ...vide, chemin: new Set(cheminVers(accessibles.value, c)) }
+    const arrivee = accessibles.value.get(c)
+    if (arrivee && c !== a.case) {
+      // PM et PA que le tacle coûterait sur ce chemin (null s'il ne coûte rien)
+      const ch = cheminVers(accessibles.value, c)!
+      const perte = { pm: a.pm - arrivee.pm - ch.length, pa: a.pa - arrivee.pa }
+      return { ...vide, chemin: new Set(ch), perte: perte.pm || perte.pa ? perte : null }
+    }
     return vide
   })
 
@@ -797,7 +805,7 @@ export const usePartieStore = defineStore('partie', () => {
     if (!verrouille.value) niveau.value = borner(v, [NIVEAU_MIN, NIVEAU_MAX])
   }
   function changerStat(cle: keyof Stats, v: number) {
-    if (!verrouille.value) stats.value = { ...stats.value, [cle]: borner(v, LIMITES_STATS[cle]) }
+    if (!verrouille.value) stats.value = { ...stats.value, [cle]: borner(v, LIMITES_STATS[cle], cle === 'fuite' ? PAS_FUITE : 1) }
   }
   function retablirPersonnage() {
     if (verrouille.value) return

@@ -3,7 +3,7 @@ import { CATEGORIES } from '~~/engine/categories'
 import { SORTS_SADIDA } from '~~/engine/sorts'
 import { useBarreStore } from '~/stores/barre'
 import { adresseLegale, nomSort, t } from '~/i18n'
-import { LIMITES_STATS, NIVEAU_MIN } from '~/stores/partie'
+import { LIMITES_STATS, NIVEAU_MIN, PAS_FUITE } from '~/stores/partie'
 import { NIVEAU_MAX } from '~~/engine/sorts'
 
 const store = usePartieStore()
@@ -20,11 +20,11 @@ const finTouche = computed(() => barre.libelle(barre.toucheFin))
 const dialogue = ref<HTMLDialogElement | null>(null)
 const notes = ref<{ ouvrir: () => void } | null>(null)
 
-/** Niveau puis PA, PM, PO, invocations et Fuite : valeur, bornes et réglage (− / + ou saisie ; la Fuite va de 10 en 10). */
+/** Niveau puis PA, PM, PO, invocations et Fuite : valeur, bornes et réglage (− / + ou saisie ; la Fuite va de 10 en 10, jusqu'à 160). */
 const reglablesPersonnage = computed(() => [
   { cle: 'niveau', nom: t('reglages.niveau'), valeur: store.niveau, bornes: [NIVEAU_MIN, NIVEAU_MAX] as const, pas: 1, changer: store.changerNiveau },
   ...(['pa', 'pm', 'po', 'invo', 'fuite'] as const).map(cle => ({
-    cle, nom: t(`carac.${cle}`), valeur: store.stats[cle], bornes: LIMITES_STATS[cle], pas: cle === 'fuite' ? 10 : 1, changer: (v: number) => store.changerStat(cle, v),
+    cle, nom: t(`carac.${cle}`), valeur: store.stats[cle], bornes: LIMITES_STATS[cle], pas: cle === 'fuite' ? PAS_FUITE : 1, changer: (v: number) => store.changerStat(cle, v),
   })),
 ])
 
@@ -74,6 +74,7 @@ const seul = computed(() => Object.values(store.categoriesActives).filter(Boolea
           inputmode="numeric"
           :min="r.bornes[0]"
           :max="r.bornes[1]"
+          :step="r.pas"
           :value="r.valeur"
           :disabled="bloque"
           @change="(ev) => { r.changer(Number((ev.target as HTMLInputElement).value)); (ev.target as HTMLInputElement).value = String(r.valeur) }"
