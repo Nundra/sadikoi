@@ -300,6 +300,15 @@ export const usePartieStore = defineStore('partie', () => {
     return casesAccessibles(plateau(p), a.case, a.pm, arretTacle(p, a))
   })
 
+  /** Cases que les PM atteindraient sans le tacle : montrées en rouge, comme en jeu. */
+  const tacles = computed(() => {
+    const p = partie.value
+    const a = acteur.value
+    if (!p || !a || accessibles.value.size === 0) return new Set<Case>()
+    const sansTacle = casesAccessibles(plateau(p), a.case, a.pm)
+    return new Set([...sansTacle.keys()].filter(c => !accessibles.value.has(c)))
+  })
+
   /** Aperçu au survol : zone du sort et ennemis qu'il infecterait, ou chemin du déplacement. */
   const apercu = computed(() => {
     const p = partie.value
@@ -814,7 +823,7 @@ export const usePartieStore = defineStore('partie', () => {
   return {
     maps, mapsBoss, mapsActives, categories, categoriesActives, compteParCategorie, basculerCategorie, mode, mapChoisie, jourDaily, dailyFait, chargerDaily, statsImposees, classement, classementIndisponible, defiPerime, numeroSalle, map, sadida, phase, niveau, stats, statsDepart, prycipithon, debloque, sortAffiche, changerNiveau, changerStat, retablirPersonnage, variantes, actions, sortChoisi, survol,
     message, vue, partie, etapes, termine, casesPlacement, acteur, etapeAffichee, partieAffichee, entites, deplacements,
-    sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, apercu, score, record, recordPrecedent,
+    sortsActeur, verrouille, bonusPo, interactif, portee, ciblables, sansVue, accessibles, tacles, apercu, score, record, recordPrecedent,
     brouillon, edition, outil, historique, problemes, enEdition, salleDuJeu, debutTrait, peindreCase, finTrait, annulerTrait,
     carteDeZero, carteDeLaSalle, ouvrirCreation, modifierCarte, testerCarte, chargerCarte,
     sexe, portrait, nomAffiche, texte, code, lienPartage, chargerCode, partager, serie, meilleureSerie, peutAvancer, salleSuivante, nouvelleRun, rejouerSalle, charger, nouvelleSalle, replacer, recommencer, validerPlacement, clicCase, choisirSort, finDuTour, changerVariante,

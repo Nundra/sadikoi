@@ -15,6 +15,13 @@ export interface NoteDeVersion {
 export const NOTES: Record<Langue, NoteDeVersion[]> = {
   fr: [
     {
+      date: '2026-11-24',
+      nouveautes: [
+        'Les cases que tes PM atteindraient sans le tacle restent affichées, en rouge.',
+      ],
+      corrections: [],
+    },
+    {
       date: '2026-11-19',
       nouveautes: [
         'Une fois le placement validé, les cases de départ rouges et bleues reprennent la couleur du sol.',
@@ -100,6 +107,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
   ],
   en: [
     {
+      date: '2026-11-24',
+      nouveautes: [
+        'Cells your MP would reach without being locked are still shown, in red.',
+      ],
+      corrections: [],
+    },
+    {
       date: '2026-11-19',
       nouveautes: [
         'Once placement is confirmed, the red and blue starting cells go back to the ground colour.',
@@ -184,6 +198,13 @@ export const NOTES: Record<Langue, NoteDeVersion[]> = {
     },
   ],
   es: [
+    {
+      date: '2026-11-24',
+      nouveautes: [
+        'Las casillas que tus PM alcanzarían sin el placaje siguen mostrándose, en rojo.',
+      ],
+      corrections: [],
+    },
     {
       date: '2026-11-19',
       nouveautes: [

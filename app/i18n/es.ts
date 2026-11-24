@@ -69,6 +69,7 @@ export const es: DicoLangue = {
   'legende.sans-vue': 'Sin línea de visión',
   'legende.zone': 'Zona del hechizo',
   'legende.deplacement': 'Desplazamiento',
+  'legende.tacle': 'Bloqueado por placaje',
   'legende.mandragore': 'Mandrágora',
   'legende.tour-2': 'Infectado en el turno 2',
 

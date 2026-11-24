@@ -81,6 +81,7 @@ function etat(c: number): string | null {
   if (store.portee.has(c)) return 'portee'
   if (store.sansVue.has(c)) return 'sans-vue'
   if (store.accessibles.has(c) && store.acteur?.case !== c) return 'accessible'
+  if (store.tacles.has(c)) return 'tacle'
   if (placementLibre.value.has(c)) return 'placement'
   return null
 }
@@ -222,6 +223,7 @@ const aide = computed(() => {
       <li><span class="pastille sans-vue" />{{ t('legende.sans-vue') }}</li>
       <li><span class="pastille zone" />{{ t('legende.zone') }}</li>
       <li><span class="pastille accessible" />{{ t('legende.deplacement') }}</li>
+      <li><span class="pastille tacle" />{{ t('legende.tacle') }}</li>
       <li><span class="pastille mandragore">{{ t('plateau.mandragore') }}</span>{{ t('legende.mandragore') }}</li>
       <li><span class="pastille tient" />{{ t('legende.tour-2') }}</li>
     </ul>
@@ -283,6 +285,8 @@ svg.edition { cursor: crosshair; }
 /* À portée mais sans ligne de vue : bleu pâle, comme en jeu */
 .cases polygon.etat-sans-vue { fill: #7f98a6; }
 .cases polygon.etat-accessible { fill: #6f9a4a; }
+/* Atteignable en PM mais pas à cause du tacle */
+.cases polygon.etat-tacle { fill: #9c4a3a; }
 .cases polygon.etat-chemin { fill: #a8d27a; }
 .cases polygon.etat-zone { fill: #8b55c7; }
 
@@ -340,6 +344,7 @@ polygon:hover { filter: brightness(1.18); }
 .pastille.sans-vue { background: #7f98a6; }
 .pastille.zone { background: #8b55c7; }
 .pastille.accessible { background: #6f9a4a; }
+.pastille.tacle { background: #9c4a3a; }
 .pastille.tient { background: #7a3fb8; border: 2px solid var(--or-clair); }
 .pastille.mandragore { width: 14px; height: 14px; border-radius: 50%; background: #3d2a5c; border: 1px solid var(--mandragore); color: var(--mandragore); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
 

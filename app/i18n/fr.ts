@@ -77,6 +77,7 @@ export const fr = {
   'legende.sans-vue': 'Sans ligne de vue',
   'legende.zone': 'Zone du sort',
   'legende.deplacement': 'Déplacement',
+  'legende.tacle': 'Bloqué par le tacle',
   'legende.mandragore': 'Mandragore',
   'legende.tour-2': 'Infecté au tour 2',
 

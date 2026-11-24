@@ -69,6 +69,7 @@ export const en: DicoLangue = {
   'legende.sans-vue': 'No line of sight',
   'legende.zone': 'Spell area',
   'legende.deplacement': 'Movement',
+  'legende.tacle': 'Blocked by lock',
   'legende.mandragore': 'Mandrake',
   'legende.tour-2': 'Infected on turn 2',
 
